@@ -1,0 +1,25 @@
+@import "external/elements.less";
+
+// remeh's functions
+@import "mixins.less";
+
+// qubuto's constants
+@import "constants.less";
+
+section#main-section {
+	background-image: @background-image;
+
+	box-shadow: inset 1px 4px 9px -6px;
+
+	.padded;
+}
+
+div#main-div {
+	background-color : #fefefe;
+	
+	width: 85%;
+	margin: auto;
+	
+	.box-shadow(0px 0px 5px 1px #bbb);
+	.padded;
+}

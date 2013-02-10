@@ -1,0 +1,88 @@
+// usefull stuff
+@import "external/elements.less";
+@import "external/cssreset-min.css";
+
+// remeh's functions
+@import "basics.less";
+@import "mixins.less";
+
+// qubuto's constants
+@import "constants.less";
+
+@import "headers.less";
+@import "footers.less";
+@import "contents.less";
+
+
+// ------------
+// Bases
+// ------------
+
+body {
+	font-family: @fonts;
+	font-size: @font-size;
+}
+
+h1, h2, h3, h4, h5, p {
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+}
+
+// no padding top for the first title because in many cases
+// the container will already have its own padding
+h1 {
+	padding-top: 0px;
+}
+
+a {
+	color: @light-gray;
+	text-decoration: none;
+}
+
+a:hover {
+	color: @gray;
+}
+
+input.button, button
+{
+	border: 1px solid #bbb;
+	padding: 0.5em;
+	border-radius: 2px;
+	
+	.gradient(#f9f9f9, #f9f9f9, #ffffff);
+	
+	color: #777;
+	
+	.box-shadow(1px 1px 2px #ddd);
+}
+
+input.button:hover, button:hover
+{
+	border: 1px solid #ddd;
+	
+	.gradient(#fff, #fff, #fff);
+}
+
+input.button:active, button:active
+{
+	.gradient(#f6f6f6, #f6f6f6, #fff);
+	
+	color: #aaa;
+}
+
+// ------------
+// Titles
+// ------------
+
+h1 {
+	font-size: 3em;
+}
+h2 {
+	font-size: 2em;
+	font-weight: bold;
+}
+h3 {
+	font-size: 2em;
+}
+
+

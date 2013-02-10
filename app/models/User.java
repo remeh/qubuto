@@ -1,6 +1,7 @@
 package models;
 
-import java.util.Date;
+import com.mehteor.db.ModelUtils;
+import com.mehteor.db.MongoModel;
 
 /**
  * An user of Qubuto.
@@ -11,44 +12,78 @@ public class User extends MongoModel {
 	/**
 	 * User's username.
 	 */
-	public String username;
+	private String username;
 	
 	/**
 	 * User's password.
 	 */
-	public String password;
+	private String password;
 	
 	/**
 	 * Salt used for the user password.
 	 */
-	public String salt;
+	private String salt;
 	
 	/**
 	 * User's email.
 	 */
-	public String email;
+	private String email;
 	
 	/**
-	 * Session ID when the user is connected.
+	 * Session when the user is connected.
 	 */
-	public String sessionId;
+	// reference //
+	private String session;
 	
-	/**
-	 * Last time this session was updated.
-	 */
-	public Date lastUpdate;
-
-
 	// ---------------------
 	
 	public User() {
 		
 	}
-	
-	@Override
-	public String getCollectionName() {
-		return "users";
-	}
 
 	// ---------------------
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	public Session getSession() {
+		ModelUtils<Session> mu = new ModelUtils<Session>(Session.class);
+		if (session != null) {
+			return mu.find(session);
+		}
+		return null;
+	}
+	
+	public void setSession(Session session) {
+		this.session = session.id;
+	}
 }
