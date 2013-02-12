@@ -1,6 +1,5 @@
 package models;
 
-import com.mehteor.db.ModelUtils;
 import com.mehteor.db.MongoModel;
 
 /**
@@ -28,12 +27,6 @@ public class User extends MongoModel {
 	 * User's email.
 	 */
 	private String email;
-	
-	/**
-	 * Session when the user is connected.
-	 */
-	// reference //
-	private String session;
 	
 	// ---------------------
 	
@@ -73,17 +66,5 @@ public class User extends MongoModel {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-	
-	public Session getSession() {
-		ModelUtils<Session> mu = new ModelUtils<Session>(Session.class);
-		if (session != null) {
-			return mu.find(session);
-		}
-		return null;
-	}
-	
-	public void setSession(Session session) {
-		this.session = session.id;
 	}
 }

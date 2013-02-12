@@ -118,7 +118,7 @@ public class Task extends MongoModel {
 	}
 	
 	public void setAuthor(User author) {
-		this.author = author.id;
+		this.author = author.getId();
 	}
 	
 	public Todolist getTodolist() {
@@ -130,6 +130,6 @@ public class Task extends MongoModel {
 	}
 	
 	public void setTodolist(Todolist todolist) {
-		this.todolist = todolist.id;
+		this.todolist = todolist.getId();
 	}
 }

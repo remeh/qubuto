@@ -49,7 +49,7 @@ public class Comment extends MongoModel {
 	}
 	
 	public void setAuthor(User author) {
-		this.author = author.id;
+		this.author = author.getId();
 	}
 	
 	public String getContent() {
@@ -77,6 +77,6 @@ public class Comment extends MongoModel {
 	}
 	
 	public void setTask(Task task) {
-		this.task = task.id;
+		this.task = task.getId();
 	}
 }

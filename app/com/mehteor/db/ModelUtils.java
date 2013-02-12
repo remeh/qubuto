@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import plugins.JongoPlugin;
+import org.jongo.Jongo;
 import org.jongo.MongoCollection;
-
-import uk.co.panaxiom.playjongo.PlayJongo;
 
 public class ModelUtils<T> {
 	private final Class<T> type;
@@ -16,7 +16,9 @@ public class ModelUtils<T> {
 	}
 
 	public MongoCollection models() {
-		return PlayJongo.getCollection(String.format("%ss", type.getSimpleName().toLowerCase()));
+        JongoPlugin plugin = JongoPlugin.getJongoPlugin();
+        Jongo jongo = plugin.getJongo("qubuto2");
+		return jongo.getCollection(String.format("%ss", type.getSimpleName().toLowerCase()));
 	}
 
 	public List<T> all() {

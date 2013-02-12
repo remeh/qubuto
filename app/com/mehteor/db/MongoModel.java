@@ -2,20 +2,27 @@ package com.mehteor.db;
 
 import javax.persistence.Id;
 
+import plugins.JongoPlugin;
+import org.jongo.Jongo;
 import org.jongo.MongoCollection;
-
-import uk.co.panaxiom.playjongo.PlayJongo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Simple Mongo model with helpers.
+ * 
+ * @author Rémy 'remeh' Mathieu
+ */
 public class MongoModel {
 	@Id
 	@JsonProperty("_id")
-	public String id;
+	protected String id;
 
-	public MongoCollection models() {
-		return PlayJongo.getCollection(String.format("%ss", this.getClass().getSimpleName().toLowerCase()));
-	}
+	// ---------------------
+	
+	
+	
+	// ---------------------
 
 	public void save() {
 		models().save(this);
@@ -29,5 +36,17 @@ public class MongoModel {
 
 	public void remove() {
 		models().remove(this.id);
+	}
+	
+	// ---------------------
+	
+	public MongoCollection models() {
+		JongoPlugin plugin = JongoPlugin.getJongoPlugin();
+		Jongo jongo = plugin.getJongo("qubuto2");
+		return jongo.getCollection(String.format("%ss", this.getClass().getSimpleName().toLowerCase()));
+	}
+	
+	public String getId() {
+		return id;
 	}
 }

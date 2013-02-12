@@ -12,7 +12,7 @@
 @import "headers.less";
 @import "footers.less";
 @import "contents.less";
-
+@import "forms.less";
 
 // ------------
 // Bases
@@ -21,6 +21,7 @@
 body {
 	font-family: @fonts;
 	font-size: @font-size;
+	color: #333;
 }
 
 h1, h2, h3, h4, h5, p {
@@ -43,11 +44,28 @@ a:hover {
 	color: @gray;
 }
 
-input.button, button
+td {
+	padding: 0.3em;
+}
+
+input
+{
+	padding: 0.3em;
+}
+
+input[type=text],
+input[type=password]
+{
+	border: 1px solid #ddd;
+	.gradient(#fff, #fafafa, #fff);
+}
+
+input.button, input[type=submit], button
 {
 	border: 1px solid #bbb;
 	padding: 0.5em;
-	border-radius: 2px;
+	
+	.rounded(2px);
 	
 	.gradient(#f9f9f9, #f9f9f9, #ffffff);
 	
@@ -56,14 +74,14 @@ input.button, button
 	.box-shadow(1px 1px 2px #ddd);
 }
 
-input.button:hover, button:hover
+input.button:hover, input[type=submit]:hover, button:hover
 {
 	border: 1px solid #ddd;
 	
 	.gradient(#fff, #fff, #fff);
 }
 
-input.button:active, button:active
+input.button:active, input[type=submit]:active, button:active
 {
 	.gradient(#f6f6f6, #f6f6f6, #fff);
 	

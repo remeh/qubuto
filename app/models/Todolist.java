@@ -67,6 +67,6 @@ public class Todolist extends MongoModel {
 	}
 
 	public void setProject(Project project) {
-		this.project = project.id;
+		this.project = project.getId();
 	}
 }
