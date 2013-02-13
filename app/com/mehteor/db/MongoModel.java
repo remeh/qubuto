@@ -41,8 +41,7 @@ public class MongoModel {
 	// ---------------------
 	
 	public MongoCollection models() {
-		JongoPlugin plugin = JongoPlugin.getJongoPlugin();
-		Jongo jongo = plugin.getJongo("qubuto2");
+		Jongo jongo = JongoPlugin.getJongoPlugin().getJongo();
 		return jongo.getCollection(String.format("%ss", this.getClass().getSimpleName().toLowerCase()));
 	}
 	

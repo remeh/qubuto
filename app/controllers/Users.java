@@ -68,6 +68,7 @@ public class Users extends Controller {
         /*
          * Checks if existing account.
          */
+
         if (checkExistingUsername(form.field("username").value())) {
             //form.reject("username", "Username already used.");
         }

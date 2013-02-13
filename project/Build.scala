@@ -4,7 +4,7 @@ import play.Project._
 
 object ApplicationBuild extends Build {
 
-  val appName         = "qubuto-play2"
+  val appName         = "qubuto2"
   val appVersion      = "0.1-SNAPSHOT"
 
   val appDependencies = Seq(
