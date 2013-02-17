@@ -2,6 +2,7 @@ package models;
 
 import java.util.Date;
 
+import com.mehteor.db.ModelUtils;
 import com.mehteor.db.MongoModel;
 
 /**
@@ -25,6 +26,12 @@ public class Project extends MongoModel
 	 * Creation's date.
 	 */
 	private Date creationDate;
+
+	/**
+	 * Creator of the project.
+	 */
+	// reference //
+	private String creator;
 	
 //	/**
 //	 * This project todo lists
@@ -36,6 +43,7 @@ public class Project extends MongoModel
 	// ---------------------
 	
 	public Project() {
+		this.creationDate = new Date();
 	}
 
 	// ---------------------
@@ -62,6 +70,18 @@ public class Project extends MongoModel
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public User getUser() {
+		ModelUtils<User> mu = new ModelUtils<User>(User.class);
+		if (creator != null) {
+			return mu.find(creator);
+		}
+		return null;
+	}
+
+	public void setCreator(User creator) {
+		this.creator = creator.getId();
 	}
 	
 //	public void addTodolist(Todolist todolist)

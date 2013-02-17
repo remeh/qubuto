@@ -1,0 +1,55 @@
+@(projectForm: Form[Project])
+@import helper._
+@main("Qubuto - Create a project") {
+<div id="main-div">
+	<section>
+		<header>
+			<h1 class="green">Create a project</h1>
+			<h2></h2>
+		</header>
+		
+		<article>
+	        @helper.form(action = routes.Projects.submit()) {
+                <table>
+                    <tr>
+                        <td class="label">
+                            <label for="@projectForm("name").id">Name</label></td>
+                        <td class="field">
+						    <input type="text" value="@projectForm("name").value" name="@projectForm("name").name" id="@projectForm("name").id">
+						    <span class="red">@if(projectForm.error("name") != null) { @projectForm.error("name").message }</span>
+						</td>
+                        <td class="description">
+                            Name of the project
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <label for="@projectForm("name").id">Description</label></td>
+                        <td class="field">
+						    <input type="text" value="@projectForm("description").value" name="@projectForm("description").name" id="@projectForm("description").id">
+						    <span class="red">@if(projectForm.error("description") != null) { @projectForm.error("description").message }</span>
+						</td>
+                        <td class="description">
+                            Description of the project
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                        <td class="field">
+                        </td>
+                        <td class="description">
+                        	<br />
+                            <input type="submit" value="Register">
+                        </td>
+                    </tr>
+                </table>
+            }
+            <p>
+            	You're new to Qubuto ? <a href='#'>Take a quick tour</a>.
+            </p>
+		</article>
+		<footer class="text-right">
+		</footer>
+	</section>
+</div>
+}

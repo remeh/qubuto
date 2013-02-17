@@ -33,10 +33,14 @@ public class ModelUtils<T> {
 	public T find(String id) {
 		return models().findOne("{_id: #}", id).as(type);
 	}
-
-	public List<T> query(String query) {
+	
+	public int remove(String query, Object...parameters) {
+		return models().remove(query, parameters).getN();
+	}
+	
+	public List<T> query(String query, Object... parameters) {
 		List<T> list = new ArrayList<T>();
-		Iterator<T> it = models().find(query).as(type).iterator();
+		Iterator<T> it = models().find(query, parameters).as(type).iterator();
 		while (it.hasNext()) {
 			list.add(it.next());
 		}

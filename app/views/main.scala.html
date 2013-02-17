@@ -4,6 +4,7 @@
     <head>
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.min.css")">
+            <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/external/font-awesome.min.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
     </head>
@@ -12,9 +13,17 @@
     		<h1 class="green bold"><a class="green" href='@routes.Application.index()'>Qubuto</a></h1>
     	</header>
     	<section id="main-section">
-	    	<div id="main-div">
-	        	@content
-	        </div>
+	    	@if( flash.get("error") ) {
+		    	<section id="flash-error-section">
+		    		@flash.get("error")
+		    	</section>
+		    }
+    		@if( flash.get("success") ) {
+		    	<section id="flash-success-section">
+		    		@flash.get("success")
+		    	</section>
+		    }
+        	@content
         </section>
         <footer id="main-footer">
     		<section>

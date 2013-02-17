@@ -2,12 +2,33 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+
+### APP
+
 # Home page
 GET     /                           controllers.Application.index()
 
 # Users
 GET		/register					controllers.Users.register()
 POST	/register					controllers.Users.update()
+GET		/login						controllers.Users.login()
+POST	/login						controllers.Users.enter()
+GET		/logout						controllers.Users.logout()
+
+
+# Projects
+GET		/project/create				controllers.Projects.create()
+POST	/project/create				controllers.Projects.submit()
+
+# Users
+GET		/q/:username				controllers.Projects.list(username)
+GET		/q/:username/:project		controllers.Projects.test(username, project)
+
+### API
+
+# Users
+GET		/api/amiauth				controllers.api.Users.amIAuth()
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
