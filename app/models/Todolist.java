@@ -11,6 +11,11 @@ public class Todolist extends MongoModel {
 	 * Todolist's name.
 	 */
 	private String name;
+	
+	/**
+	 * Todolist's description.
+	 */
+	private String description;
 
 	/**
 	 * Creation's date of this todolist.
@@ -31,15 +36,23 @@ public class Todolist extends MongoModel {
 	// ---------------------
 	
 	public Todolist() {
-		
+		this.creationDate = new Date();
 	}
 
 	public String getName() {
 		return name;
 	}
-
+	
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public Date getCreationDate() {

@@ -20,9 +20,12 @@ GET		/logout						controllers.Users.logout()
 GET		/project/create				controllers.Projects.create()
 POST	/project/create				controllers.Projects.submit()
 
+# Todolists
+POST	/todolist/create			controllers.Todolists.submit()
+
 # Users
 GET		/q/:username				controllers.Projects.list(username)
-GET		/q/:username/:project		controllers.Projects.test(username, project)
+GET		/q/:username/:projectname	controllers.Projects.show(username, projectname)
 
 ### API
 

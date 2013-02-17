@@ -34,6 +34,10 @@ public class Users extends SessionController {
 	// ---------------------
     
 	public static Result login() {
+		if (isAuthenticated()) {
+			return redirect(routes.Projects.list(session("u")));
+		}
+		
 		return ok(views.html.users.login.render(userForm));
 	}
 	

@@ -8,23 +8,25 @@
 		</header>
 		<br />		
 		<article style='margin-top: 25px';>
-			<a  href="@routes.Projects.create"><div class="project-div text-center"><i class="icon-plus-sign"> </i> New project</div></a>
+			<a href="@routes.Projects.create"><div class="project-div text-center"><i class="icon-plus-sign"> </i> New project</div></a>
 			@for(project <- userProjects) {
-				<div class="project-div">
-					<div style="width: 100%;">
-						<div class="project-list-description"><b>@project.getName()</b> - @project.getDescription()</div>
-						<div class="clear"></div>
-					</div>
-					<div>
-						<div class="project-list-type"></div>
-						<div class="float-right" style="padding: 0px; margin: 0px;">
-							<div class="project-list-content"><span style='color: #ccc'><i class="icon-ok"> </i> No todolists</span></div>
-							<div class="project-list-content"><span style='color: #ccc'><i class="icon-comments-alt"> </i> No conversations</span></div>
-							<div class="project-list-content"><span style='color: #ccc'><i class="icon-picture"> </i> No files</span></div>
+				<a href="@routes.Projects.show(project.getUser().getUsername(), project.getName())" title="@project.getName()">
+					<div class="project-div">
+						<div style="width: 100%;">
+							<div class="project-list-description"><b>@project.getName()</b> - @project.getDescription()</div>
+							<div class="clear"></div>
 						</div>
-						<div class="clear"></div>
+						<div>
+							<div class="project-list-type"></div>
+							<div class="float-right" style="padding: 0px; margin: 0px;">
+								<div class="project-list-content"><span style='color: #ccc'><i class="icon-ok"> </i> No todolists</span></div>
+								<div class="project-list-content"><span style='color: #ccc'><i class="icon-comments-alt"> </i> No conversations</span></div>
+								<div class="project-list-content"><span style='color: #ccc'><i class="icon-picture"> </i> No files</span></div>
+							</div>
+							<div class="clear"></div>
+						</div>
 					</div>
-				</div>
+				</a>
 			}
 		</article>
 		
