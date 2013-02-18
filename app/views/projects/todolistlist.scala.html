@@ -1,0 +1,21 @@
+@(project: Project)
+<div class="todolist-list ">
+	<table class="todolist">
+	@for(todolist <- project.getTodolists()) {
+		<tr class="todolist-entry">
+			<td class="todolist-name">
+				<span class="todolist-name">@todolist.getName()</span> - <span class="gray">@todolist.getDescription()</span>
+			</td>
+			<td class="todolist-state">
+				<span class="gray"> <i class="icon-check-empty"> 0</i></span>
+			</td>
+			<td class="todolist-state">
+				<span class="gray"> <i class="icon-check"> 0</i></span>
+			</td>
+		</tr>
+	}
+	@if(project.getTodolists().size() == 0) {
+		<tr><td class="todolist-name">No todolists.</td><td></td><td></td></tr>
+	}
+	</table>
+</div>

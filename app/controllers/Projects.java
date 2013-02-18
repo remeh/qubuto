@@ -8,6 +8,7 @@ import models.Todolist;
 import models.User;
 
 import com.mehteor.db.ModelUtils;
+import com.mehteor.qubuto.StringHelper;
 import com.mehteor.qubuto.session.SessionController;
 
 import play.Logger;
@@ -41,29 +42,37 @@ public class Projects extends SessionController {
 			return redirect(routes.Users.login());
 		}
 		
-		/*
-		 * Retrieve the user's ID
-		 */
-		User user = SessionController.getUser();
-		String userId = user.getId();
-		if (!username.equals(user.getUsername())) {
-			// TODO find this user and retrieve its user id
+		// TODO access to the project of another user
+		if (!getUser().getUsername().equals(username)) {
 			return TODO;
 		}
+		
+		String userId = SessionController.getUserId(username);
 		
 		/*
 		 * Look for the project 
 		 */
+		Project project = findProject(userId, projectname);
+		if (project == null) {
+			return notFound(Application.renderNotFound());
+		}
+
+		return ok(views.html.projects.show.render(project, Form.form(Todolist.class)));
+	}
+	
+	public static Project findProject(String userId, String projectName) {
 		ModelUtils<Project> muProjects = new ModelUtils<Project>(Project.class);
-		List<Project> projects = muProjects.query("{'creator': #, 'name': #}", userId, projectname);
+		List<Project> projects = muProjects.query("{'creator': #, 'name': #}", userId, projectName);
+		
 		if (projects.size() == 0) {
 			// TODO project not found
-			return notFound(Application.renderNotFound());
+			// TODO want to create a project ?
+			return null;
 		} else if (projects.size() > 1) {
 			// This should never happened !
 			// This user has many projects with the same name.
-			Logger.warn(String.format("The user[%s] has many projects called \"%s\" !", userId, projectname));
-		}
+			Logger.warn(String.format("The user[%s] has many projects called \"%s\" !", userId, projectName));
+		}	
 		
 		/*
 		 * Gets the project
@@ -71,11 +80,10 @@ public class Projects extends SessionController {
 		Project project = projects.get(0);
 		if (project == null) {
 			// should never happen but heh..
-			Logger.warn(String.format("A null project has been extracted from the database for the user[%s], projectname[%s]", userId, projectname));
-			return notFound(Application.renderNotFound());
+			Logger.warn(String.format("A null project has been extracted from the database for the user[%s], projectname[%s]", userId, projectName));
 		}
-
-		return ok(views.html.projects.show.render(project, Form.form(Todolist.class)));
+		
+		return project;
 	}
 	
 	public static Result create() {
@@ -95,10 +103,20 @@ public class Projects extends SessionController {
         /*
          *  Required fields
          */
-        if(form.field("name").valueOr("").isEmpty() || form.field("description").valueOr("").isEmpty()) {
-        	return badRequest(views.html.projects.create.render(form));
+        if (form.field("name").valueOr("").isEmpty()) {
+        	form.reject("name", "Required.");
+        } else if (StringHelper.validateString(form.field("name").value()) == false) {
+    		form.reject("name", "Must be composed of letters, numbers or underscores.");
+    	}
+        	
+        if (form.field("description").valueOr("").isEmpty()) {
+        	form.reject("description", "Required.");
         }
 
+        if (form.hasErrors()) {
+        	return badRequest(views.html.projects.create.render(form));
+        }
+        
         User creator = SessionController.getUser();
         
         Project project = form.get();
@@ -110,6 +128,11 @@ public class Projects extends SessionController {
 	
 	// ---------------------
 	
+	/**
+	 * Finds the projects of the provided user. 
+	 * @param user the user for which we want to find the projects
+	 * @return the projects of this user.
+	 */
 	private static List<Project> findProjectsOfUser(User user) {
 		if (user == null) {
 			return new ArrayList<Project>();

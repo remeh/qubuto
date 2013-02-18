@@ -1,7 +1,7 @@
 @(project: Project, todolistForm: Form[Todolist])
 @import helper._
 @main("Qubuto - " + project.getName()) {
-@todolist.modal.render(project, todolistForm)
+@todolists.modal.render(project, todolistForm)
 <div id="main-div">
 	<section>
 		<header>
@@ -13,18 +13,15 @@
 			<div class="separator"></div>
 			<div class="project-summary">
 				<ul class="navigation-horizontal">
-					<li><i class="icon-ok"> </i> No todolists</li>
+					<li><i class="icon-ok"> </i> @if(project.getTodolists().size() == 0) { No } else { @project.getTodolists().size() } todolists</li>
 					<li><i class="icon-comments-alt"> </i> No conversations</li>
 					<li><i class="icon-picture"> </i> No files</li>
 				</ul>
 			</div>			
 			<div class="separator"></div>
-			
 			<h3 class="dark-gray">Todolists</h3>
-			No todolists.
-			<p>
-				<span><a class="new-todolist" href='#'><i class="icon-plus"> </i> Add a todolist</a></span>
-			</p>
+			<p class="project-action-new"><a class="new-todolist" href='#'><i class="icon-plus"> </i> Add a todolist</a></p>
+			@projects.todolistlist.render(project)
 			<h3 class="dark-gray">Conversations</h3>
 			
 			No conversations.

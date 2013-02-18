@@ -1,6 +1,8 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.mehteor.db.ModelUtils;
 import com.mehteor.db.MongoModel;
@@ -16,7 +18,7 @@ public class Project extends MongoModel
 	 * Project's name.
 	 */
 	private String name;
-	
+
 	/**
 	 * Project's description.
 	 */
@@ -38,7 +40,6 @@ public class Project extends MongoModel
 //	 */
 //	private Set<String> todolists;
 //	@JsonIgnore
-//	private ReferenceUtils<Todolist> ruTodolist = new ReferenceUtils<Todolist>(Todolist.class);
 	
 	// ---------------------
 	
@@ -93,8 +94,13 @@ public class Project extends MongoModel
 //	{
 //		todolists = ruTodolist.remove(todolists, todolist);
 //	}
-//	
-//	public Set<Todolist> getTodolists() {
-//		return Collections.unmodifiableSet(ruTodolist.gets(todolists));
-//	}
+	
+	public List<Todolist> getTodolists() {
+		ModelUtils<Todolist> todolists = new ModelUtils<Todolist>(Todolist.class);
+		return todolists.query("{'project': #}", this.getId());
+	}
+	
+	public List<Conversation> getConversations() {
+		return new ArrayList<Conversation>(); // TODO
+	}
 }

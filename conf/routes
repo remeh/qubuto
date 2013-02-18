@@ -6,32 +6,33 @@
 ### APP
 
 # Home page
-GET     /                           controllers.Application.index()
+GET     /                         					 	 controllers.Application.index()
 
 # Users
-GET		/register					controllers.Users.register()
-POST	/register					controllers.Users.update()
-GET		/login						controllers.Users.login()
-POST	/login						controllers.Users.enter()
-GET		/logout						controllers.Users.logout()
+GET		/register										controllers.Users.register()
+POST	/register										controllers.Users.update()
+GET		/login											controllers.Users.login()
+POST	/login											controllers.Users.enter()
+GET		/logout											controllers.Users.logout()
 
 
 # Projects
-GET		/project/create				controllers.Projects.create()
-POST	/project/create				controllers.Projects.submit()
+GET		/project/create									controllers.Projects.create()
+POST	/project/create									controllers.Projects.submit()
 
 # Todolists
-POST	/todolist/create			controllers.Todolists.submit()
+POST	/todolist/create								controllers.Todolists.submit()
+GET		/q/:username/:projectname/t/:todolistname		controllers.Todolists.show(username, projectname, todolistname)
 
 # Users
-GET		/q/:username				controllers.Projects.list(username)
-GET		/q/:username/:projectname	controllers.Projects.show(username, projectname)
+GET		/q/:username									controllers.Projects.list(username)
+GET		/q/:username/:projectname						controllers.Projects.show(username, projectname)
 
 ### API
 
 # Users
-GET		/api/amiauth				controllers.api.Users.amIAuth()
+GET		/api/amiauth									controllers.api.Users.amIAuth()
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file               					controllers.Assets.at(path="/public", file)

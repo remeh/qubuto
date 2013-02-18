@@ -16,7 +16,7 @@
                             <label for="@userForm("username").id">Username</label></td>
                         <td class="field">
 						    <input type="text" value="@userForm("username").value" name="@userForm("username").name" id="@userForm("username").id">
-						    <span class="red">@if(userForm.error("username") != null) { @userForm.error("username").message }</span>
+						    <br /><span class="red">@if(userForm.error("username") != null) { @userForm.error("username").message }</span>
 						</td>
                         <td class="description">
                             Choose an username
@@ -27,7 +27,7 @@
                             <label for="@userForm("email").id">Email</label></td>
                         <td class="field">
 						    <input type="text" value="@userForm("email").value" name="@userForm("email").name" id="@userForm("email").id">
-						    <span class="red">@if(userForm.error("email") != null) { @userForm.error("email").message }</span>
+						    <br /><span class="red">@if(userForm.error("email") != null) { @userForm.error("email").message }</span>
 						</td>
                         <td class="description">
                             Enter your email
@@ -38,7 +38,7 @@
                             <label for="@userForm("password").id">Password</label></td>
                         <td class="field">
 						    <input type="password" name="@userForm("password").name" id="@userForm("password").id">
-						    <span class="red">@if(userForm.error("password") != null) { @userForm.error("password").message }</span>
+						    <br /><span class="red">@if(userForm.error("password") != null) { @userForm.error("password").message }</span>
 						</td>
                         <td class="description">
                             Choose a password
@@ -49,7 +49,7 @@
                             <label for="password_validation">Password validation</label></td>
                         <td class="field">
 						    <input type="password" name="password_validation" id="password_validation">
-						    <span class="red">@if(userForm.error("password_validation") != null) { @userForm.error("password_validation").message }</span>
+						    <br /><span class="red">@if(userForm.error("password_validation") != null) { @userForm.error("password_validation").message }</span>
 						</td>
                         <td class="description">
                             Validate your password.

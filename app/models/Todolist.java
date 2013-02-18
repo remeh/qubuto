@@ -13,6 +13,11 @@ public class Todolist extends MongoModel {
 	private String name;
 	
 	/**
+	 * The clean name is the name id of this Todolist. (used to identified it in the URL)
+	 */
+	private String cleanName;
+	
+	/**
 	 * Todolist's description.
 	 */
 	private String description;
@@ -45,6 +50,14 @@ public class Todolist extends MongoModel {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getCleanName() {
+		return cleanName;
+	}
+	
+	public void setCleanName(String cleanName) {
+		this.cleanName = cleanName;
 	}
 
 	public String getDescription() {

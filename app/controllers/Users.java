@@ -12,6 +12,7 @@ import play.mvc.*;
 import models.User;
 
 import com.mehteor.db.ModelUtils;
+import com.mehteor.qubuto.StringHelper;
 import com.mehteor.qubuto.session.SessionController;
 import com.mehteor.qubuto.session.SessionManager;
 
@@ -112,10 +113,15 @@ public class Users extends SessionController {
         
         if (form.field("username").valueOr("").isEmpty()) {
         	form.reject("username", "Required");
-        }
+        } else if (StringHelper.validateString(form.field("username").value()) == false) {
+    		form.reject("username", "Must be composed of letters, numbers or underscores.");
+    	}
+        
+        // TODO validate that it's an email
         if (form.field("email").valueOr("").isEmpty()) {
         	form.reject("email", "Required");
         }
+        
         if(form.field("password").valueOr("").isEmpty()) {
         	form.reject("password", "Required");
         }
