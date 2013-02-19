@@ -3,6 +3,7 @@ package controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.Conversation;
 import models.Project;
 import models.Todolist;
 import models.User;
@@ -57,7 +58,7 @@ public class Projects extends SessionController {
 			return notFound(Application.renderNotFound());
 		}
 
-		return ok(views.html.projects.show.render(project, Form.form(Todolist.class)));
+		return ok(views.html.projects.show.render(project, Form.form(Todolist.class), Form.form(Conversation.class)));
 	}
 	
 	public static Project findProject(String userId, String projectName) {
@@ -144,8 +145,6 @@ public class Projects extends SessionController {
 		if (projects == null) {
 			return new ArrayList<Project>();
 		}
-		
-		System.out.println(projects.size());
 		
 		return projects;
 	}

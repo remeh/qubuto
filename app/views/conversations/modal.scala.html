@@ -1,0 +1,6 @@
+@(project: Project, conversationForm: Form[Conversation])
+<div id="new-conversation" style="display: none;">
+	<span class="close-modal float-right"><a href='#'>Close</a></span>
+	<h3>Create a conversation</h3>
+	@conversations.form.render(project, conversationForm, true)
+</div>

@@ -16,6 +16,7 @@
 @import "projects.less";
 @import "modals.less";
 @import "todolists.less";
+@import "conversations.less";
 
 // ------------
 // Bases
@@ -58,10 +59,16 @@ input
 }
 
 input[type=text],
-input[type=password]
+input[type=password],
+textarea
 {
 	border: 1px solid #ddd;
 	.gradient(#fff, #fafafa, #fff);
+}
+
+textarea {
+	min-width: 160px;
+	min-height: 10em;
 }
 
 input.button, input[type=submit], button, a.btn

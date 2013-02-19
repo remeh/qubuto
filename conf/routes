@@ -24,6 +24,10 @@ POST	/project/create									controllers.Projects.submit()
 POST	/todolist/create								controllers.Todolists.submit()
 GET		/q/:username/:projectname/t/:todolistname		controllers.Todolists.show(username, projectname, todolistname)
 
+# Conversations
+POST	/conversation/create							controllers.Conversations.submit()
+GET		/q/:username/:projectname/c/:conversationname	controllers.Conversations.show(username, projectname, conversationname)
+
 # Users
 GET		/q/:username									controllers.Projects.list(username)
 GET		/q/:username/:projectname						controllers.Projects.show(username, projectname)

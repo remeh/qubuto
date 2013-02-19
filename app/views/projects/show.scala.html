@@ -1,7 +1,8 @@
-@(project: Project, todolistForm: Form[Todolist])
+@(project: Project, todolistForm: Form[Todolist], conversationForm: Form[Conversation])
 @import helper._
 @main("Qubuto - " + project.getName()) {
 @todolists.modal.render(project, todolistForm)
+@conversations.modal.render(project, conversationForm)
 <div id="main-div">
 	<section>
 		<header>
@@ -23,8 +24,8 @@
 			<p class="project-action-new"><a class="new-todolist" href='#'><i class="icon-plus"> </i> Add a todolist</a></p>
 			@projects.todolistlist.render(project)
 			<h3 class="dark-gray">Conversations</h3>
-			
-			No conversations.
+			<p class="project-action-new"><a class="new-conversation" href='#'><i class="icon-plus"> </i> Add a conversation</a></p>
+			@projects.conversationlist.render(project)
 			<h3 class="dark-gray">Files</h3>
 			
 			No files.

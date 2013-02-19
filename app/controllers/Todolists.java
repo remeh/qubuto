@@ -9,8 +9,8 @@ import play.data.Form;
 import play.mvc.Result;
 
 import com.mehteor.db.ModelUtils;
+import com.mehteor.qubuto.StringHelper;
 import com.mehteor.qubuto.session.SessionController;
-import com.mehteor.qubuto.todolist.TodolistHelper;
 
 public class Todolists extends SessionController {
 	public static Form<Todolist> todolistForm = Form.form(Todolist.class);
@@ -50,21 +50,20 @@ public class Todolists extends SessionController {
 		String cleanName = null;
         if (form.field("name").valueOr("").isEmpty()) {
         	form.reject("name", "Required");
+        } else {
+        	/*
+        	 * You can't have more than one todolist of this name.
+        	 */
+        	ModelUtils<Todolist> muTodolists = new ModelUtils<Todolist>(Todolist.class);
+        	cleanName = StringHelper.generateNameId(form.field("name").value());
+        	List<Todolist> foundExisting = muTodolists.query("{'project': #, 'cleanName': # }", project.getId(), cleanName);
+        	if (foundExisting.size() > 0) {
+        		form.reject("name", "This name is conflicting with another todolist in this project.");
+        	}
+        	
         }
         if (form.field("description").valueOr("").isEmpty()) {
         	form.reject("description", "Required");
-        } else {
-	        
-	        /*
-	         * You can't have more than one todolist of this name.
-	         */
-	        ModelUtils<Todolist> muTodolists = new ModelUtils<Todolist>(Todolist.class);
-	        cleanName = TodolistHelper.generateNameId(form.field("name").value());
-	        List<Todolist> foundExisting = muTodolists.query("{'project': #, 'cleanName': # }", project.getId(), cleanName);
-	        if (foundExisting.size() > 0) {
-	        	form.reject("name", "This name is conflicting with another todolist in this project.");
-	        }
-	        
         }
 	        
         /*
@@ -111,6 +110,6 @@ public class Todolists extends SessionController {
 		
 		Todolist todolist = todolists.get(0);
 		
-		return ok(todolist.getName());
+		return ok(views.html.todolists.show.render(todolist));
 	}
 }

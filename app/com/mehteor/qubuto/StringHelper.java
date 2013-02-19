@@ -1,5 +1,7 @@
 package com.mehteor.qubuto;
 
+import play.Logger;
+
 public class StringHelper {
 	public final static String acceptedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_";
 	
@@ -16,4 +18,35 @@ public class StringHelper {
 		}
 		return true;
 	}
+	
+	/**
+	 * Returns a valid URL string by replacing every other characters than letters and numbers with '-'.
+	 * @param name the string to reformat
+	 * @return the formatted string.
+	 */
+	public static String generateNameId(String name) {
+		if (name == null) {
+			Logger.error("A null name has been provided to generateNameId.");
+			return null;
+		}
+		
+		String shortenName = name;
+		if (shortenName.length() > 40) {
+			shortenName = shortenName.substring(0,40);
+		}
+		
+		StringBuilder cleanName = new StringBuilder(41);
+		for (int i = 0; i < shortenName.length(); i++) {
+			if (StringHelper.acceptedChars.indexOf(shortenName.charAt(i)) == -1) {
+				cleanName.append("-");
+			} else {
+				cleanName.append(shortenName.charAt(i));
+			}
+		}
+		
+		String result = cleanName.toString();
+		
+		return result.toLowerCase();
+	}
+
 }

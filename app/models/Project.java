@@ -1,6 +1,5 @@
 package models;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -73,7 +72,7 @@ public class Project extends MongoModel
 		this.creationDate = creationDate;
 	}
 
-	public User getUser() {
+	public User getCreator() {
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (creator != null) {
 			return mu.find(creator);
@@ -101,6 +100,7 @@ public class Project extends MongoModel
 	}
 	
 	public List<Conversation> getConversations() {
-		return new ArrayList<Conversation>(); // TODO
+		ModelUtils<Conversation> conversations = new ModelUtils<Conversation>(Conversation.class);
+		return conversations.query("{'project': #}", this.getId());
 	}
 }

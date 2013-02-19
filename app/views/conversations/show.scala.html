@@ -1,0 +1,16 @@
+@(conversation: Conversation)
+@import helper._
+@main(conversation.getProject().getName() + " - " + conversation.getTitle()) {
+<div id="main-div">
+	<section>
+		<header>
+			<h1 class="green">@conversation.getTitle()</h1>
+		</header>
+		<article class="conversation-content">
+				@conversation.getContent()
+		</article>
+		<footer>
+		</footer>
+	</section>
+</div>
+}

@@ -1,0 +1,31 @@
+@import "external/elements.less";
+
+// remeh's functions
+@import "mixins.less";
+
+// qubuto's constants
+@import "constants.less";
+
+div.conversation-list {
+	width: 95%;
+	margin: auto;
+	.padded;
+}
+
+div.conversation-entry {
+	.padded;
+	border-bottom: 1px solid #eee;
+}
+div.conversation-entry:hover {
+	background-color: #fff;
+}
+
+article.conversation-content {
+	margin: auto;
+	margin-top: 5px;
+	padding: 2em;
+	.rounded(3px);
+	border: 1px dashed #eee;
+	background-color: #fdfdfd;
+	width: 90%;
+}

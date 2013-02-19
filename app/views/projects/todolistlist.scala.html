@@ -3,9 +3,13 @@
 	<table class="todolist">
 	@for(todolist <- project.getTodolists()) {
 		<tr class="todolist-entry">
+			
 			<td class="todolist-name">
-				<span class="todolist-name">@todolist.getName()</span> - <span class="gray">@todolist.getDescription()</span>
+				<a href='@routes.Todolists.show(project.getCreator().getUsername(), project.getName(), todolist.getCleanName())' title='@todolist.getName()'>
+					<span class="todolist-name">@todolist.getName()</span> - <span class="gray">@todolist.getDescription()</span>
+				</a>
 			</td>
+			</a>
 			<td class="todolist-state">
 				<span class="gray"> <i class="icon-check-empty"> 0</i></span>
 			</td>
