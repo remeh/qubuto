@@ -10,7 +10,6 @@ import play.mvc.Result;
 
 import com.mehteor.db.ModelUtils;
 import com.mehteor.qubuto.StringHelper;
-import com.mehteor.qubuto.session.SessionController;
 
 public class Todolists extends SessionController {
 	public static Form<Todolist> todolistForm = Form.form(Todolist.class);
@@ -85,31 +84,35 @@ public class Todolists extends SessionController {
         return redirect(routes.Todolists.show(getUser().getUsername(), project.getName(), cleanName));
 	}
 	
-	public static Result show(String username, String projectname, String todolistname) {
+	public static Result show(String username, String projectName, String todolistName) {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return redirect(routes.Users.login());
 		}
 
-		String userId = SessionController.getUserId(username);
-		if (userId == null) {
+		Todolist todolist = Todolists.findTodolist(username, projectName, todolistName);
+		if (todolist == null ) {
 			return notFound(Application.renderNotFound());
 		}
 		
-		Project project = Projects.findProject(userId, projectname);
+		return ok(views.html.todolists.show.render(todolist));
+	}
+	
+	// ---------------------
+	
+	private static Todolist findTodolist(String username, String projectName, String todolistName) {
+		Project project = BaseController.findProject(username, projectName);
+		
 		if (project == null) {
-			return notFound(Application.renderNotFound());
+			return null;
 		}
 		
 		ModelUtils<Todolist> muTodolists = new ModelUtils<Todolist>(Todolist.class);
-		List<Todolist> todolists = muTodolists.query("{'project': # , 'cleanName' : #}", project.getId(), todolistname);
+		List<Todolist> todolists = muTodolists.query("{'project': # , 'cleanName' : #}", project.getId(), todolistName);
 		if (todolists.size() == 0) {
-			return notFound(Application.renderNotFound());
+			return null;
 		} else if (todolists.size() > 1) {
-			Logger.warn(String.format("Many todolists for the projectname[%s], username[%s], cleanName[%s]", projectname, username, todolistname)); 
+			Logger.warn(String.format("Many todolists for the projectname[%s], username[%s], cleanName[%s]", projectName, username, todolistName)); 
 		}
-		
-		Todolist todolist = todolists.get(0);
-		
-		return ok(views.html.todolists.show.render(todolist));
+		return todolists.get(0);
 	}
 }

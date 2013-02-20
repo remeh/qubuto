@@ -29,6 +29,11 @@ public class Conversation extends MongoModel {
 	 * Creation's date.
 	 */
 	private Date creationDate;
+	
+	/**
+	 * Last update.
+	 */
+	private Date lastUpdate;
 
 	/**
 	 * Creator of the project.
@@ -107,9 +112,19 @@ public class Conversation extends MongoModel {
 	}
 	
 	public String getSummary() {
-		if (content.length() > CONVERSATION_SUMMARY) {
-			return String.format("%s...", content.substring(0, CONVERSATION_SUMMARY)); 
+		if (content != null) {
+			if (content.length() > CONVERSATION_SUMMARY) {
+				return String.format("%s...", content.substring(0, CONVERSATION_SUMMARY)); 
+			}
 		}
 		return content;
+	}
+
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 }

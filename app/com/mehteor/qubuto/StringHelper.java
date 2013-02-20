@@ -3,7 +3,11 @@ package com.mehteor.qubuto;
 import play.Logger;
 
 public class StringHelper {
+	private static String websiteUri = null;
+	
 	public final static String acceptedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_";
+	
+	// ---------------------
 	
 	/**
 	 * Validates that the string is only composed of letters, numbers and undescores.
@@ -49,4 +53,13 @@ public class StringHelper {
 		return result.toLowerCase();
 	}
 
+	public static String removeRoutes(String uri) {
+		if (websiteUri != null) {
+			return websiteUri;
+		}
+		
+		// TODO
+		websiteUri = "http://localhost:9000/";
+		return websiteUri;
+	}
 }

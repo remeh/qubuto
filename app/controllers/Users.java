@@ -13,7 +13,6 @@ import models.User;
 
 import com.mehteor.db.ModelUtils;
 import com.mehteor.qubuto.StringHelper;
-import com.mehteor.qubuto.session.SessionController;
 import com.mehteor.qubuto.session.SessionManager;
 
 public class Users extends SessionController {

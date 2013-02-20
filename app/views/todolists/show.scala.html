@@ -4,7 +4,8 @@
 <div id="main-div">
 	<section>
 		<header>
-			<h1 class="green">@todolist.getProject().getName() - @todolist.getName()</h1>
+		<a href='@routes.Projects.show(todolist.getProject().getCreator().getUsername(), todolist.getProject().getName())' title='@todolist.getProject().getName()'>&nbsp;<i class='icon-arrow-left'> </i> <span class="bold">@todolist.getProject().getName()</span></a>
+			<h1 class="green">@todolist.getName()</h1>
 		</header>
 		<article>
 		</article>

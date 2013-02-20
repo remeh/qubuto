@@ -1,16 +1,25 @@
-@(conversation: Conversation)
+@(conversation: Conversation, domain: String)
 @import helper._
 @main(conversation.getProject().getName() + " - " + conversation.getTitle()) {
-<div id="main-div">
+<div id="main-div" data-author="@conversation.getProject().getCreator().getUsername"
+				   data-domain="@domain"
+				   data-route-save-topic="@routes.Conversations.update(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName(), conversation.getCleanTitle())"
+				   data-route-get-topic="@routes.Conversations.getContent(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName(), conversation.getCleanTitle())">
 	<section>
 		<header>
+			<a href="@routes.Projects.show(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName())" title="@conversation.getProject().getName()">&nbsp;<i class="icon-arrow-left"> </i> <span class="bold">@conversation.getProject().getName()</span></a>
 			<h1 class="green">@conversation.getTitle()</h1>
 		</header>
 		<article class="conversation-content">
-				@conversation.getContent()
+				<div class="text-right">
+					<button id="save">Save</button>
+				</div>
+				<div id="epiceditor">
+				</div>
 		</article>
 		<footer>
 		</footer>
 	</section>
 </div>
+<script src="@routes.Assets.at("javascripts/conversations.js")" type="text/javascript"></script>
 }

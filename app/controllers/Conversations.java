@@ -1,16 +1,20 @@
 package controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import models.Conversation;
 import models.Project;
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.Form;
+import play.libs.Json;
 import play.mvc.Result;
 
 import com.mehteor.db.ModelUtils;
+import com.mehteor.qubuto.ErrorCode;
 import com.mehteor.qubuto.StringHelper;
-import com.mehteor.qubuto.session.SessionController;
 
 public class Conversations extends SessionController {
 	public static Form<Conversation> conversationForm = Form.form(Conversation.class);
@@ -81,31 +85,87 @@ public class Conversations extends SessionController {
         return redirect(routes.Conversations.show(getUser().getUsername(), project.getName(), cleanTitle));
 	}
 	
-	public static Result show(String username, String projectname, String conversationname) {
+	public static Result show(String username, String projectName, String conversationName) {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return redirect(routes.Users.login());
 		}
-
-		String userId = SessionController.getUserId(username);
-		if (userId == null) {
-			return notFound(Application.renderNotFound());
+		
+		Conversation conversation = Conversations.findConversation(username, projectName, conversationName);
+		if (conversation == null) {
+			return badRequest(Application.renderNotFound());
 		}
 		
-		Project project = Projects.findProject(userId, projectname);
-		if (project == null) {
-			return notFound(Application.renderNotFound());
+		return ok(views.html.conversations.show.render(conversation, StringHelper.removeRoutes(request().uri())));
+	}
+	
+	
+	/*
+	 * AJAX part
+	 */
+	
+	public static Result update(String username, String projectName, String conversationName) {
+		if (!isAuthenticated("You're not authenticated.", true)) {
+			return badRequest(BaseController.renderNotAuthenticatedJson());
 		}
+		
+	    DynamicForm form = Form.form().bindFromRequest();
+
+	    /*
+	     * Required fields.
+	     */
+	    
+		String content = form.get("content");
+		if (content == null) {
+			return badRequest(renderJson(ErrorCode.NOT_ENOUGH_PARAMETERS.getErrorCode(), ErrorCode.NOT_ENOUGH_PARAMETERS.getDefaultMessage()));
+		}
+		
+		/*
+		 * Remove html tags!
+		 */
+		content = content.replaceAll("\\<.*?>","");
+		
+		Conversation conversation = findConversation(username, projectName, conversationName);
+		conversation.setContent(content);
+		conversation.save();
+		
+		return ok(BaseController.renderNoErrorsJson());
+	}
+	
+	public static Result getContent(String username, String projectName, String conversationName) {
+		if (!isAuthenticated("You're not authenticated.", true)) {
+			return badRequest(BaseController.renderNotAuthenticatedJson());
+		}
+		
+		// Get the conversation
+		Conversation conversation = findConversation(username, projectName, conversationName);
+		// Get the content
+		String content = conversation.getContent();
+		// If null, set to empty
+		if (content == null) {
+			content = "";
+		}
+		// Preserve for Javascript.
+		content.replace("\"", "\\\"");
+		// Build the JSON response.
+		Map<String, Object> hashMap = new HashMap<String, Object>();
+		hashMap.put("content", conversation.getContent());
+		hashMap.put("error", 0);
+		return ok(Json.toJson(hashMap).toString());
+	}
+	
+	// ---------------------
+	
+	private static Conversation findConversation(String username, String projectName, String conversationName) {
+		Project project = findProject(username, projectName);
 		
 		ModelUtils<Conversation> muConversations = new ModelUtils<Conversation>(Conversation.class);
-		List<Conversation> conversations = muConversations.query("{'project': # , 'cleanTitle' : #}", project.getId(), conversationname);
+		List<Conversation> conversations = muConversations.query("{'project': # , 'cleanTitle' : #}", project.getId(), conversationName);
 		if (conversations.size() == 0) {
-			return notFound(Application.renderNotFound());
+			return null;
 		} else if (conversations.size() > 1) {
-			Logger.warn(String.format("Many todolists for the projectname[%s], username[%s], cleanTitle[%s]", projectname, username, conversationname)); 
+			Logger.warn(String.format("Many todolists for the projectname[%s], username[%s], cleanTitle[%s]", projectName, username, conversationName)); 
 		}
 		
-		Conversation conversation = conversations.get(0);
-		
-		return ok(views.html.conversations.show.render(conversation));
+		return conversations.get(0);
 	}
 }

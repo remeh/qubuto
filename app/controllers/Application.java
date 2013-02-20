@@ -1,6 +1,5 @@
 package controllers;
 
-import com.mehteor.qubuto.session.SessionController;
 
 import play.api.templates.Html;
 import play.mvc.*;

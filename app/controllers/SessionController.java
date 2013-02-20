@@ -1,15 +1,11 @@
-package com.mehteor.qubuto.session;
+package controllers;
 
-import java.util.List;
-
-import com.mehteor.db.ModelUtils;
+import com.mehteor.qubuto.session.SessionManager;
 
 import models.Session;
 import models.User;
-import play.Logger;
-import play.mvc.Controller;
 
-public class SessionController extends Controller {
+public class SessionController extends BaseController {
 	/**
 	 * Returns true if the user is authenticated, false otherwise.
 	 * @return true if the user is authenticated, false otherwise.
@@ -30,14 +26,14 @@ public class SessionController extends Controller {
 		String sessionId = session().get("s");
 		
 		if (sessionId == null || sessionId.isEmpty()) {
-			SessionController.setFlashError(error);
+			BaseController.setFlashError(error);
 			return false;
 		}
 		
 		Session session = SessionManager.findSession(sessionId);
 		
 		if (session == null) {
-			SessionController.setFlashError(error);
+			BaseController.setFlashError(error);
 			// not mandatory, but we remove "s" and "u" data in the browser
 			// session. Just-in-case.
 			SessionManager.cleanBrowserSession(session());
@@ -58,34 +54,5 @@ public class SessionController extends Controller {
 		}
 		
 		return session.getUser();
-	}
-	
-	/**
-	 * Finds a user id by its username.
-	 * @param username the username
-	 * @return the user id found, or null
-	 */
-	public static String getUserId(String username) {
-		/*
-		 * Retrieve the user's ID
-		 */
-		ModelUtils<User> muUsers = new ModelUtils<User>(User.class);
-		List<User> users = muUsers.query("{'username': #}", username);
-		if (users.size() > 1) {
-			Logger.warn(String.format("Many users retrieved for the username [%s] !!", username));
-			return users.get(0).getId();
-		} else if (users.size() == 1) {
-			return users.get(0).getId();
-		}
-		
-		return null;
-	}
-	
-	// ---------------------
-	
-	private static void setFlashError(String error) {
-		if (error != null && !error.isEmpty()) {
-			flash("error", error);
-		}
 	}
 }
