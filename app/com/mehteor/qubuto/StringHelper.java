@@ -24,11 +24,13 @@ public class StringHelper {
 	}
 	
 	/**
-	 * Returns a valid URL string by replacing every other characters than letters and numbers with '-'.
+	 * Returns a valid URL string by replacing every other characters than letters and numbers
+	 * with the provided char, or simply removing them
 	 * @param name the string to reformat
+	 * @param replaceWith the character to replace with. Sets this parameter to null to simple remove
 	 * @return the formatted string.
 	 */
-	public static String generateNameId(String name) {
+	public static String cleanString(String name, String replaceWith) {
 		if (name == null) {
 			Logger.error("A null name has been provided to generateNameId.");
 			return null;
@@ -42,7 +44,9 @@ public class StringHelper {
 		StringBuilder cleanName = new StringBuilder(41);
 		for (int i = 0; i < shortenName.length(); i++) {
 			if (StringHelper.acceptedChars.indexOf(shortenName.charAt(i)) == -1) {
-				cleanName.append("-");
+				if (replaceWith != null) {
+					cleanName.append(replaceWith);
+				}
 			} else {
 				cleanName.append(shortenName.charAt(i));
 			}

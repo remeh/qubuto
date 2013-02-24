@@ -4,53 +4,42 @@ $(function() {
 	var routeGetTopic = $("div#main-div").data("route-get-topic");
 	var routeSaveTopic = $("div#main-div").data("route-save-topic");
 	
-	/**
- 	 * Init the editor and fill it with the provided content.
- 	 * @param content the content to fill the editor with.
- 	 */
-	function initEditor(content) {
-		var opts = {
-		  basePath: domain + 'assets/external/epiceditor',
-		  theme: {
-		    base: '/base/epiceditor.css',
-		    preview: '/preview/q.css',
-		  	editor: '/editor/epic-light.css'
-		  },
-		  file: {
-		  	autoSave: false
-		  },
-		  clientSideStorage: false
-		};
+	function initEditor() {
+		var converter = Markdown.getSanitizingConverter();
 		
-		editor = new EpicEditor(opts).load(function() {
-			// Loads the content
-			this.importFile('content', content);
-			this.preview();
+		converter.hooks.chain("preBlockGamut", function (text, rbg) {
+		    return text.replace(/^ {0,3}""" *\n((?:.*?\n)+?) {0,3}""" *$/gm, function (whole, inner) {
+		        return "<blockquote>" + rbg(inner) + "</blockquote>\n";
+		    });
 		});
 		
-		// removes the HTML tags on preview
-		editor.on("preview", function() {
-			onPreview(this);
+		var editor = new Markdown.Editor(converter, "-topic");
+		
+		editor.run();
+		
+		// fills the topic
+		$("#wmd-input-topic").val(content);
+		
+		$("button#save-topic").on("click", function() {
+			saveTopic();
+			// hide the edit mode
+			switchEditMode('hide', 100, "-topic");
 		});
-	}
-	
-	function onPreview(editor) {
-		var content = editor.exportFile();
-		content = content.replace(/<.*?>/, '');
-		editor.importFile('content', content);
-		editor.save();
+		
+		$("button#edit-topic").on("click", function() {
+			switchEditMode('show', 100, "-topic");
+		});
 	}
 	
 	function saveTopic() {
-		editor.save();
-		var content = editor.exportFile();
+		var content = $("#wmd-input-topic").val();
 		$.ajax({
-				  type: "POST",
-				  url: routeSaveTopic,
-				  data: {
-				  	'content': content
-				  }
-				})
+			type: "POST",
+			url: routeSaveTopic,
+			data: {
+			  	'content': content
+			  }
+			})
 			.done(function(data) {
 				var json = JSON.parse(data);
 				if (json.error != 0) {
@@ -63,29 +52,30 @@ $(function() {
 	}
 
 	/**
+	 * Switch the preview/edit mode
+	 */
+	function switchEditMode(state, duration, editor) {
+		if (state == 'hide') {
+			$("div#wmd" + editor).fadeOut(duration);
+			$("button#save" + editor).hide();
+			$("button#edit" + editor).fadeIn(duration);
+		} else {
+			$("div#wmd" + editor).fadeIn(duration);
+			$("button#edit" + editor).hide();
+			$("button#save" + editor).fadeIn(duration);
+		}
+	}
+
+	/**
 	 * Init the conversations pages.
 	 * @param domain the domain ex: http://localhost/
 	 * @param routeGetTopic the route to get the conversation topic content
 	 */
 	function init(domain, routeGetTopic) {
-		var content = null;
+		// the var content used here come from the view		
+		initEditor(content);
 		
-		$.ajax(routeGetTopic)
-			.done(function(data) {
-				var json = JSON.parse(data);
-				if (json.error == 0) {
-					initEditor(json.content);
-				} else {
-					alert("Error: " + json.message);
-				}
-			})
-			.fail(function() {
-				alert("AJAX Fail. TODO");
-			});
-			
-		$("button#save").on("click", function() {
-			saveTopic();
-		});
+		switchEditMode('hide', 1, "-topic");
 	}
 	
 	/*

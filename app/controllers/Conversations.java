@@ -1,20 +1,25 @@
 package controllers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import org.codehaus.jackson.JsonNode;
 
 import models.Conversation;
 import models.Project;
+import models.User;
 import play.Logger;
 import play.data.DynamicForm;
 import play.data.Form;
+import play.libs.F.*;
 import play.libs.Json;
 import play.mvc.Result;
+import play.mvc.WebSocket;
 
 import com.mehteor.db.ModelUtils;
 import com.mehteor.qubuto.ErrorCode;
 import com.mehteor.qubuto.StringHelper;
+import com.mehteor.qubuto.socket.Subscriber;
+import com.mehteor.qubuto.socket.manager.ConversationSubscriptionManager;
 
 public class Conversations extends SessionController {
 	public static Form<Conversation> conversationForm = Form.form(Conversation.class);
@@ -59,7 +64,7 @@ public class Conversations extends SessionController {
 	         * You can't have more than one todolist of this name.
 	         */
 	        ModelUtils<Conversation> muConversations = new ModelUtils<Conversation>(Conversation.class);
-	        cleanTitle = StringHelper.generateNameId(form.field("title").value());
+	        cleanTitle = StringHelper.cleanString(form.field("title").value(), "-");
 	        List<Conversation> foundExisting = muConversations.query("{'project': #, 'cleanTitle': # }", project.getId(), cleanTitle);
 	        if (foundExisting.size() > 0) {
 	        	form.reject("title", "This name is conflicting with another conversation in this project.");
@@ -95,7 +100,12 @@ public class Conversations extends SessionController {
 			return badRequest(Application.renderNotFound());
 		}
 		
-		return ok(views.html.conversations.show.render(conversation, StringHelper.removeRoutes(request().uri())));
+		String content = "";
+		if (conversation.getContent() != null) {
+			content = Json.stringify(Json.toJson(conversation.getContent()));
+		}
+		
+		return ok(views.html.conversations.show.render(conversation, content));
 	}
 	
 	
@@ -131,32 +141,81 @@ public class Conversations extends SessionController {
 		return ok(BaseController.renderNoErrorsJson());
 	}
 	
-	public static Result getContent(String username, String projectName, String conversationName) {
-		if (!isAuthenticated("You're not authenticated.", true)) {
-			return badRequest(BaseController.renderNotAuthenticatedJson());
-		}
+//	public static Result getContent(String username, String projectName, String conversationName) {
+//		if (!isAuthenticated("You're not authenticated.", true)) {
+//			return badRequest(BaseController.renderNotAuthenticatedJson());
+//		}
+//		
+//		// Get the conversation
+//		Conversation conversation = findConversation(username, projectName, conversationName);
+//		// Get the content
+//		String content = conversation.getContent();
+//		// If null, set to empty
+//		if (content == null) {
+//			content = "";
+//		}
+//		// Preserve for Javascript.
+//		content.replace("\"", "\\\"");
+//		// Build the JSON response.
+//		Map<String, Object> hashMap = new HashMap<String, Object>();
+//		hashMap.put("content", conversation.getContent());
+//		hashMap.put("error", 0);
+//		return ok(Json.toJson(hashMap).toString());
+//	}
+	
+	/**
+	 * Opens a websocket on the provided conversation.
+	 */
+	public static WebSocket<JsonNode> subscribe(final String username, final String projectName, final String conversationName) {
+//		if (!isAuthenticated()) {
+//			return BaseController.renderJsonSocket(ErrorCode.NOT_AUTHENTICATED.getErrorCode(), ErrorCode.NOT_AUTHENTICATED.getDefaultMessage());
+//		}
+//		
+//		final Conversation conversation = Conversations.findConversation(username, projectName, conversationName);
+//		if (conversation == null) {
+//			return BaseController.renderJsonSocket(ErrorCode.NOT_ENOUGH_PARAMETERS.getErrorCode(), ErrorCode.NOT_ENOUGH_PARAMETERS.getDefaultMessage());
+//		}
 		
-		// Get the conversation
-		Conversation conversation = findConversation(username, projectName, conversationName);
-		// Get the content
-		String content = conversation.getContent();
-		// If null, set to empty
-		if (content == null) {
-			content = "";
-		}
-		// Preserve for Javascript.
-		content.replace("\"", "\\\"");
-		// Build the JSON response.
-		Map<String, Object> hashMap = new HashMap<String, Object>();
-		hashMap.put("content", conversation.getContent());
-		hashMap.put("error", 0);
-		return ok(Json.toJson(hashMap).toString());
+		final User user = getUser();
+		
+		// Opens the websocket
+		return new WebSocket<JsonNode>() {
+			public void onReady(final WebSocket.In<JsonNode> in, final WebSocket.Out<JsonNode> out) {
+				
+				// For each event received on the socket,
+				in.onMessage(new Callback<JsonNode>() {
+					public void invoke(JsonNode event) {
+						// TODO nuffin to do ?
+					}
+				});
+				
+				// When the socket is closed, removes the subscription.
+				in.onClose(new Callback0() {
+					public void invoke() {
+						ConversationSubscriptionManager.getInstance()
+									.unsubscribe(String.format("%s/%s/c/%s", username, projectName, conversationName), new Subscriber(out, user));
+					}
+				});
+				
+				// Subscribe the socket to the conversation.
+				ConversationSubscriptionManager.getInstance()
+							.subscribe(String.format("%s/%s/c/%s", username, projectName, conversationName), new Subscriber(out, user));
+				
+				System.out.println("Conversation subscribers : " + ConversationSubscriptionManager.getInstance().getSubscribersCount());
+			}
+			
+		};
+		
 	}
 	
 	// ---------------------
 	
 	private static Conversation findConversation(String username, String projectName, String conversationName) {
 		Project project = findProject(username, projectName);
+		
+		if (project == null) {
+			return null;
+		}
 		
 		ModelUtils<Conversation> muConversations = new ModelUtils<Conversation>(Conversation.class);
 		List<Conversation> conversations = muConversations.query("{'project': # , 'cleanTitle' : #}", project.getId(), conversationName);

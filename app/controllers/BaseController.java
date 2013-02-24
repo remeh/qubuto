@@ -1,8 +1,9 @@
 package controllers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 
 import models.Project;
 import models.User;
@@ -13,6 +14,7 @@ import com.mehteor.qubuto.ErrorCode;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.Controller;
+import play.mvc.WebSocket;
 
 public class BaseController extends Controller {
 	public static String renderNoErrorsJson() {
@@ -24,10 +26,24 @@ public class BaseController extends Controller {
 	}
 	
 	public static String renderJson(int error, String message) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("error", error);
-		result.put("message", message);
-		return Json.toJson(result).toString();
+		ObjectNode node = Json.newObject();
+		node.put("error", error);
+		node.put("message", message);
+		return node.toString();
+	}
+	
+	public static WebSocket<JsonNode> renderJsonSocket(final int error, final String message) {
+		return new WebSocket<JsonNode>() {
+			@Override
+			public void onReady(play.mvc.WebSocket.In<JsonNode> in,
+					play.mvc.WebSocket.Out<JsonNode> out) {
+				ObjectNode jsonNode = Json.newObject();
+				jsonNode.put("error", error);
+				jsonNode.put("message", message);
+				out.write(jsonNode);
+				out.close();
+			}
+		};
 	}
 	
 	// ---------------------
