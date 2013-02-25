@@ -20,7 +20,7 @@
 							<div class="project-list-type"></div>
 							<div class="float-right" style="padding: 0px; margin: 0px;">
 								<div class="project-list-content"><span style='color: #ccc'><i class="icon-ok"> </i> @if(project.getTodolists().size() == 0) { No } else { @project.getTodolists().size() } todolists</span></div>
-								<div class="project-list-content"><span style='color: #ccc'><i class="icon-comments-alt"> </i> No conversations</span></div>
+								<div class="project-list-content"><span style='color: #ccc'><i class="icon-comments-alt"> </i> @if(project.getConversations().size() == 0) { No } else { @project.getConversations().size() } conversations</span></div>
 								<div class="project-list-content"><span style='color: #ccc'><i class="icon-picture"> </i> No files</span></div>
 							</div>
 							<div class="clear"></div>

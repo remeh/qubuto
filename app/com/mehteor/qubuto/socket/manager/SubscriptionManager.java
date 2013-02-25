@@ -5,16 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import play.Logger;
+
 import com.mehteor.qubuto.socket.Subscriber;
 import com.mehteor.qubuto.socket.action.Action;
-
-import models.Project;
 
 /**
  * Manages the connection on collaborative features of Qubuto.
  */
 public class SubscriptionManager {
-	private static Map<String, List<Subscriber>> projectsSubscribers = new HashMap<String, List<Subscriber>>();
+	private static Map<String, List<Subscriber>> channelsSubscribers = new HashMap<String, List<Subscriber>>();
 	private static Map<String, List<Action>> actionsQueues = new HashMap<String, List<Action>>();
 
 	/**
@@ -34,18 +34,23 @@ public class SubscriptionManager {
 
 	// ---------------------
 
-	public void subscribe(String projectId, Subscriber subscriber) {
-		if (projectId == null || projectId.isEmpty() || subscriber == null) {
+	/**
+	 * Subscribes to a channel.
+	 * @param id the channel id (could be a conversation id, a todolist id, ...)
+	 * @param subscriber
+	 */
+	public void subscribe(String id, Subscriber subscriber) {
+		if (id == null || id.isEmpty() || subscriber == null) {
 			return;
 		}
 
-		synchronized (projectsSubscribers) {
-			List<Subscriber> projectSubscribers = projectsSubscribers
-					.get(projectId);
+		synchronized (channelsSubscribers) {
+			List<Subscriber> projectSubscribers = channelsSubscribers
+					.get(id);
 
 			if (projectSubscribers == null) {
 				projectSubscribers = new ArrayList<Subscriber>();
-				projectsSubscribers.put(projectId, projectSubscribers);
+				channelsSubscribers.put(id, projectSubscribers);
 				subscribersCount++;
 				
 			}
@@ -59,8 +64,8 @@ public class SubscriptionManager {
 			return;
 		}
 
-		synchronized (projectsSubscribers) {
-			List<Subscriber> subscribers = projectsSubscribers.get(projectId);
+		synchronized (channelsSubscribers) {
+			List<Subscriber> subscribers = channelsSubscribers.get(projectId);
 			if (subscribers != null) {
 				subscribers.remove(subscriber);
 				subscribersCount--;
@@ -68,42 +73,52 @@ public class SubscriptionManager {
 		}
 	}
 
-	public void consumeActions(String projectId) {
-		List<Action> actionsQueue = actionsQueues.get(projectId);
+	public void consumeActions(String channelId) {
+		List<Action> actionsQueue = actionsQueues.get(channelId);
 		if (actionsQueue != null) {
-			// should never happened because this tick is called by
-			// the websocket.
-			List<Subscriber> projectSubscribers = projectsSubscribers.get(projectId);
-			if (projectSubscribers == null) {
-				actionsQueue.clear();
-			}
-
-			// send every actions queued to subscribers
-			for (Action action : actionsQueue) {
-				for (Subscriber subscriber : projectSubscribers) {
-					// TODO
-					// do not send the action to the author
-					if (!action.isAuthor(subscriber.getUser()))
-					{
-						subscriber.sendAction(action);
+			
+			List<Subscriber> channelSubscribers = channelsSubscribers.get(channelId);
+			
+			// if there is no more subscribers, forget the channel.
+			if (channelSubscribers == null || channelSubscribers.size() == 0) {
+				actionsQueues.remove(channelId);
+				channelsSubscribers.remove(channelId);
+				Logger.error(String.format("No more subscribers to channelId[%s]", channelId));
+			} else {
+				// send every actions queued for this channel to subscribers
+				for (Action action : actionsQueue) {
+					for (Subscriber subscriber : channelSubscribers) {
+						// TODO
+						// do not send the action to the author
+						if (!action.isAuthor(subscriber.getUser()))
+						{
+							subscriber.sendAction(action);
+						}
 					}
+					Logger.error(String.format("%s consumed by %d subscribers.", action.getClass().getSimpleName(), 0));
 				}
 			}
+			
 			actionsQueue.clear();
 		}
 	}
 
-	public void addAction(Project project, Action action) {
-		if (project == null || action == null) {
+	public void addAction(String id, Action action) {
+		if (id == null) {
+			Logger.error(String.format("A null id has been provided when adding an action %s.", action.getClass().getSimpleName()));
+			return;
+		}
+	
+		if (action == null) {
+			Logger.error(String.format("A null action has been provided the id[%s]", id));
 			return;
 		}
 
 		synchronized (actionsQueues) {
-			String projectId = project.getId();
-			List<Action> actionsQueue = actionsQueues.get(projectId);
+			List<Action> actionsQueue = actionsQueues.get(id);
 			if (actionsQueue == null) {
 				actionsQueue = new ArrayList<Action>();
-				actionsQueues.put(projectId, actionsQueue);
+				actionsQueues.put(id, actionsQueue);
 			}
 
 			actionsQueue.add(action);
@@ -121,5 +136,13 @@ public class SubscriptionManager {
 
 	public int getSubscribersCount() {
 		return subscribersCount;
+	}
+	
+	public int getPoolSize() {
+		int nbActions = 0;
+		for (String actionQueue: actionsQueues.keySet()) {
+			nbActions += actionsQueues.get(actionQueue).size();
+		}
+		return nbActions;
 	}
 }

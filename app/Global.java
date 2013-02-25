@@ -17,6 +17,7 @@ public class Global extends GlobalSettings {
 	
     @Override
     public void onStart(play.Application app) {
+    	System.out.println(Application.printQubuto());
         Logger.info("Application starting...");
         // Launch the session job
     	scheduleSessionTask();

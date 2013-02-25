@@ -19,6 +19,7 @@ import com.mehteor.db.ModelUtils;
 import com.mehteor.qubuto.ErrorCode;
 import com.mehteor.qubuto.StringHelper;
 import com.mehteor.qubuto.socket.Subscriber;
+import com.mehteor.qubuto.socket.action.ConversationActions;
 import com.mehteor.qubuto.socket.manager.ConversationSubscriptionManager;
 
 public class Conversations extends SessionController {
@@ -130,13 +131,21 @@ public class Conversations extends SessionController {
 		}
 		
 		/*
-		 * Remove html tags!
+		 * Remove html tags! Normally already done by Pagedown
+		 * but to avoid injection or something else. 
 		 */
+		
 		content = content.replaceAll("\\<.*?>","");
 		
 		Conversation conversation = findConversation(username, projectName, conversationName);
 		conversation.setContent(content);
 		conversation.save();
+		
+		/*
+		 * Broadcast the action
+		 */
+		
+		ConversationActions.addTopicUpdateAction(conversation.getId(), getUser(), content);
 		
 		return ok(BaseController.renderNoErrorsJson());
 	}
@@ -177,6 +186,12 @@ public class Conversations extends SessionController {
 //		}
 		
 		final User user = getUser();
+		final Conversation conversation = findConversation(username, projectName, conversationName);
+		
+		// TODO OK ?
+		if (conversation == null) {
+			return null;
+		}
 		
 		// Opens the websocket
 		return new WebSocket<JsonNode>() {
@@ -193,15 +208,13 @@ public class Conversations extends SessionController {
 				in.onClose(new Callback0() {
 					public void invoke() {
 						ConversationSubscriptionManager.getInstance()
-									.unsubscribe(String.format("%s/%s/c/%s", username, projectName, conversationName), new Subscriber(out, user));
+									.unsubscribe(conversation.getId(), new Subscriber(out, user));
 					}
 				});
 				
 				// Subscribe the socket to the conversation.
 				ConversationSubscriptionManager.getInstance()
-							.subscribe(String.format("%s/%s/c/%s", username, projectName, conversationName), new Subscriber(out, user));
-				
-				System.out.println("Conversation subscribers : " + ConversationSubscriptionManager.getInstance().getSubscribersCount());
+							.subscribe(conversation.getId(), new Subscriber(out, user));
 			}
 			
 		};

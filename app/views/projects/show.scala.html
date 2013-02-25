@@ -15,7 +15,7 @@
 			<div class="project-summary">
 				<ul class="navigation-horizontal">
 					<li><i class="icon-ok"> </i> @if(project.getTodolists().size() == 0) { No } else { @project.getTodolists().size() } todolists</li>
-					<li><i class="icon-comments-alt"> </i> No conversations</li>
+					<li><i class="icon-comments-alt"> </i> @if(project.getConversations().size() == 0) { No } else { @project.getConversations().size() } conversations</li>
 					<li><i class="icon-picture"> </i> No files</li>
 				</ul>
 			</div>			

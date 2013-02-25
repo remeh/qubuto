@@ -7,6 +7,8 @@
 
 # Home page
 GET     /                         					 	 						controllers.Application.index()
+GET		/status																	controllers.Application.status()
+GET		/stats																	controllers.Application.stats()
 
 #
 # Users
