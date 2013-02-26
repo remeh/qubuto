@@ -1,5 +1,6 @@
+var editorTopic = null;
+
 $(function() {
-	var editor = null;
 	var domain = $("div#main-div").data("domain");
 	var routeGetTopic = $("div#main-div").data("route-get-topic");
 	var routeSaveTopic = $("div#main-div").data("route-save-topic");
@@ -13,9 +14,9 @@ $(function() {
 		    });
 		});
 		
-		var editor = new Markdown.Editor(converter, "-topic");
+		editorTopic = new Markdown.Editor(converter, "-topic");
 		
-		editor.run();
+		editorTopic.run();
 		
 		// fills the topic
 		$("#wmd-input-topic").val(content);
@@ -41,13 +42,27 @@ $(function() {
 			  }
 			})
 			.done(function(data) {
-				var json = JSON.parse(data);
-				if (json.error != 0) {
-					alert("Error: " + json.message);
+				if (data != null) {
+					var json = JSON.parse(data);
+					if (json.error != 0) {
+						alert("Error: " + json.message);
+					}
 				}
 			})
-			.fail(function() {
-				alert("AJAX Fail. TODO");
+			.fail(function(jqxhr) {
+				if (jqxhr != null) {
+					var json = JSON.parse(jqxhr.responseText);
+					if (json.error == 1) { // NOT_AUTHENTICATED
+						alert("You're not authenticated or your session has expired.");
+						document.location.href = "/login";
+					} else {
+						if (json.message != undefined) {
+							alert("An error occurred : " + json.message);
+						} else { 
+							alert("An unknown error occurred.");
+						}
+					}
+				}
 			});
 	}
 
@@ -74,8 +89,18 @@ $(function() {
 	function init(domain, routeGetTopic) {
 		// the var content used here come from the view		
 		initEditor(content);
+		initWebsocket();
 		
 		switchEditMode('hide', 1, "-topic");
+	}
+	
+	function initWebsocket() {
+		// websocketUri comes from the DOM.
+		if (websocketUri != undefined) {
+			websocket = new ConversationQubutoWebSocket$$module$websocket();
+			websocket.setEditorTopic(editorTopic);
+			websocket.open(websocketUri);
+		}
 	}
 	
 	/*

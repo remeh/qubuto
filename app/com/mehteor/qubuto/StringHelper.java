@@ -58,12 +58,12 @@ public class StringHelper {
 	}
 
 	public static String removeRoutes(String uri) {
-		if (websiteUri != null) {
-			return websiteUri;
+		if (websiteUri == null) {
+			String[] parts = uri.split("/");
+			websiteUri = String.format("%s//%s", parts[0], parts[1]);
 		}
 		
 		// TODO
-		websiteUri = "http://localhost:9000/";
 		return websiteUri;
 	}
 }

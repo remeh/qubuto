@@ -20,6 +20,7 @@ public class TopicUpdateAction extends Action {
 	public TopicUpdateAction(User author, String content) {
 		super(author);
 		objectNode = Action.createNoErrorsNode();
+		objectNode.put("action", "TopicUpdate");
 		objectNode.put("content", content);
 	}
 	

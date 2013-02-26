@@ -1,4 +1,4 @@
-@(conversation: Conversation, content: String)
+@(conversation: Conversation, websocketUri: String, content: String)
 @import helper._
 @main(conversation.getProject().getName() + " - " + conversation.getTitle()) {
 <script type="text/javascript">
@@ -7,6 +7,7 @@
 	} else {
 		var content = @Html(content);
 	}
+	websocketUri = "@websocketUri";
 </script>
 <div id="main-div" data-author="@conversation.getProject().getCreator().getUsername"
 				   data-route-save-topic="@routes.Conversations.update(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName(), conversation.getCleanTitle())">
@@ -45,5 +46,6 @@
 		</footer>
 	</section>
 </div>
+<script src="@routes.Assets.at("javascripts/websocket.min.js")" type="text/javascript"></script>
 <script src="@routes.Assets.at("javascripts/conversations.js")" type="text/javascript"></script>
 }

@@ -106,7 +106,13 @@ public class Conversations extends SessionController {
 			content = Json.stringify(Json.toJson(conversation.getContent()));
 		}
 		
-		return ok(views.html.conversations.show.render(conversation, content));
+		/*
+		 * Generate the websocket URI.
+		 */
+		
+		String websocketUri = String.format("ws://%s%s", request().host(), routes.Conversations.subscribe(username, projectName, conversationName).url());
+		
+		return ok(views.html.conversations.show.render(conversation, websocketUri, content));
 	}
 	
 	
@@ -188,7 +194,6 @@ public class Conversations extends SessionController {
 		final User user = getUser();
 		final Conversation conversation = findConversation(username, projectName, conversationName);
 		
-		// TODO OK ?
 		if (conversation == null) {
 			return null;
 		}
@@ -196,6 +201,7 @@ public class Conversations extends SessionController {
 		// Opens the websocket
 		return new WebSocket<JsonNode>() {
 			public void onReady(final WebSocket.In<JsonNode> in, final WebSocket.Out<JsonNode> out) {
+				final Subscriber subscriber = new Subscriber(out, user);
 				
 				// For each event received on the socket,
 				in.onMessage(new Callback<JsonNode>() {
@@ -208,13 +214,13 @@ public class Conversations extends SessionController {
 				in.onClose(new Callback0() {
 					public void invoke() {
 						ConversationSubscriptionManager.getInstance()
-									.unsubscribe(conversation.getId(), new Subscriber(out, user));
+									.unsubscribe(conversation.getId(), subscriber);
 					}
 				});
 				
 				// Subscribe the socket to the conversation.
 				ConversationSubscriptionManager.getInstance()
-							.subscribe(conversation.getId(), new Subscriber(out, user));
+							.subscribe(conversation.getId(), subscriber);
 			}
 			
 		};

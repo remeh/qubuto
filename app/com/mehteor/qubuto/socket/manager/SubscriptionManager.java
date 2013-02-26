@@ -22,8 +22,6 @@ public class SubscriptionManager {
 	 */
 	private static SubscriptionManager instance;
 
-	private static int subscribersCount = 0;
-
 	// ---------------------
 
 	/**
@@ -36,39 +34,36 @@ public class SubscriptionManager {
 
 	/**
 	 * Subscribes to a channel.
-	 * @param id the channel id (could be a conversation id, a todolist id, ...)
+	 * @param channelId the channel id (could be a conversation id, a todolist id, ...)
 	 * @param subscriber
 	 */
-	public void subscribe(String id, Subscriber subscriber) {
-		if (id == null || id.isEmpty() || subscriber == null) {
+	public void subscribe(String channelId, Subscriber subscriber) {
+		if (channelId == null || channelId.isEmpty() || subscriber == null) {
 			return;
 		}
-
+		
 		synchronized (channelsSubscribers) {
 			List<Subscriber> projectSubscribers = channelsSubscribers
-					.get(id);
+					.get(channelId);
 
 			if (projectSubscribers == null) {
 				projectSubscribers = new ArrayList<Subscriber>();
-				channelsSubscribers.put(id, projectSubscribers);
-				subscribersCount++;
-				
+				channelsSubscribers.put(channelId, projectSubscribers);
 			}
 
 			projectSubscribers.add(subscriber);
 		}
 	}
 
-	public void unsubscribe(String projectId, Subscriber subscriber) {
-		if (projectId == null || projectId.isEmpty() || subscriber == null) {
+	public void unsubscribe(String channelId, Subscriber subscriber) {
+		if (channelId == null || channelId.isEmpty() || subscriber == null) {
 			return;
 		}
 
 		synchronized (channelsSubscribers) {
-			List<Subscriber> subscribers = channelsSubscribers.get(projectId);
+			List<Subscriber> subscribers = channelsSubscribers.get(channelId);
 			if (subscribers != null) {
 				subscribers.remove(subscriber);
-				subscribersCount--;
 			}
 		}
 	}
@@ -87,15 +82,17 @@ public class SubscriptionManager {
 			} else {
 				// send every actions queued for this channel to subscribers
 				for (Action action : actionsQueue) {
+//					int i = 0;
 					for (Subscriber subscriber : channelSubscribers) {
 						// TODO
 						// do not send the action to the author
-						if (!action.isAuthor(subscriber.getUser()))
-						{
+//						if (!action.isAuthor(subscriber.getUser()))
+//						{
 							subscriber.sendAction(action);
-						}
+//							i++;
+//						}
 					}
-					Logger.error(String.format("%s consumed by %d subscribers.", action.getClass().getSimpleName(), 0));
+//					Logger.error(String.format("%s consumed by %d subscribers.", action.getClass().getSimpleName(), i));
 				}
 			}
 			
@@ -135,7 +132,11 @@ public class SubscriptionManager {
 	}
 
 	public int getSubscribersCount() {
-		return subscribersCount;
+		int nbSubscribers = 0;
+		for (String channelSubscriber: channelsSubscribers.keySet()) {
+			nbSubscribers += channelsSubscribers.get(channelSubscriber).size();
+		}
+		return nbSubscribers;
 	}
 	
 	public int getPoolSize() {
