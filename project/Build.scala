@@ -18,7 +18,10 @@ object ApplicationBuild extends Build {
   val main = play.Project(appName, appVersion, appDependencies).settings(
     // Add your own project settings here      
 	//resolvers += Resolver.url("My GitHub Play Repository", url("http://alexanderjarvis.github.com/releases/"))(Resolver.ivyStylePatterns)
-    resolvers += "Local Play Repository" at "file://home/remy/docs/apps/play-2.1.0/repository/local"
+    resolvers += "Local Play Repository" at "file://home/remy/docs/apps/play-2.1.0/repository/local",
+    requireJs += "commons.js", // is this one really usefull ?
+    requireJs += "projects.js", // is this one really usefull ?
+    requireJs += "conversations.js"
   )
 
 }
