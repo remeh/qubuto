@@ -28,6 +28,11 @@ public class Message extends MongoModel {
 	private String conversation;
 
 	/**
+	 * Position in the conversation.
+	 */
+	private long position;
+	
+	/**
 	 * Creation's date.
 	 */
 	private Date creationDate;
@@ -77,5 +82,13 @@ public class Message extends MongoModel {
 	
 	public void setConversation(Conversation conversation) {
 		this.conversation = conversation.getId();
+	}
+
+	public long getPosition() {
+		return position;
+	}
+
+	public void setPosition(long position) {
+		this.position = position;
 	}
 }

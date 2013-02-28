@@ -38,6 +38,14 @@ public class ModelUtils<T> {
 		return models().remove(query, parameters).getN();
 	}
 	
+	public long count() {
+		return models().count();
+	}
+	
+	public long count(String query, Object... parameters) {
+		return models().count(query, parameters);
+	}
+	
 	public List<T> query(String query, Object... parameters) {
 		List<T> list = new ArrayList<T>();
 		Iterator<T> it = models().find(query, parameters).as(type).iterator();

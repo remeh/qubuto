@@ -28,12 +28,6 @@ public class MongoModel {
 		models().save(this);
 	}
 
-	// XXX...
-	public void update() {
-		this.remove();
-		this.save();
-	}
-
 	public void remove() {
 		models().remove(this.id);
 	}

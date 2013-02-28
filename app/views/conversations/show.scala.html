@@ -1,4 +1,4 @@
-@(conversation: Conversation, websocketUri: String, content: String)
+@(conversation: Conversation, websocketUri: String, content: String, messages: List[Message])
 @import helper._
 @main(conversation.getProject().getName() + " - " + conversation.getTitle()) {
 <script type="text/javascript">
@@ -6,6 +6,11 @@
 		var content = ""
 	} else {
 		var content = @Html(content);
+	}
+	var messagesCount = @messages.size();
+	var messages = [];
+	@for(message <- messages) {
+		messages[@message.getPosition()] = {id:"@message.getId()",position:@message.getPosition(),content:"@Html(message.getContent())"};
 	}
 	websocketUri = "@websocketUri";
 </script>
@@ -27,7 +32,7 @@
 	 		    </div>
 		        <div id="wmd-preview-topic" class="wmd-panel wmd-preview"></div>
 		        <div class="text-right">
-				<button id="save-topic">
+					<button id="save-topic" style="display: none;">
 						Save
 					</button>
 					<button id="edit-topic">
@@ -36,11 +41,29 @@
 				</div>
 			<div>
 			<br />
-			<div class="topic-comment-container">
+			<div class="topic-message-container">
+				<div class="topic-message topic-message-prototype" style="display: none;" data-id="__id__">
+					<div id="wmd-__id__" style="display: none;">
+				        <div class="wmd-panel">
+				            <div id="wmd-button-bar-__id__"></div>
+				            <textarea class="wmd-input" id="wmd-input-__id__" style="width: 100%;">
+							</textarea>
+				        </div>
+		 		    </div>
+			        <div id="wmd-preview-__id__" class="wmd-panel wmd-preview"></div>
+			        <div class="text-right">
+						<button id="save-__id__" style="display: none;">
+							Save
+						</button>
+						<button id="edit-__id__">
+							Edit
+						</button>
+					</div>
+				</div>
 			</div>
 			<br />
-			<div class="topic-comment">
-				<div class="conversation-add-comment" id="conversation-add-comment">
+			<div class="topic-message">
+				<div class="conversation-add-message" id="conversation-add-message">
 					<span class="light-gray text-center">Click here to comment on this conversation.</span>
 				</div>
 			</div>

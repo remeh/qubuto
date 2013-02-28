@@ -3,37 +3,41 @@
 # ~~~~
 
 
-### APP
+###############
+###############
+###   APP   ###
+###############
+###############
 
 # Home page
 GET     /                         					 	 						controllers.Application.index()
 GET		/status																	controllers.Application.status()
 GET		/stats																	controllers.Application.stats()
 
-#
+# ###############
 # Users
-#
+# ###############
 GET		/register																controllers.Users.register()
 POST	/register																controllers.Users.update()
 GET		/login																	controllers.Users.login()
 POST	/login																	controllers.Users.enter()
 GET		/logout																	controllers.Users.logout()
 
-#
+# ###############
 # Projects
-#
+# ###############
 GET		/project/create															controllers.Projects.create()
 POST	/project/create															controllers.Projects.submit()
 
-#
+# ###############
 # Todolists
-#
+# ###############
 POST	/todolist/create														controllers.Todolists.submit()
 GET		/q/:username/:projectName/t/:todolistName								controllers.Todolists.show(username, projectName, todolistName)
 
-#
+# ###############
 # Conversations
-#
+# ###############
 POST	/conversation/create													controllers.Conversations.submit()
 GET		/q/:username/:projectName/c/:conversationName							controllers.Conversations.show(username, projectName, conversationName)
 # Ajax part
@@ -42,14 +46,23 @@ POST	/q/:username/:projectName/a/c/save-topic/:conversationName				controllers.C
 # Websocket part
 GET		/q/:username/:projectName/ws/c/:conversationName						controllers.Conversations.subscribe(username, projectName, conversationName)
 
+# ###############
+# Messages
+# ###############
+# Ajax part
+POST	/q/:username/:projectName/a/c/m/add/:conversationName					controllers.Messages.add(username, projectName, conversationName)
 
-#
+# ###############
 # Users dashboard
-#
+# ###############
 GET		/q/:username															controllers.Projects.list(username)
 GET		/q/:username/:projectName												controllers.Projects.show(username, projectName)
 
-### API
+###############
+###############
+###   API   ###
+###############
+###############
 
 # Users
 GET		/api/amiauth															controllers.api.Users.amIAuth()

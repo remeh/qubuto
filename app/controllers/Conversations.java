@@ -1,10 +1,14 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
 
 import models.Conversation;
+import models.Message;
 import models.Project;
 import models.User;
 import play.Logger;
@@ -112,7 +116,25 @@ public class Conversations extends SessionController {
 		
 		String websocketUri = String.format("ws://%s%s", request().host(), routes.Conversations.subscribe(username, projectName, conversationName).url());
 		
-		return ok(views.html.conversations.show.render(conversation, websocketUri, content));
+		List<Message> messages = conversation.getMessages();
+		if (messages == null) {
+			messages = new ArrayList<Message>();
+		} else {
+			Collections.sort(messages, new Comparator<Message>() {
+				@Override
+				public int compare(Message o1, Message o2) {
+					long diff = o1.getPosition() - o2.getPosition();
+					if (diff < 0) {
+						return -1;
+					} else if (diff > 0) {
+						return 1;
+					}
+					return 0;
+				}
+			});
+		}
+		
+		return ok(views.html.conversations.show.render(conversation, websocketUri, content, messages));
 	}
 	
 	
@@ -125,6 +147,8 @@ public class Conversations extends SessionController {
 			return badRequest(BaseController.renderNotAuthenticatedJson());
 		}
 		
+		Conversation conversation = findConversation(username, projectName, conversationName);
+		
 	    DynamicForm form = Form.form().bindFromRequest();
 
 	    /*
@@ -132,7 +156,8 @@ public class Conversations extends SessionController {
 	     */
 	    
 		String content = form.get("content");
-		if (content == null) {
+		
+		if (content == null || conversation == null) {
 			return badRequest(renderJson(ErrorCode.NOT_ENOUGH_PARAMETERS.getErrorCode(), ErrorCode.NOT_ENOUGH_PARAMETERS.getDefaultMessage()));
 		}
 		
@@ -143,7 +168,6 @@ public class Conversations extends SessionController {
 		
 		content = content.replaceAll("\\<.*?>","");
 		
-		Conversation conversation = findConversation(username, projectName, conversationName);
 		conversation.setContent(content);
 		conversation.save();
 		
@@ -229,7 +253,7 @@ public class Conversations extends SessionController {
 	
 	// ---------------------
 	
-	private static Conversation findConversation(String username, String projectName, String conversationName) {
+	public static Conversation findConversation(String username, String projectName, String conversationName) {
 		Project project = findProject(username, projectName);
 		
 		if (project == null) {

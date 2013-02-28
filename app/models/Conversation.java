@@ -1,6 +1,7 @@
 package models;
 
 import java.util.Date;
+import java.util.List;
 
 import com.mehteor.db.ModelUtils;
 import com.mehteor.db.MongoModel;
@@ -126,5 +127,10 @@ public class Conversation extends MongoModel {
 
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
+	}
+	
+	public List<Message> getMessages() {
+		ModelUtils<Message> messages = new ModelUtils<Message>(Message.class);
+		return messages.query("{'conversation': #}", this.getId());
 	}
 }

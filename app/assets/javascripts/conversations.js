@@ -11,10 +11,18 @@ require(["Conversation"], function(Conversation) {
 		var routeSaveTopic = $("div#main-div").data("route-save-topic");
 		
 		var conversation = new Conversation();
+		
 		/*
 		 * Init the conversation.
 		 */
+		 
 		conversation.init(domain, routeGetTopic, routeSaveTopic);
+		
+		/*
+		 * Init the existing messages.
+		 */
+		
+		conversation.initMessages();
 		
 		$(document).on("click", "#conversation-add-comment", function() { alert('!'); });
 	});
