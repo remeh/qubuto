@@ -3,6 +3,7 @@ package controllers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
@@ -12,10 +13,10 @@ import models.Message;
 import models.Project;
 import models.User;
 import play.Logger;
+import play.api.templates.Html;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.F.*;
-import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.WebSocket;
 
@@ -76,6 +77,7 @@ public class Conversations extends SessionController {
 	        }
         }
         
+        
 	    /*
 	     * Redirect to the create form if there is errors
 	     */
@@ -90,6 +92,8 @@ public class Conversations extends SessionController {
         Conversation conversation = form.get();
         conversation.setProject(project);
         conversation.setCleanTitle(cleanTitle);
+        conversation.setLastUpdate(new Date());
+        conversation.setCreator(getUser());
         conversation.save();
 		
         return redirect(routes.Conversations.show(getUser().getUsername(), project.getName(), cleanTitle));
@@ -105,16 +109,15 @@ public class Conversations extends SessionController {
 			return badRequest(Application.renderNotFound());
 		}
 		
-		String content = "";
-		if (conversation.getContent() != null) {
-			content = Json.stringify(Json.toJson(conversation.getContent()));
-		}
-		
 		/*
 		 * Generate the websocket URI.
 		 */
 		
 		String websocketUri = String.format("ws://%s%s", request().host(), routes.Conversations.subscribe(username, projectName, conversationName).url());
+		
+		/*
+		 * Ordonates the message by their position.
+		 */
 		
 		List<Message> messages = conversation.getMessages();
 		if (messages == null) {
@@ -122,8 +125,8 @@ public class Conversations extends SessionController {
 		} else {
 			Collections.sort(messages, new Comparator<Message>() {
 				@Override
-				public int compare(Message o1, Message o2) {
-					long diff = o1.getPosition() - o2.getPosition();
+				public int compare(Message m1, Message m2) {
+					long diff = m1.getPosition() - m2.getPosition();
 					if (diff < 0) {
 						return -1;
 					} else if (diff > 0) {
@@ -134,7 +137,7 @@ public class Conversations extends SessionController {
 			});
 		}
 		
-		return ok(views.html.conversations.show.render(conversation, websocketUri, content, messages));
+		return ok(views.html.conversations.show.render(conversation, messages, websocketUri, conversation.getContent()));
 	}
 	
 	
@@ -168,14 +171,15 @@ public class Conversations extends SessionController {
 		
 		content = content.replaceAll("\\<.*?>","");
 		
-		conversation.setContent(content);
+		conversation.setContent(Html.apply(content).toString());
+		conversation.setLastUpdate(new Date());
 		conversation.save();
 		
 		/*
 		 * Broadcast the action
 		 */
 		
-		ConversationActions.addTopicUpdateAction(conversation.getId(), getUser(), content);
+		ConversationActions.addTopicUpdateAction(conversation.getId(), getUser(), conversation);
 		
 		return ok(BaseController.renderNoErrorsJson());
 	}

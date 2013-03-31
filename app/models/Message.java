@@ -37,9 +37,16 @@ public class Message extends MongoModel {
 	 */
 	private Date creationDate;
 	
+	/**
+	 * Last update of this {@link Message}.
+	 */
+	private Date lastUpdate;
+	
 	// ---------------------
 	
 	public Message() {
+		this.creationDate = new Date();
+		this.lastUpdate = new Date();
 	}
 	
 	// ---------------------
@@ -90,5 +97,13 @@ public class Message extends MongoModel {
 
 	public void setPosition(long position) {
 		this.position = position;
+	}
+
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 }

@@ -7,7 +7,12 @@ import play.api.templates.Html;
 import play.mvc.*;
 import scala.util.Random;
 
-public class Application extends SessionController{
+public class Application extends SessionController {
+	
+	public static String COMPLETE_DATE_PATTERN = "yyyy/MM/dd - HH:mm";
+	
+	// ---------------------
+	
     public static Result index() {
     	// if the user is already authenticated
     	// redirect it to its dashboard page

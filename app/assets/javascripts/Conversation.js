@@ -3,14 +3,16 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 		var _this = this;
 		this.editorTopic = null;
 		this.editors = [];
+		this.websocket = null;
 		
 		/**
 		 * Inits an editor.
 		 * @param the suffix for Pagedown, could be "topic" or a message id
 		 * @param the position of the editor in the message (-1 means that it's the topic)
 		 * @param the initial content of the editor.
+		 * @param isNew true if this is a new message
 		 */		
-		this.initAnEditor = function(suffix, position, content) {
+		this.initAnEditor = function(suffix, position, content, isNew) {
 			/*
 			 * Pagedown Markdown converter and hook to remove HTML.
 			 */
@@ -36,19 +38,28 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			}
 			
 			/*
-			 *
+			 * Append the content.
 			 */
-			 $("#wmd-input-" + suffix).val(content);
+			 
+		 	$("#wmd-input-" + suffix).val(content);
 			 			
 			$("button#save-" + suffix).on("click", function() {
-				_this.save(suffix);
-				// hide the edit mode
-				_this.switchEditMode('hide', 100, suffix);
+				if (isNew) {
+					_this.saveNewMessage(suffix);
+				} else {
+					_this.save(suffix);
+					// hide the edit mode
+					_this.switchEditMode('hide', 100, suffix);
+				}
 			});
 			
 			$("button#edit-" + suffix).on("click", function() {
 				_this.switchEditMode('show', 100, suffix);
 			});
+			
+			if (isNew) {
+				this.switchEditMode('show', 1, suffix);
+			}
 		}
 		
 		/**
@@ -108,9 +119,10 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 		 * @param domain the domain ex: http://localhost/
 		 * @param routeGetTopic the route to get the conversation topic content
 		 */
-		this.init = function(domain, routeGetTopic, routeSaveTopic) {
+		this.init = function(domain, routeGetTopic, routeSaveTopic, routeNewMessage) {
 			this.routeGetTopic = routeGetTopic;
 			this.routeSaveTopic = routeSaveTopic;
+			this.routeNewMessage = routeNewMessage;
 			
 			// init the topic editor
 			// the var 'content' used here come from the view	
@@ -119,14 +131,73 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			this.initWebsocket();
 			
 			this.switchEditMode('hide', 1, "topic");
+			
+			$(document).on("click", "#conversation-add-message", function() {
+				_this.newMessage();
+			});
+		}
+		
+		this.newMessage = function() {
+			$(".conversation-add-message").hide();
+			
+			$message = this.prepareNewEditor("new", -1);
+			
+			$(".container-new-message").append($message);
+			
+			this.initAnEditor("new", -1, "", true);
+			
+			$message.fadeIn(300);
+		}
+		
+		
+		this.saveNewMessage = function(suffix) {
+			$topic = $('.topic-message-' + suffix);
+			
+			// saves the new message
+			
+			var content = $("#wmd-input-" + suffix).val();
+			$.ajax({
+				type: "POST",
+				url: _this.routeNewMessage,
+				data: {
+				  	'content': content
+				  }
+				})
+				.done(function(data) {
+					if (data != null) {
+						var json = JSON.parse(data);
+						if (json.error != 0) {
+							alert("Error: " + json.message);
+						}
+					}
+				})
+				.fail(function(jqxhr) {
+					if (jqxhr != null) {
+						var json = JSON.parse(jqxhr.responseText);
+						if (json.error == 1) { // NOT_AUTHENTICATED
+							alert("You're not authenticated or your session has expired.");
+							document.location.href = "/login";
+						} else {
+							if (json.message != undefined) {
+								alert("An error occurred : " + json.message);
+							} else { 
+								alert("An unknown error occurred.");
+							}
+						}
+					}
+				});
+			
+			// remove the edit and re-display the new message div
+			$topic.remove();
+			$(".conversation-add-message").fadeIn(300);
 		}
 		
 		this.initWebsocket = function() {
 			// websocketUri comes from the DOM.
 			if (websocketUri != undefined) {
-				websocket = new ConversationQubutoWebSocket();
-				websocket.setEditorTopic(this.editorTopic);
-				websocket.open(websocketUri);
+				this.websocket = new ConversationQubutoWebSocket(this);
+				this.websocket.setEditorTopic(this.editorTopic);
+				this.websocket.open(websocketUri);
 			}
 		}
 		
@@ -140,11 +211,11 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 				if (message == undefined) {
 					continue;
 				}
-				this.insertMessage(message.id, message.position, message.content);
+				this.insertMessage(message.id, message.position, message.content, message.author, message.creationDate);
 			}
 		}
 		
-		this.insertMessage = function(id, position, content) {
+		this.prepareNewEditor = function(id, position) {
 			// clone the prototype
 			
 			var $message = $(".topic-message-prototype").clone();
@@ -156,6 +227,10 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			// it is no more a prototype
 			
 			$message.removeClass("topic-message-prototype");
+			
+			// add a class instead
+			
+			$message.addClass("topic-message-" + id);
 			
 			// replace in html content the __id__ tag by the real id
 			
@@ -169,6 +244,18 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			$message.data("id", id);
 			$message.attr("data-position", position);
 			$message.data("position", position);
+			
+			return $message;
+		}
+		
+		this.insertMessage = function(id, position, content, author, creationDate) {
+			var $message = this.prepareNewEditor(id, position);
+			
+			// fill creation information
+			
+			$message.find('span.message-author').html(author);
+			$message.find('span.message-creation-date').html(creationDate);
+			$message.find('div.message-author').show();			
 			
 			// append the message in the DOM
 			

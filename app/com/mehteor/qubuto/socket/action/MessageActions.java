@@ -1,18 +1,18 @@
 package com.mehteor.qubuto.socket.action;
 
-import com.mehteor.qubuto.socket.action.conversation.TopicUpdateAction;
+import com.mehteor.qubuto.socket.action.message.NewMessageAction;
 import com.mehteor.qubuto.socket.manager.ConversationSubscriptionManager;
 
-import models.Conversation;
+import models.Message;
 import models.User;
 
 /**
  * Helpers to create actions.
  * @author Rémy 'remeh' Mathieu
  */
-public class ConversationActions {
-	public static void addTopicUpdateAction(String channelId, User author, Conversation conversation) {
-		ConversationSubscriptionManager.getInstance().addAction(channelId, new TopicUpdateAction(author, conversation));
+public class MessageActions {
+	public static void newMessageAction(String channelId, User author, Message message) {
+		ConversationSubscriptionManager.getInstance().addAction(channelId, new NewMessageAction(author, message));
 		consumeActions(channelId);
 	}
 	

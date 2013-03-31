@@ -1,8 +1,9 @@
 define(function() {
-	function ConversationQubutoWebSocket() {
+	function ConversationQubutoWebSocket(conversation) {
 		this.websocketUri = null;
 		this.websocket = null;
 		this.editorTopic = null;
+		this.conversation = conversation;
 		
 		this.open = function(uri) {
 			var $this = this;
@@ -44,18 +45,30 @@ define(function() {
 				case "TopicUpdate":
 					this.topicUpdate(json);
 					break;
+				case "NewMessage":
+					this.newMessage(json);
+					break;
 			}
+		}
+		
+		this.newMessage = function(json) {
+			conversation.insertMessage(json.id, json.position, json.content, json.username, json.creationDate);
 		}
 	
 		/**
-		 * Actions called when the topic of the conversation is updated.
+		 * Action called when the topic of the conversation is updated.
 		 * @param json the JSON received from Qubuto.
 		 */ 	
 		this.topicUpdate = function(json) {
+			// refresh the content
 			$("#wmd-input-topic").val(json.content);
 			$preview = $("#wmd-preview-topic");
 			$preview.hide();		
 			this.editorTopic.refreshPreview();
+			
+			// refresh the last update date
+			$(".topic").find('.last-update-date').html(json.lastUpdate);
+			
 			$preview.fadeIn(150);
 		}
 	}

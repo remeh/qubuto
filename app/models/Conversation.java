@@ -52,6 +52,7 @@ public class Conversation extends MongoModel {
 	
 	public Conversation() {
 		this.creationDate = new Date();
+		this.lastUpdate = new Date();
 	}
 
 	// ---------------------

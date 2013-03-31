@@ -1,25 +1,33 @@
-@(conversation: Conversation, websocketUri: String, content: String, messages: List[Message])
+@(conversation: Conversation, messages: List[Message], websocketUri: String, conversationContent: String)
 @import helper._
+@import play.libs.Json
 @main(conversation.getProject().getName() + " - " + conversation.getTitle()) {
 <script type="text/javascript">
-	@if(content.isEmpty()) { 
+	@if(conversation.getContent() == null) { 
 		var content = ""
 	} else {
-		var content = @Html(content);
+		var content = @Html(Json.stringify(Json.toJson(conversation.getContent())));
 	}
 	var messagesCount = @messages.size();
 	var messages = [];
 	@for(message <- messages) {
-		messages[@message.getPosition()] = {id:"@message.getId()",position:@message.getPosition(),content:"@Html(message.getContent())"};
+		messages[@message.getPosition()] = {id:"@message.getId()",position:@message.getPosition(),author: "@message.getAuthor().getUsername()",creationDate: "@message.getCreationDate().format(Application.COMPLETE_DATE_PATTERN)",content: @Html(Json.stringify(Json.toJson(message.getContent())))};
 	}
 	websocketUri = "@websocketUri";
 </script>
 <div id="main-div" data-author="@conversation.getProject().getCreator().getUsername"
-				   data-route-save-topic="@routes.Conversations.update(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName(), conversation.getCleanTitle())">
+				   data-route-save-topic="@routes.Conversations.update(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName(), conversation.getCleanTitle())"
+				   data-route-new-message="@routes.Messages.add(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName(), conversation.getCleanTitle())">
 	<section>
 		<header>
 			<a href="@routes.Projects.show(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName())" title="@conversation.getProject().getName()">&nbsp;<i class="icon-arrow-left"> </i> <span class="bold">@conversation.getProject().getName()</span></a>
 			<h1 class="green">@conversation.getTitle()</h1>
+			<span class="topic-author light-gray">
+				<i class="icon-user"></i> Authored by</span> <span class="gray">@conversation.getCreator().getUsername()
+			</span> 
+    		<span class="topic-creation-date light-gray">
+    			<i class="icon-time"></i> Creation date <span class="gray">@conversation.getCreationDate().format(Application.COMPLETE_DATE_PATTERN)</span>
+        	</span>
 		</header>
 		<article class="conversation-content">
 			<div class="topic">
@@ -32,17 +40,27 @@
 	 		    </div>
 		        <div id="wmd-preview-topic" class="wmd-panel wmd-preview"></div>
 		        <div class="text-right">
+		        	&nbsp;
+		        	<span class="last-update light-gray">
+		        		<i class="icon-time"></i> Last update <span class="last-update-date gray">@conversation.getLastUpdate().format(Application.COMPLETE_DATE_PATTERN)</span>
+		        	</span>
+		        	&nbsp;
 					<button id="save-topic" style="display: none;">
-						Save
+						<i class="icon-save"> </i>Save
 					</button>
 					<button id="edit-topic">
-						Edit
+						<i class="icon-pencil"> </i>Edit
 					</button>
 				</div>
 			<div>
+		</article>
+		<article>
 			<br />
 			<div class="topic-message-container">
 				<div class="topic-message topic-message-prototype" style="display: none;" data-id="__id__">
+					<div class="message-author" style="display: none;">
+						<i class="icon-user"></i> Reply by <span class="message-author gray"></span> <i class="icon-time"></i> <span class="gray message-creation-date"></span>
+					</div>
 					<div id="wmd-__id__" style="display: none;">
 				        <div class="wmd-panel">
 				            <div id="wmd-button-bar-__id__"></div>
@@ -53,18 +71,18 @@
 			        <div id="wmd-preview-__id__" class="wmd-panel wmd-preview"></div>
 			        <div class="text-right">
 						<button id="save-__id__" style="display: none;">
-							Save
+							<i class="icon-save"> </i>Save
 						</button>
 						<button id="edit-__id__">
-							Edit
+							<i class="icon-pencil"> </i>Edit
 						</button>
 					</div>
 				</div>
 			</div>
 			<br />
-			<div class="topic-message">
+			<div class="topic-message container-new-message">
 				<div class="conversation-add-message" id="conversation-add-message">
-					<span class="light-gray text-center">Click here to comment on this conversation.</span>
+					<span class="light-gray text-center"><i class="icon-plus"> </i> &nbsp;Click here to comment on this conversation.</span>
 				</div>
 			</div>
 			</article>

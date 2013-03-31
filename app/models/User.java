@@ -1,5 +1,12 @@
 package models;
 
+
+import java.util.Date;
+
+import org.codehaus.jackson.node.ObjectNode;
+
+import play.libs.Json;
+
 import com.mehteor.db.MongoModel;
 
 /**
@@ -27,6 +34,11 @@ public class User extends MongoModel {
 	 * User's email.
 	 */
 	private String email;
+	
+	/**
+	 * User's subscription date.
+	 */
+	private Date subscriptionDate;
 	
 	// ---------------------
 	
@@ -66,5 +78,26 @@ public class User extends MongoModel {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public Date getSubscriptionDate() {
+		return subscriptionDate;
+	}
+	
+	public void setSubscriptionDate(Date subscriptionDate) {
+		this.subscriptionDate = subscriptionDate;
+	}
+	
+	// ---------------------
+	
+	/**
+	 * Returns an User's jsoned without its secure information.
+	 * @return only the public informations about this user.
+	 */
+	public ObjectNode toJsonPublic() {
+		ObjectNode node = Json.newObject();
+		node.put("username", username);
+//		node.put("email", email);
+		return node;
 	}
 }
