@@ -3,7 +3,8 @@ package com.mehteor.qubuto;
 public enum ErrorCode {
 	OK(0, "OK"),
 	NOT_AUTHENTICATED(1, "You're not authenticated."),
-	NOT_ENOUGH_PARAMETERS(2, "You didn't provide enough parameters.");
+	NOT_ENOUGH_PARAMETERS(2, "You didn't provide enough parameters."),
+	BAD_PARAMETERS(3, "The parameters provided is wrong or didn't return any correct result.");
 	
 	private String defaultMessage;
 	private int errorCode;

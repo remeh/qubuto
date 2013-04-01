@@ -28,7 +28,7 @@ $(function() {
 	$("a.new-conversation").on("click", function() {
 		cleanInputs();
 		$("div#new-conversation").modal({
-			'containerCss': { 'min-width': '220px', 'min-height': '160px' },
+			'containerCss': { 'min-width': '250px', 'min-height': '180px' },
 			'overlayClose': true,
 			'closeClass': 'close-modal'
 		});

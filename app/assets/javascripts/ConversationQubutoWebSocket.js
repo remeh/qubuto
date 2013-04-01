@@ -48,11 +48,18 @@ define(function() {
 				case "NewMessage":
 					this.newMessage(json);
 					break;
+				case "UpdateMessage":
+					this.updateMessage(json);
+					break;
 			}
 		}
 		
 		this.newMessage = function(json) {
 			conversation.insertMessage(json.id, json.position, json.content, json.username, json.creationDate);
+		}
+		
+		this.updateMessage = function(json) {
+			conversation.updateMessage(json.id, json.position, json.content, json.lastUpdate);
 		}
 	
 		/**

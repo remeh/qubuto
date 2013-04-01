@@ -43,6 +43,7 @@ GET		/q/:username/:projectName/c/:conversationName							controllers.Conversatio
 # Ajax part
 #GET		/q/:username/:projectName/a/c/get-topic/:conversationName			controllers.Conversations.getContent(username, projectName, conversationName)
 POST	/q/:username/:projectName/a/c/save-topic/:conversationName				controllers.Conversations.update(username, projectName, conversationName)
+POST	/q/:username/:projectName/a/c/save-message/:conversationName/:messageId	controllers.Messages.update(username, projectName, conversationName, messageId)
 # Websocket part
 GET		/q/:username/:projectName/ws/c/:conversationName						controllers.Conversations.subscribe(username, projectName, conversationName)
 

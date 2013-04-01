@@ -10,6 +10,7 @@ require(["Conversation"], function(Conversation) {
 		var routeGetTopic = $("div#main-div").data("route-get-topic");
 		var routeSaveTopic = $("div#main-div").data("route-save-topic");
 		var routeNewMessage = $("div#main-div").data("route-new-message");
+		var routeSaveMessage = $("div#main-div").data("route-save-message");
 		
 		var conversation = new Conversation();
 		
@@ -17,7 +18,7 @@ require(["Conversation"], function(Conversation) {
 		 * Init the conversation.
 		 */
 		 
-		conversation.init(domain, routeGetTopic, routeSaveTopic, routeNewMessage);
+		conversation.init(domain, routeGetTopic, routeSaveTopic, routeNewMessage, routeSaveMessage);
 		
 		/*
 		 * Init the existing messages.

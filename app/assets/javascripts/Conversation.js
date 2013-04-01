@@ -1,6 +1,6 @@
 define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 	function Conversation() {
-		var _this = this;
+		var self = this;
 		this.editorTopic = null;
 		this.editors = [];
 		this.websocket = null;
@@ -42,19 +42,41 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			 */
 			 
 		 	$("#wmd-input-" + suffix).val(content);
-			 			
+			 
+			/*
+			 * Save clicks
+			 */		
+			 
 			$("button#save-" + suffix).on("click", function() {
 				if (isNew) {
-					_this.saveNewMessage(suffix);
+					self.saveNewMessage(suffix);
 				} else {
-					_this.save(suffix);
-					// hide the edit mode
-					_this.switchEditMode('hide', 100, suffix);
+					/*
+					 * Detects whether its a message or the topic.
+					 */
+					if ($("#wmd-"+suffix).parent().hasClass("topic-message")) {
+						/*
+						 * Save the message
+						 */
+						var routeMessage = $("#wmd-"+suffix).parent().data('route-update');
+						self.save(suffix, routeMessage);
+					} else {
+						/*
+						 * Save the topic
+						 */
+						self.save(suffix);
+					}
+					
+					/*
+					 * Hide the edit mode.
+					 */
+					self.switchEditMode('hide', 100, suffix);
 				}
 			});
 			
+			
 			$("button#edit-" + suffix).on("click", function() {
-				_this.switchEditMode('show', 100, suffix);
+				self.switchEditMode('show', 100, suffix);
 			});
 			
 			if (isNew) {
@@ -64,12 +86,20 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 		
 		/**
 		 * Saves the content of the provided editor.
+		 * @param suffix the suffix of the editor
+		 * @param routeMessage if we want to save a message, the route to save it. (otherwise, we save the topic.)
 		 */
-		this.save = function(suffix) {
+		this.save = function(suffix, routeMessage) {
 			var content = $("#wmd-input-" + suffix).val();
+			
+			var route = self.routeSaveTopic;
+			if (routeMessage != undefined) {
+				route = routeMessage;
+			}
+			
 			$.ajax({
 				type: "POST",
-				url: _this.routeSaveTopic,
+				url: route,
 				data: {
 				  	'content': content
 				  }
@@ -133,7 +163,7 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			this.switchEditMode('hide', 1, "topic");
 			
 			$(document).on("click", "#conversation-add-message", function() {
-				_this.newMessage();
+				self.newMessage();
 			});
 		}
 		
@@ -153,12 +183,14 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 		this.saveNewMessage = function(suffix) {
 			$topic = $('.topic-message-' + suffix);
 			
-			// saves the new message
+			/*
+			 * Saves the new message.
+			 */
 			
 			var content = $("#wmd-input-" + suffix).val();
 			$.ajax({
 				type: "POST",
-				url: _this.routeNewMessage,
+				url: self.routeNewMessage,
 				data: {
 				  	'content': content
 				  }
@@ -238,8 +270,15 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			messageDomContent = messageDomContent.replace(/__id__/g, id);
 			$message.html(messageDomContent);
 			
-			// set some data in the dom and in the jQuery cache
+			// same for the route to update
 			
+			var routeToUpdate = $message.data('route-update');
+			routeToUpdate = routeToUpdate.replace(/__id__/g, id);
+			
+			// set the data in the dom and in the jQuery cache
+			
+			$message.attr("data-route-update", routeToUpdate);
+			$message.data("route-update", routeToUpdate);
 			$message.attr("data-id", id);
 			$message.data("id", id);
 			$message.attr("data-position", position);
@@ -268,6 +307,26 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			// show the message
 			
 			$message.fadeIn(300);
+		}
+		
+		this.updateMessage = function(id, position, content, lastUpdate) {
+			var $message = $(".topic-message-" + id);
+			if ($message == undefined) {
+				// TODO FIXME better looking alert or no alert but a better solution.
+				alert('An error occurred while update a message. You should refresh the page.');
+			}
+			
+			// TODO adds an edit date ?
+//			$message.find('.message-creation-date').html(lastUpdate);
+			
+			/*
+			 * Refresh the content and the preview
+			 */
+			$("#wmd-input-" + id).val(content);
+			$preview = $("#wmd-preview-" + id);
+			$preview.hide();		
+			this.editors[position].refreshPreview();
+			$preview.fadeIn(150);
 		}
 		
 	}
