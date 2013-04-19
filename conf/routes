@@ -10,54 +10,54 @@
 ###############
 
 # Home page
-GET     /                         					 	 						controllers.Application.index()
-GET		/status																	controllers.Application.status()
-GET		/stats																	controllers.Application.stats()
+GET     /                         					 	 								controllers.Application.index()
+GET		/status																			controllers.Application.status()
+GET		/stats																			controllers.Application.stats()
 
 # ###############
 # Users
 # ###############
-GET		/register																controllers.Users.register()
-POST	/register																controllers.Users.update()
-GET		/login																	controllers.Users.login()
-POST	/login																	controllers.Users.enter()
-GET		/logout																	controllers.Users.logout()
+GET		/register																		controllers.Users.register()
+POST	/register																		controllers.Users.update()
+GET		/login																			controllers.Users.login()
+POST	/login																			controllers.Users.enter()
+GET		/logout																			controllers.Users.logout()
 
 # ###############
 # Projects
 # ###############
-GET		/project/create															controllers.Projects.create()
-POST	/project/create															controllers.Projects.submit()
+GET		/project/create																	controllers.Projects.create()
+POST	/project/create																	controllers.Projects.submit()
 
 # ###############
 # Todolists
 # ###############
-POST	/todolist/create														controllers.Todolists.submit()
-GET		/q/:username/:projectName/t/:todolistName								controllers.Todolists.show(username, projectName, todolistName)
+POST	/todolist/create																controllers.Todolists.submit()
+GET		/q/:username/:projectCleanName/t/:todolistName									controllers.Todolists.show(username, projectCleanName, todolistName)
 
 # ###############
 # Conversations
 # ###############
-POST	/conversation/create													controllers.Conversations.submit()
-GET		/q/:username/:projectName/c/:conversationName							controllers.Conversations.show(username, projectName, conversationName)
+POST	/conversation/create															controllers.Conversations.submit()
+GET		/q/:username/:projectCleanName/c/:conversationName								controllers.Conversations.show(username, projectCleanName, conversationName)
 # Ajax part
-#GET		/q/:username/:projectName/a/c/get-topic/:conversationName			controllers.Conversations.getContent(username, projectName, conversationName)
-POST	/q/:username/:projectName/a/c/save-topic/:conversationName				controllers.Conversations.update(username, projectName, conversationName)
-POST	/q/:username/:projectName/a/c/save-message/:conversationName/:messageId	controllers.Messages.update(username, projectName, conversationName, messageId)
+#GET		/q/:username/:projectCleanName/a/c/get-topic/:conversationName				controllers.Conversations.getContent(username, projectCleanName, conversationName)
+POST	/q/:username/:projectCleanName/a/c/save-topic/:conversationName					controllers.Conversations.update(username, projectCleanName, conversationName)
+POST	/q/:username/:projectCleanName/a/c/save-message/:conversationName/:messageId	controllers.Messages.update(username, projectCleanName, conversationName, messageId)
 # Websocket part
-GET		/q/:username/:projectName/ws/c/:conversationName						controllers.Conversations.subscribe(username, projectName, conversationName)
+GET		/q/:username/:projectCleanName/ws/c/:conversationName							controllers.Conversations.subscribe(username, projectCleanName, conversationName)
 
 # ###############
 # Messages
 # ###############
 # Ajax part
-POST	/q/:username/:projectName/a/c/m/add/:conversationName					controllers.Messages.add(username, projectName, conversationName)
+POST	/q/:username/:projectCleanName/a/c/m/add/:conversationName						controllers.Messages.add(username, projectCleanName, conversationName)
 
 # ###############
 # Users dashboard
 # ###############
-GET		/q/:username															controllers.Projects.list(username)
-GET		/q/:username/:projectName												controllers.Projects.show(username, projectName)
+GET		/q/:username																	controllers.Projects.list(username)
+GET		/q/:username/:projectCleanName													controllers.Projects.show(username, projectCleanName)
 
 ###############
 ###############
@@ -66,8 +66,8 @@ GET		/q/:username/:projectName												controllers.Projects.show(username, pr
 ###############
 
 # Users
-GET		/api/amiauth															controllers.api.Users.amIAuth()
+GET		/api/amiauth																	controllers.api.Users.amIAuth()
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               											controllers.Assets.at(path="/public", file)
+GET     /assets/*file               													controllers.Assets.at(path="/public", file)

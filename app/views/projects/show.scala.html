@@ -6,7 +6,7 @@
 <div id="main-div">
 	<section>
 		<header>
-			<h2 class="dark-gray">@project.getName()</h2>
+			<h2 class="dark-gray">@project.getCleanName()</h2>
 			<span class="light-gray">@project.getDescription()</span>
 		</header>
 		<br />		
@@ -15,19 +15,20 @@
 			<div class="project-summary">
 				<ul class="navigation-horizontal">
 					<li><i class="icon-ok"> </i> @if(project.getTodolists().size() == 0) { No } else { @project.getTodolists().size() } todolists</li>
-					<li><i class="icon-comments-alt"> </i> @if(project.getConversations().size() == 0) { No } else { @project.getConversations().size() } conversations</li>
-					<li><i class="icon-picture"> </i> No files</li>
+					<li><i class="icon-comments"> </i> @if(project.getConversations().size() == 0) { No } else { @project.getConversations().size() } conversations</li>
+					<li><i class="icon-download-alt"> </i> No files</li>
 				</ul>
 			</div>			
 			<div class="separator"></div>
-			<h3 class="dark-gray">Todolists</h3>
+			<h3 class="dark-gray"><i class="icon-ok"></i>&nbsp;Todolists</h3>
 			<p class="project-action-new"><a class="new-todolist" href='#'><i class="icon-plus"> </i> Add a todolist</a></p>
 			@projects.todolistlist.render(project)
-			<h3 class="dark-gray">Conversations</h3>
+			
+			<h3 class="dark-gray"><i class="icon-comment"></i>&nbsp;Conversations</h3>
 			<p class="project-action-new"><a class="new-conversation" href='#'><i class="icon-plus"> </i> Add a conversation</a></p>
 			@projects.conversationlist.render(project)
-			<h3 class="dark-gray">Files</h3>
 			
+			<h3 class="dark-gray"><i class="icon-download-alt"></i>&nbsp;Files</h3>
 			No files.
 		</article>
 		<footer>

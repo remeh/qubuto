@@ -8,6 +8,7 @@
 	} else {
 		var content = @Html(Json.stringify(Json.toJson(conversation.getContent())));
 	}
+
 	var messagesCount = @messages.size();
 	var messages = [];
 	@for(message <- messages) {
@@ -16,11 +17,11 @@
 	websocketUri = "@websocketUri";
 </script>
 <div id="main-div" data-author="@conversation.getProject().getCreator().getUsername"
-				   data-route-save-topic="@routes.Conversations.update(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName(), conversation.getCleanTitle())"
-				   data-route-new-message="@routes.Messages.add(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName(), conversation.getCleanTitle())">
+				   data-route-save-topic="@routes.Conversations.update(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName(), conversation.getCleanTitle())"
+				   data-route-new-message="@routes.Messages.add(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName(), conversation.getCleanTitle())">
 	<section>
 		<header>
-			<a href="@routes.Projects.show(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName())" title="@conversation.getProject().getName()">&nbsp;<i class="icon-arrow-left"> </i> <span class="bold">@conversation.getProject().getName()</span></a>
+			<a href="@routes.Projects.show(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName())" title="@conversation.getProject().getName()">&nbsp;<i class="icon-arrow-left"> </i> <span class="bold">@conversation.getProject().getName()</span></a>
 			<h1 class="green">@conversation.getTitle()</h1>
 			<span class="topic-author light-gray">
 				<i class="icon-user"></i> Authored by</span> <span class="gray">@conversation.getCreator().getUsername()
@@ -48,9 +49,11 @@
 					<button id="save-topic" style="display: none;">
 						<i class="icon-save"> </i>Save
 					</button>
-					<button id="edit-topic">
-						<i class="icon-pencil"> </i>Edit
-					</button>
+					@if(session.get("u") == conversation.getCreator().getUsername()) {
+						<button id="edit-topic">
+							<i class="icon-pencil"> </i>Edit
+						</button>
+					}
 				</div>
 			<div>
 		</article>
@@ -58,7 +61,7 @@
 			<br />
 			<div class="topic-message-container">
 				<div class="topic-message topic-message-prototype" style="display: none;" data-id="__id__"
-					data-route-update="@routes.Messages.update(conversation.getProject().getCreator().getUsername(), conversation.getProject().getName(), conversation.getCleanTitle(), "__id__")">
+					data-route-update="@routes.Messages.update(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName(), conversation.getCleanTitle(), "__id__")">
 					<div class="message-author" style="display: none;">
 						<i class="icon-user"></i> Reply by <span class="message-author gray"></span> <i class="icon-time"></i> <span class="gray message-creation-date"></span>
 					</div>

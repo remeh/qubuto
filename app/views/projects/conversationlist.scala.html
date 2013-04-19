@@ -1,10 +1,18 @@
 @(project: Project)
 <div class="conversation-list">
 	@for(conversation <- project.getConversations()) {
-		<a href='@routes.Conversations.show(project.getCreator().getUsername(), project.getName(), conversation.getCleanTitle())' title='@conversation.getTitle()'>
+		<a href='@routes.Conversations.show(project.getCreator().getUsername(), project.getCleanName(), conversation.getCleanTitle())' title='@conversation.getTitle()'>
 			<div class="conversation-entry">
-				<span class="conversation-name dark-gray">@conversation.getTitle()</span><br />
-				<span class="gray">@conversation.getSummary()</span>
+				<div>
+					<span class="conversation-name dark-gray">@conversation.getTitle()</span>
+				</div>
+				<div>
+					<span class="gray">@conversation.getSummary()</span>
+				</div>
+				<div>
+					<span class="light-gray">@conversation.getCreator().getUsername()</span>
+					<span class="light-gray pull-right"><i class="icon-comments-alt"></i>&nbsp;@conversation.getMessages().size() messages</span>
+				</div>
 			</div>
 		</a>
 	}

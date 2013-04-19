@@ -12,15 +12,29 @@ public class StringHelper {
 	/**
 	 * Validates that the string is only composed of letters, numbers and undescores.
 	 * @param toValidate the string to validate
+	 * @param spaceAccepted whether space are valid or not
 	 * @return true if the string is only composed of letters, numbers and underscores.
 	 */
-	public static boolean validateString(String toValidate) {
+	public static boolean validateString(String toValidate, boolean spaceAccepted) {
 		for (int i = 0; i < toValidate.length(); i++) {
+			// special case for space
+			if (spaceAccepted && toValidate.charAt(i) == ' ')
+			{
+				continue;
+			}
+			
 			if (StringHelper.acceptedChars.indexOf(toValidate.charAt(i)) == -1) {
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * @see StringHelper#validateString(String, boolean)
+	 */
+	public static boolean validateString(String toValidate) {
+		return validateString(toValidate, true);
 	}
 	
 	/**

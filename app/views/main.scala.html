@@ -24,7 +24,7 @@
     	<section id="main-section">
     		<span class="float-right">
     			@if(session.get("u") != null) {
-    				<span class="light-gray"><i class="icon-user"> </i> &nbsp;<a href='@routes.Projects.list(session.get("u"))' title='Go to your projects list'>@session.get("u")</a></span> - <span class="light-gray"><i class="icon-off"> </i> &nbsp;<a href='@routes.Users.logout()' title='Logout'>Logout</a></span>
+    				<span class="light-gray username" data-username="@session.get("u")"><i class="icon-user"> </i> &nbsp;<a href='@routes.Projects.list(session.get("u"))' title='Go to your projects list'>@session.get("u")</a></span> - <span class="light-gray"><i class="icon-off"> </i> &nbsp;<a href='@routes.Users.logout()' title='Logout'>Logout</a></span>
     			}
     		</span>
 	    	@if( flash.get("error") ) {

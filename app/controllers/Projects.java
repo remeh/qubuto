@@ -95,6 +95,7 @@ public class Projects extends SessionController {
         
         Project project = form.get();
         project.setCreator(creator);
+        project.setCleanName(StringHelper.cleanString(form.field("name").value(), "-"));
 		project.save();
         
 		return redirect(routes.Projects.list(creator.getUsername()));
@@ -130,7 +131,7 @@ public class Projects extends SessionController {
 	 */
 	public static Project findProject(String userId, String projectCleanName) {
 		ModelUtils<Project> muProjects = new ModelUtils<Project>(Project.class);
-		List<Project> projects = muProjects.query("{'creator': #, 'name': #}", userId, projectCleanName);
+		List<Project> projects = muProjects.query("{'creator': #, 'cleanName': #}", userId, projectCleanName);
 		
 		if (projects.size() == 0) {
 			// TODO project not found
@@ -148,7 +149,7 @@ public class Projects extends SessionController {
 		Project project = projects.get(0);
 		if (project == null) {
 			// should never happen but heh..
-			Logger.warn(String.format("A null project has been extracted from the database for the user[%s], projectname[%s]", userId, projectCleanName));
+			Logger.warn(String.format("A null project has been extracted from the database for the user[%s], projectCleanName[%s]", userId, projectCleanName));
 		}
 		
 		return project;

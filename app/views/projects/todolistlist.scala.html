@@ -5,7 +5,7 @@
 		<tr class="todolist-entry">
 			
 			<td class="todolist-name">
-				<a href='@routes.Todolists.show(project.getCreator().getUsername(), project.getName(), todolist.getCleanName())' title='@todolist.getName()'>
+				<a href='@routes.Todolists.show(project.getCreator().getUsername(), project.getCleanName(), todolist.getCleanName())' title='@todolist.getName()'>
 					<span class="todolist-name">@todolist.getName()</span> - <span class="gray">@todolist.getDescription()</span>
 				</a>
 			</td>

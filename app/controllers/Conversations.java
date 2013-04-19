@@ -96,15 +96,15 @@ public class Conversations extends SessionController {
         conversation.setCreator(getUser());
         conversation.save();
 		
-        return redirect(routes.Conversations.show(getUser().getUsername(), project.getName(), cleanTitle));
+        return redirect(routes.Conversations.show(getUser().getUsername(), project.getCleanName(), cleanTitle));
 	}
 	
-	public static Result show(String username, String projectName, String conversationName) {
+	public static Result show(String username, String projectCleanName, String conversationName) {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return redirect(routes.Users.login());
 		}
 		
-		Conversation conversation = Conversations.findConversation(username, projectName, conversationName);
+		Conversation conversation = Conversations.findConversation(username, projectCleanName, conversationName);
 		if (conversation == null) {
 			return badRequest(Application.renderNotFound());
 		}
@@ -113,7 +113,7 @@ public class Conversations extends SessionController {
 		 * Generate the websocket URI.
 		 */
 		
-		String websocketUri = String.format("ws://%s%s", request().host(), routes.Conversations.subscribe(username, projectName, conversationName).url());
+		String websocketUri = String.format("ws://%s%s", request().host(), routes.Conversations.subscribe(username, projectCleanName, conversationName).url());
 		
 		/*
 		 * Ordonates the message by their position.
@@ -145,12 +145,12 @@ public class Conversations extends SessionController {
 	 * AJAX part
 	 */
 	
-	public static Result update(String username, String projectName, String conversationName) {
+	public static Result update(String username, String projectCleanName, String conversationName) {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return badRequest(BaseController.renderNotAuthenticatedJson());
 		}
 		
-		Conversation conversation = findConversation(username, projectName, conversationName);
+		Conversation conversation = findConversation(username, projectCleanName, conversationName);
 		
 	    DynamicForm form = Form.form().bindFromRequest();
 
@@ -209,7 +209,8 @@ public class Conversations extends SessionController {
 	/**
 	 * Opens a websocket on the provided conversation.
 	 */
-	public static WebSocket<JsonNode> subscribe(final String username, final String projectName, final String conversationName) {
+	public static WebSocket<JsonNode> subscribe(final String username, final String projectCleanName, final String conversationName) {
+		// TODO Uncomment this code !
 //		if (!isAuthenticated()) {
 //			return BaseController.renderJsonSocket(ErrorCode.NOT_AUTHENTICATED.getErrorCode(), ErrorCode.NOT_AUTHENTICATED.getDefaultMessage());
 //		}
@@ -220,7 +221,7 @@ public class Conversations extends SessionController {
 //		}
 		
 		final User user = getUser();
-		final Conversation conversation = findConversation(username, projectName, conversationName);
+		final Conversation conversation = findConversation(username, projectCleanName, conversationName);
 		
 		if (conversation == null) {
 			return null;

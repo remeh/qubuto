@@ -16,7 +16,7 @@ $(function() {
 	$("a.new-todolist").on("click", function() {
 		cleanInputs();
 		$("div#new-todolist").modal({
-			'containerCss': { 'min-width': '250px' },
+			'containerCss': { 'min-width': '350px' },
 			'overlayClose': true,
 			'closeClass': 'close-modal'
 		});

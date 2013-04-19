@@ -4,10 +4,13 @@
 <div id="main-div">
 	<section>
 		<header>
-		<a href='@routes.Projects.show(todolist.getProject().getCreator().getUsername(), todolist.getProject().getName())' title='@todolist.getProject().getName()'>&nbsp;<i class='icon-arrow-left'> </i> <span class="bold">@todolist.getProject().getName()</span></a>
+		<a href='@routes.Projects.show(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName())' title='@todolist.getProject().getName()'>&nbsp;<i class='icon-arrow-left'> </i> <span class="bold">@todolist.getProject().getName()</span></a>
 			<h1 class="green">@todolist.getName()</h1>
 		</header>
 		<article>
+			<div class="text-center">
+				<button>Create a task</a>
+			</div>
 		</article>
 		<footer>
 		</footer>

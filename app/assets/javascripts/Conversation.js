@@ -294,11 +294,17 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			
 			$message.find('span.message-author').html(author);
 			$message.find('span.message-creation-date').html(creationDate);
-			$message.find('div.message-author').show();			
+			$message.find('div.message-author').show();
 			
 			// append the message in the DOM
 			
 			$(".topic-message-container").append($message);
+
+			// Hide the edit button if the user isn't the author.
+			if (author != $('span.username').data('username')) {
+				$("button#edit-" + id).hide();
+			}
+			
 			
 			// init the editor
 			

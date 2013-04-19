@@ -10,7 +10,7 @@
 		<article style='margin-top: 25px';>
 			<a href="@routes.Projects.create"><div class="project-div text-center"><i class="icon-plus-sign"> </i> New project</div></a>
 			@for(project <- userProjects) {
-				<a href="@routes.Projects.show(project.getCreator().getUsername(), project.getName())" title="@project.getName()">
+				<a href="@routes.Projects.show(project.getCreator().getUsername(), project.getCleanName())" title="@project.getName()">
 					<div class="project-div">
 						<div style="width: 100%;">
 							<div class="project-list-description"><b>@project.getName()</b> - @project.getDescription()</div>

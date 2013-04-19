@@ -14,7 +14,7 @@ import play.data.Form;
 import play.mvc.Result;
 
 public class Messages extends SessionController {
-	public static Result add(String username, String projectName, String conversationName) {
+	public static Result add(String username, String projectCleanName, String conversationName) {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return badRequest(BaseController.renderNotAuthenticatedJson());
 		}
@@ -22,7 +22,7 @@ public class Messages extends SessionController {
 		/*
 		 * Find the corresponding conversation.
 		 */
-		Conversation conversation = Conversations.findConversation(username, projectName, conversationName);
+		Conversation conversation = Conversations.findConversation(username, projectCleanName, conversationName);
 		
 	    DynamicForm form = Form.form().bindFromRequest();
 
@@ -65,7 +65,7 @@ public class Messages extends SessionController {
 		return ok(BaseController.renderNoErrorsJson());
 	}
 	
-	public static Result update(String username, String projectName, String conversationName, String messageId) {
+	public static Result update(String username, String projectCleanName, String conversationName, String messageId) {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return badRequest(BaseController.renderNotAuthenticatedJson());
 		}
@@ -73,7 +73,7 @@ public class Messages extends SessionController {
 		/*
 		 * Find the corresponding conversation.
 		 */
-		Conversation conversation = Conversations.findConversation(username, projectName, conversationName);
+		Conversation conversation = Conversations.findConversation(username, projectCleanName, conversationName);
 		
 	    DynamicForm form = Form.form().bindFromRequest();
 

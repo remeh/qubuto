@@ -19,6 +19,11 @@ public class Project extends MongoModel
 	private String name;
 
 	/**
+	 * Project's clean name.
+	 */
+	private String cleanName;
+	
+	/**
 	 * Project's description.
 	 */
 	private String description;
@@ -54,6 +59,14 @@ public class Project extends MongoModel
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getCleanName() {
+		return cleanName;
+	}
+
+	public void setCleanName(String cleanName) {
+		this.cleanName = cleanName;
 	}
 
 	public String getDescription() {
