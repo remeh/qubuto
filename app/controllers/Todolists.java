@@ -2,14 +2,23 @@ package controllers;
 
 import java.util.List;
 
+import org.codehaus.jackson.JsonNode;
+
 import models.Project;
 import models.Todolist;
+import models.User;
 import play.Logger;
 import play.data.Form;
+import play.libs.F.Callback;
+import play.libs.F.Callback0;
 import play.mvc.Result;
+import play.mvc.WebSocket;
 
 import com.mehteor.db.ModelUtils;
+import com.mehteor.qubuto.ErrorCode;
 import com.mehteor.qubuto.StringHelper;
+import com.mehteor.qubuto.socket.Subscriber;
+import com.mehteor.qubuto.socket.manager.ConversationSubscriptionManager;
 
 public class Todolists extends SessionController {
 	public static Form<Todolist> todolistForm = Form.form(Todolist.class);
@@ -81,21 +90,73 @@ public class Todolists extends SessionController {
         todolist.setCleanName(cleanName);
         todolist.save();
 		
-        return redirect(routes.Todolists.show(getUser().getUsername(), project.getName(), cleanName));
+        return redirect(routes.Todolists.show(getUser().getUsername(), project.getCleanName(), cleanName));
 	}
 	
-	public static Result show(String username, String projectName, String todolistName) {
+	public static Result show(String username, String projectCleanName, String todolistName) {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return redirect(routes.Users.login());
 		}
 
-		Todolist todolist = Todolists.findTodolist(username, projectName, todolistName);
+		Todolist todolist = Todolists.findTodolist(username, projectCleanName, todolistName);
 		if (todolist == null ) {
 			return notFound(Application.renderNotFound());
 		}
 		
-		return ok(views.html.todolists.show.render(todolist));
+		
+		/*
+		 * Generate the websocket URI.
+		 */
+		
+		String websocketUri = String.format("ws://%s%s", request().host(), routes.Todolists.subscribe(username, projectCleanName, todolistName).url());
+		
+		
+		return ok(views.html.todolists.show.render(todolist, websocketUri));
 	}
+	
+	/**
+	 * Opens a websocket on the provided conversation.
+	 */
+	public static WebSocket<JsonNode> subscribe(final String username, final String projectCleanName, final String todolistName) {
+		if (!isAuthenticated()) {
+			return BaseController.renderJsonSocket(ErrorCode.NOT_AUTHENTICATED.getErrorCode(), ErrorCode.NOT_AUTHENTICATED.getDefaultMessage());
+		}
+		
+		final User user = getUser();
+		final Todolist todolist = findTodolist(username, projectCleanName, todolistName);
+		
+		if (todolist == null) {
+			return null; // TODO 404 ?
+		}
+		
+		// Opens the websocket
+		return new WebSocket<JsonNode>() {
+			public void onReady(final WebSocket.In<JsonNode> in, final WebSocket.Out<JsonNode> out) {
+				final Subscriber subscriber = new Subscriber(out, user);
+				
+				// For each event received on the socket,
+				in.onMessage(new Callback<JsonNode>() {
+					public void invoke(JsonNode event) {
+						// TODO nuffin to do ?
+					}
+				});
+				
+				// When the socket is closed, removes the subscription.
+				in.onClose(new Callback0() {
+					public void invoke() {
+						ConversationSubscriptionManager.getInstance()
+									.unsubscribe(todolist.getId(), subscriber);
+					}
+				});
+				
+				// Subscribe the socket to the conversation.
+				ConversationSubscriptionManager.getInstance()
+							.subscribe(todolist.getId(), subscriber);
+			}
+			
+		};
+	}
+	
 	
 	// ---------------------
 	

@@ -210,21 +210,15 @@ public class Conversations extends SessionController {
 	 * Opens a websocket on the provided conversation.
 	 */
 	public static WebSocket<JsonNode> subscribe(final String username, final String projectCleanName, final String conversationName) {
-		// TODO Uncomment this code !
-//		if (!isAuthenticated()) {
-//			return BaseController.renderJsonSocket(ErrorCode.NOT_AUTHENTICATED.getErrorCode(), ErrorCode.NOT_AUTHENTICATED.getDefaultMessage());
-//		}
-//		
-//		final Conversation conversation = Conversations.findConversation(username, projectName, conversationName);
-//		if (conversation == null) {
-//			return BaseController.renderJsonSocket(ErrorCode.NOT_ENOUGH_PARAMETERS.getErrorCode(), ErrorCode.NOT_ENOUGH_PARAMETERS.getDefaultMessage());
-//		}
+		if (!isAuthenticated()) {
+			return BaseController.renderJsonSocket(ErrorCode.NOT_AUTHENTICATED.getErrorCode(), ErrorCode.NOT_AUTHENTICATED.getDefaultMessage());
+		}
 		
 		final User user = getUser();
 		final Conversation conversation = findConversation(username, projectCleanName, conversationName);
 		
 		if (conversation == null) {
-			return null;
+			return null; // TODO 404 ?
 		}
 		
 		// Opens the websocket

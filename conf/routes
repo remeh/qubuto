@@ -34,6 +34,8 @@ POST	/project/create																	controllers.Projects.submit()
 # ###############
 POST	/todolist/create																controllers.Todolists.submit()
 GET		/q/:username/:projectCleanName/t/:todolistName									controllers.Todolists.show(username, projectCleanName, todolistName)
+# Websocket part
+GET		/q/:username/:projectCleanName/ws/t/:todolistName								controllers.Todolists.subscribe(username, projectCleanName, todolistName)
 
 # ###############
 # Conversations

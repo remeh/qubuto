@@ -1,8 +1,8 @@
 @(project: Project)
-<div class="conversation-list">
+<div class="pretty-list">
 	@for(conversation <- project.getConversations()) {
 		<a href='@routes.Conversations.show(project.getCreator().getUsername(), project.getCleanName(), conversation.getCleanTitle())' title='@conversation.getTitle()'>
-			<div class="conversation-entry">
+			<div class="pretty-entry">
 				<div>
 					<span class="conversation-name dark-gray">@conversation.getTitle()</span>
 				</div>
@@ -17,7 +17,7 @@
 		</a>
 	}
 	@if(project.getConversations().size() == 0) {
-		<div class="conversation-entry">
+		<div class="pretty-entry">
 			No conversations.
 		</div>
 	}

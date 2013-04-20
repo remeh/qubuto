@@ -1,6 +1,11 @@
-@(todolist: Todolist)
+@(todolist: Todolist, websocketUri: String)
 @import helper._
+@import play.libs.Json
 @main(todolist.getProject().getName() + " - " + todolist.getName()) {
+<script type="text/javascript">
+	websocketUri = "@websocketUri";
+</script>
+@todolists.modalNewTask.render(todolist)
 <div id="main-div">
 	<section>
 		<header>
@@ -9,11 +14,12 @@
 		</header>
 		<article>
 			<div class="text-center">
-				<button>Create a task</a>
+				<button id="btn-create-task">Create a task</a>
 			</div>
 		</article>
 		<footer>
 		</footer>
 	</section>
 </div>
+@helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/todolists").url)
 }

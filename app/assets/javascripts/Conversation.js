@@ -146,10 +146,9 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 	
 		/**
 		 * Init the conversations pages.
-		 * @param domain the domain ex: http://localhost/
 		 * @param routeGetTopic the route to get the conversation topic content
 		 */
-		this.init = function(domain, routeGetTopic, routeSaveTopic, routeNewMessage) {
+		this.init = function(routeGetTopic, routeSaveTopic, routeNewMessage) {
 			this.routeGetTopic = routeGetTopic;
 			this.routeSaveTopic = routeSaveTopic;
 			this.routeNewMessage = routeNewMessage;

@@ -1,25 +1,24 @@
 @(project: Project)
-<div class="todolist-list ">
-	<table class="todolist">
+<div class="pretty-list">
 	@for(todolist <- project.getTodolists()) {
-		<tr class="todolist-entry">
-			
-			<td class="todolist-name">
-				<a href='@routes.Todolists.show(project.getCreator().getUsername(), project.getCleanName(), todolist.getCleanName())' title='@todolist.getName()'>
-					<span class="todolist-name">@todolist.getName()</span> - <span class="gray">@todolist.getDescription()</span>
-				</a>
-			</td>
-			</a>
-			<td class="todolist-state">
-				<span class="gray"> <i class="icon-check-empty"> 0</i></span>
-			</td>
-			<td class="todolist-state">
-				<span class="gray"> <i class="icon-check"> 0</i></span>
-			</td>
-		</tr>
+		<a href='@routes.Todolists.show(project.getCreator().getUsername(), project.getCleanName(), todolist.getCleanName())' title='@todolist.getName()'>
+			<div class="pretty-entry">
+				<div>
+					<span class="todolist-name dark-gray">@todolist.getName()</span>
+				</div>
+				<div class="pull-right">
+					<span class="light-gray"><i class="icon-check-empty"> 0</i></span> <span class="light-gray" style="margin-left: 5px;"> <i class="icon-check"> 0</i></span>
+				</div>
+				<div>
+					<span class="light-gray">@todolist.getDescription()</span>
+				</div>
+			</div>
+		</a>
 	}
 	@if(project.getTodolists().size() == 0) {
-		<tr><td class="todolist-name">No todolists.</td><td></td><td></td></tr>
+		<div class="pretty-entry">
+			No todolists... <a class="new-todolist" href='#'>Start creating one !</a>
+		</div>
+	
 	}
-	</table>
 </div>
