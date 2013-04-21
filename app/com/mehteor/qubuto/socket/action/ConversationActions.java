@@ -16,6 +16,8 @@ public class ConversationActions {
 		consumeActions(channelId);
 	}
 	
+	// ---------------------
+	
 	public static void consumeActions(String channelId) {
 		ConversationSubscriptionManager.getInstance().consumeActions(channelId);
 	}

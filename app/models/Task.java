@@ -47,7 +47,12 @@ public class Task extends MongoModel {
 	/**
 	 * Tags applied to this project.
 	 */
-	public Set<String> tags;
+	private Set<String> tags;
+
+	/**
+	 * Position in the conversation.
+	 */
+	private long position;
 	
 	/**
 	 * True if this task has been archived.
@@ -107,6 +112,14 @@ public class Task extends MongoModel {
 
 	public void setArchived(boolean archived) {
 		this.archived = archived;
+	}
+
+	public long getPosition() {
+		return position;
+	}
+
+	public void setPosition(long position) {
+		this.position = position;
 	}
 	
 	public User getAuthor() {

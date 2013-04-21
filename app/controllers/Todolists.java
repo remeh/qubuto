@@ -160,7 +160,7 @@ public class Todolists extends SessionController {
 	
 	// ---------------------
 	
-	private static Todolist findTodolist(String username, String projectName, String todolistName) {
+	public static Todolist findTodolist(String username, String projectName, String todolistName) {
 		Project project = BaseController.findProject(username, projectName);
 		
 		if (project == null) {

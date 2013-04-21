@@ -2,7 +2,6 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-
 ###############
 ###############
 ###   APP   ###
@@ -38,6 +37,12 @@ GET		/q/:username/:projectCleanName/t/:todolistName									controllers.Todolist
 GET		/q/:username/:projectCleanName/ws/t/:todolistName								controllers.Todolists.subscribe(username, projectCleanName, todolistName)
 
 # ###############
+# Tasks
+# ###############
+# Ajax part
+POST	/q/:username/:projectCleanName/a/t/t/add/:todolistName							controllers.Tasks.add(username, projectCleanName, todolistName)
+
+# ###############
 # Conversations
 # ###############
 POST	/conversation/create															controllers.Conversations.submit()
@@ -45,7 +50,6 @@ GET		/q/:username/:projectCleanName/c/:conversationName								controllers.Conve
 # Ajax part
 #GET		/q/:username/:projectCleanName/a/c/get-topic/:conversationName				controllers.Conversations.getContent(username, projectCleanName, conversationName)
 POST	/q/:username/:projectCleanName/a/c/save-topic/:conversationName					controllers.Conversations.update(username, projectCleanName, conversationName)
-POST	/q/:username/:projectCleanName/a/c/save-message/:conversationName/:messageId	controllers.Messages.update(username, projectCleanName, conversationName, messageId)
 # Websocket part
 GET		/q/:username/:projectCleanName/ws/c/:conversationName							controllers.Conversations.subscribe(username, projectCleanName, conversationName)
 
@@ -54,6 +58,7 @@ GET		/q/:username/:projectCleanName/ws/c/:conversationName							controllers.Con
 # ###############
 # Ajax part
 POST	/q/:username/:projectCleanName/a/c/m/add/:conversationName						controllers.Messages.add(username, projectCleanName, conversationName)
+POST	/q/:username/:projectCleanName/a/c/save-message/:conversationName/:messageId	controllers.Messages.update(username, projectCleanName, conversationName, messageId)
 
 # ###############
 # Users dashboard

@@ -1,5 +1,10 @@
 @(todolist: Todolist)
 <div id="new-task" style="display: none;">
-	<span class="close-modal float-right"><a href='#'>Close</a></span>
+	<span class="close-modal float-right"><a href='#'><i class="icon-remove"></i></a></span>
 	<h3>New task</h3>
+	<div class="new-task-container padded">
+		<input type="text" placeholder="Title of the task" class="full-width" id="add-task-title" />
+		<textarea placeholder="Content of the task" class="full-width" id="add-task-content"></textarea>
+		<button class="small-btn full-width" id="add-task">Add</button>
+	</div>
 </div>

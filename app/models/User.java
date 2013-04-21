@@ -97,7 +97,6 @@ public class User extends MongoModel {
 	public ObjectNode toJsonPublic() {
 		ObjectNode node = Json.newObject();
 		node.put("username", username);
-//		node.put("email", email);
 		return node;
 	}
 }

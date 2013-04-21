@@ -81,6 +81,7 @@ textarea {
 textarea {
 	min-width: 160px;
 	min-height: 10em;
+	resize: none;
 }
 
 input.button, input[type=submit], button, a.btn {
@@ -108,6 +109,14 @@ input.button:active, input[type=submit]:active, button:active, a.btn:active
 	.gradient(#f6f6f6, #f6f6f6, #fff);
 	
 	color: #aaa;
+}
+
+input.button:disabled, input[type=submit]:disabled,
+button:disabled, a.btn:disabled, textarea:disabled,
+input[type=text]:disabled, input[type=password]:disabled
+{
+	background: #fff;
+	color: #eee;
 }
 
 // ------------
