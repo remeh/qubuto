@@ -18,7 +18,22 @@ $(function() {
 		$("div#new-todolist").modal({
 			'containerCss': { 'min-width': '350px' },
 			'overlayClose': true,
-			'closeClass': 'close-modal'
+			'closeClass': 'close-modal',
+			onOpen: function (dialog) {
+				dialog.overlay.fadeIn(100, function () {
+					dialog.data.fadeIn(50, function () {
+						dialog.container.show();
+					});
+				});
+			},
+			onClose: function (dialog) {
+				dialog.container.fadeOut(150, function () {
+					dialog.data.fadeOut(50, function () {
+						dialog.overlay.fadeOut(50);
+						$.modal.close();
+					});
+				});
+			}
 		});
 	});
 	
@@ -30,7 +45,22 @@ $(function() {
 		$("div#new-conversation").modal({
 			'containerCss': { 'min-width': '250px', 'min-height': '180px' },
 			'overlayClose': true,
-			'closeClass': 'close-modal'
+			'closeClass': 'close-modal',
+			onOpen: function (dialog) {
+				dialog.overlay.fadeIn(100, function () {
+					dialog.data.fadeIn(50, function () {
+						dialog.container.show();
+					});
+				});
+			},
+			onClose: function (dialog) {
+				dialog.container.fadeOut(150, function () {
+					dialog.data.fadeOut(50, function () {
+						dialog.overlay.fadeOut(50);
+						$.modal.close();
+					});
+				});
+			}
 		});
 	});
 });

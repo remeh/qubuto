@@ -1,4 +1,4 @@
-package com.mehteor.qubuto;
+package com.mehteor.util;
 
 public enum ErrorCode {
 	OK(0, "OK"),

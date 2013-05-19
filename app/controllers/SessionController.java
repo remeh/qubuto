@@ -1,6 +1,6 @@
 package controllers;
 
-import com.mehteor.qubuto.session.SessionManager;
+import com.mehteor.util.session.SessionManager;
 
 import models.Session;
 import models.User;

@@ -1,20 +1,47 @@
-@(todolist: Todolist, websocketUri: String)
+@(todolist: Todolist, tasks: List[Task], websocketUri: String)
 @import helper._
 @import play.libs.Json
 @main(todolist.getProject().getName() + " - " + todolist.getName()) {
 <script type="text/javascript">
+	var tasksCount = @tasks.size();
+	var tasks = [];
+	@for(task <- tasks) {
+		tasks[@task.getPosition()] = {id:"@task.getId()",state:"@task.getState()",position:@task.getPosition(),author:"@task.getAuthor().getUsername()",creationDate:"@task.getCreationDate().format(Application.COMPLETE_DATE_PATTERN)",title: @Html(Json.stringify(Json.toJson(task.getTitle()))),content: @Html(Json.stringify(Json.toJson(task.getContent())))};
+	}
 	websocketUri = "@websocketUri";
 </script>
 @todolists.modalNewTask.render(todolist)
-<div id="main-div">
+<div id="main-div"
+				   data-route-add-task="@routes.Tasks.add(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())">
 	<section>
 		<header>
 		<a href='@routes.Projects.show(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName())' title='@todolist.getProject().getName()'>&nbsp;<i class='icon-arrow-left'> </i> <span class="bold">@todolist.getProject().getName()</span></a>
-			<h1 class="green">@todolist.getName()</h1>
+			<h1 class="green"><span class="light-gray"><i class="icon-ok"> </i></span> @todolist.getName()</h1>
+			<span class="topic-author light-gray">
+				<i class="icon-user"></i> Authored by</span> <span class="gray">@todolist.getCreator().getUsername()
+			</span> 
+    		<span class="topic-creation-date light-gray">
+    			<i class="icon-time"></i> Creation date <span class="gray">@todolist.getCreationDate().format(Application.COMPLETE_DATE_PATTERN)</span>
+        	</span>
 		</header>
 		<article>
 			<div class="text-center">
-				<button id="btn-create-task">Create a task</a>
+				<button id="btn-create-task">Create a task</button>
+			</div>
+		</article>
+		<article>
+			<div class="todo">
+				<h3><i class="light-gray icon-check-empty"> </i>Todo</h3>
+				<div id="todo-container" class="pretty-list">
+					<div class="todo-template" style="display: none;">
+						<div class="pretty-entry todo-entry">
+							<span class="dark-gray bold">{{title}}</span> - {{content}}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="done">
+				<h3><i class="light-gray icon-check"> </i>Done</h3>
 			</div>
 		</article>
 		<footer>

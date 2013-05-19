@@ -9,7 +9,7 @@ import models.Todolist;
 import models.User;
 
 import com.mehteor.db.ModelUtils;
-import com.mehteor.qubuto.StringHelper;
+import com.mehteor.util.StringHelper;
 
 import play.Logger;
 import play.data.Form;

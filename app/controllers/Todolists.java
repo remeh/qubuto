@@ -1,10 +1,15 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
 
+import models.Message;
 import models.Project;
+import models.Task;
 import models.Todolist;
 import models.User;
 import play.Logger;
@@ -15,10 +20,10 @@ import play.mvc.Result;
 import play.mvc.WebSocket;
 
 import com.mehteor.db.ModelUtils;
-import com.mehteor.qubuto.ErrorCode;
-import com.mehteor.qubuto.StringHelper;
 import com.mehteor.qubuto.socket.Subscriber;
 import com.mehteor.qubuto.socket.manager.ConversationSubscriptionManager;
+import com.mehteor.util.ErrorCode;
+import com.mehteor.util.StringHelper;
 
 public class Todolists extends SessionController {
 	public static Form<Todolist> todolistForm = Form.form(Todolist.class);
@@ -87,6 +92,7 @@ public class Todolists extends SessionController {
         
         Todolist todolist = form.get();
         todolist.setProject(project);
+        todolist.setCreator(getUser());
         todolist.setCleanName(cleanName);
         todolist.save();
 		
@@ -103,15 +109,22 @@ public class Todolists extends SessionController {
 			return notFound(Application.renderNotFound());
 		}
 		
-		
 		/*
 		 * Generate the websocket URI.
 		 */
 		
 		String websocketUri = String.format("ws://%s%s", request().host(), routes.Todolists.subscribe(username, projectCleanName, todolistName).url());
+
+		/*
+		 * Ordonates the tasks by their position.
+		 */
 		
+		List<Task> tasks = todolist.getTasks();
+		if (tasks == null) {
+			tasks = new ArrayList<Task>();
+		}
 		
-		return ok(views.html.todolists.show.render(todolist, websocketUri));
+		return ok(views.html.todolists.show.render(todolist, tasks, websocketUri));
 	}
 	
 	/**

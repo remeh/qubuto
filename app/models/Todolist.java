@@ -1,6 +1,8 @@
 package models;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import com.mehteor.db.ModelUtils;
@@ -31,6 +33,12 @@ public class Todolist extends MongoModel {
 	 * Tags configuration for this todolist.
 	 */
 	private Set<String> tags;
+	
+	/**
+	 * Creator of the project.
+	 */
+	// reference //
+	private String creator;
 
 	/**
 	 * In which project is this todolist.
@@ -58,6 +66,18 @@ public class Todolist extends MongoModel {
 	
 	public void setCleanName(String cleanName) {
 		this.cleanName = cleanName;
+	}
+	
+	public User getCreator() {
+		ModelUtils<User> mu = new ModelUtils<User>(User.class);
+		if (creator != null) {
+			return mu.find(creator);
+		}
+		return null;
+	}
+
+	public void setCreator(User creator) {
+		this.creator = creator.getId();
 	}
 
 	public String getDescription() {
@@ -95,4 +115,10 @@ public class Todolist extends MongoModel {
 	public void setProject(Project project) {
 		this.project = project.getId();
 	}
+	
+	public List<Task> getTasks() {
+		ModelUtils<Task> tasks = new ModelUtils<Task>(Task.class);
+		return Collections.unmodifiableList(tasks.query("{'todolist': #}", this.getId()));
+	}
+
 }

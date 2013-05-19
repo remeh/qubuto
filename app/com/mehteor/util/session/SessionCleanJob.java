@@ -1,4 +1,4 @@
-package com.mehteor.qubuto.session;
+package com.mehteor.util.session;
 
 import play.Logger;
 

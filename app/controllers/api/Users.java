@@ -1,6 +1,6 @@
 package controllers.api;
 
-import com.mehteor.qubuto.ErrorCode;
+import com.mehteor.util.ErrorCode;
 
 import controllers.SessionController;
 

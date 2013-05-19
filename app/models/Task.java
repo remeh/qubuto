@@ -57,7 +57,7 @@ public class Task extends MongoModel {
 	/**
 	 * True if this task has been archived.
 	 */
-	private boolean archived;
+	private TaskState state;
 	
 	// ---------------------
 	
@@ -106,12 +106,12 @@ public class Task extends MongoModel {
 		this.tags = tags;
 	}
 
-	public boolean isArchived() {
-		return archived;
+	public TaskState getState() {
+		return state;
 	}
 
-	public void setArchived(boolean archived) {
-		this.archived = archived;
+	public void setState(TaskState state) {
+		this.state = state;
 	}
 
 	public long getPosition() {

@@ -22,7 +22,7 @@
 	<section>
 		<header>
 			<a href="@routes.Projects.show(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName())" title="@conversation.getProject().getName()">&nbsp;<i class="icon-arrow-left"> </i> <span class="bold">@conversation.getProject().getName()</span></a>
-			<h1 class="green">@conversation.getTitle()</h1>
+			<h1 class="green"><span class="light-gray"><i class="icon-comment"> </i></span> @conversation.getTitle()</h1>
 			<span class="topic-author light-gray">
 				<i class="icon-user"></i> Authored by</span> <span class="gray">@conversation.getCreator().getUsername()
 			</span> 

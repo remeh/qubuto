@@ -21,11 +21,11 @@ import play.mvc.Result;
 import play.mvc.WebSocket;
 
 import com.mehteor.db.ModelUtils;
-import com.mehteor.qubuto.ErrorCode;
-import com.mehteor.qubuto.StringHelper;
 import com.mehteor.qubuto.socket.Subscriber;
 import com.mehteor.qubuto.socket.action.ConversationActions;
 import com.mehteor.qubuto.socket.manager.ConversationSubscriptionManager;
+import com.mehteor.util.ErrorCode;
+import com.mehteor.util.StringHelper;
 
 public class Conversations extends SessionController {
 	public static Form<Conversation> conversationForm = Form.form(Conversation.class);
@@ -122,19 +122,6 @@ public class Conversations extends SessionController {
 		List<Message> messages = conversation.getMessages();
 		if (messages == null) {
 			messages = new ArrayList<Message>();
-		} else {
-			Collections.sort(messages, new Comparator<Message>() {
-				@Override
-				public int compare(Message m1, Message m2) {
-					long diff = m1.getPosition() - m2.getPosition();
-					if (diff < 0) {
-						return -1;
-					} else if (diff > 0) {
-						return 1;
-					}
-					return 0;
-				}
-			});
 		}
 		
 		return ok(views.html.conversations.show.render(conversation, messages, websocketUri, conversation.getContent()));

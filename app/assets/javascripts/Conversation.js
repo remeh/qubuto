@@ -80,7 +80,7 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			});
 			
 			if (isNew) {
-				this.switchEditMode('show', 1, suffix);
+				self.switchEditMode('show', 1, suffix);
 			}
 		}
 		
@@ -97,36 +97,7 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 				route = routeMessage;
 			}
 			
-			$.ajax({
-				type: "POST",
-				url: route,
-				data: {
-				  	'content': content
-				  }
-				})
-				.done(function(data) {
-					if (data != null) {
-						var json = JSON.parse(data);
-						if (json.error != 0) {
-							alert("Error: " + json.message);
-						}
-					}
-				})
-				.fail(function(jqxhr) {
-					if (jqxhr != null) {
-						var json = JSON.parse(jqxhr.responseText);
-						if (json.error == 1) { // NOT_AUTHENTICATED
-							alert("You're not authenticated or your session has expired.");
-							document.location.href = "/login";
-						} else {
-							if (json.message != undefined) {
-								alert("An error occurred : " + json.message);
-							} else { 
-								alert("An unknown error occurred.");
-							}
-						}
-					}
-				});
+			self.makeAjaxCall("POST", route, { "content": content });
 		}
 	
 		/**
@@ -187,36 +158,8 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			 */
 			
 			var content = $("#wmd-input-" + suffix).val();
-			$.ajax({
-				type: "POST",
-				url: self.routeNewMessage,
-				data: {
-				  	'content': content
-				  }
-				})
-				.done(function(data) {
-					if (data != null) {
-						var json = JSON.parse(data);
-						if (json.error != 0) {
-							alert("Error: " + json.message);
-						}
-					}
-				})
-				.fail(function(jqxhr) {
-					if (jqxhr != null) {
-						var json = JSON.parse(jqxhr.responseText);
-						if (json.error == 1) { // NOT_AUTHENTICATED
-							alert("You're not authenticated or your session has expired.");
-							document.location.href = "/login";
-						} else {
-							if (json.message != undefined) {
-								alert("An error occurred : " + json.message);
-							} else { 
-								alert("An unknown error occurred.");
-							}
-						}
-					}
-				});
+			
+			self.makeAjaxCall("POST", self.routeNewMessage, { "content": content });
 			
 			// remove the edit and re-display the new message div
 			$topic.remove();
@@ -238,11 +181,10 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			}
 			
 			for (var i = 0; i < messagesCount; i++) {
-				var message = messages[i];
-				if (message == undefined) {
-					continue;
+				if (i in messages) {
+					var message = messages[i];
+					this.insertMessage(message.id, message.position, message.content, message.author, message.creationDate);
 				}
-				this.insertMessage(message.id, message.position, message.content, message.author, message.creationDate);
 			}
 		}
 		
@@ -334,6 +276,43 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			$preview.fadeIn(150);
 		}
 		
+
+		/**
+		 * Do an AJAX call.
+		 * @param type the type of call ("GET", "POST")
+		 * @param route the route to call
+		 * @param values the value to put in the request.
+		 */
+		this.makeAjaxCall = function(type, route, values) {
+			$.ajax({
+				type: type,
+				url: route,
+				data: values
+				})
+				.done(function(data) {
+					if (data != null) {
+						var json = JSON.parse(data);
+						if (json.error != 0) {
+							alert("Error: " + json.message);
+						}
+					}
+				})
+				.fail(function(jqxhr) {
+					if (jqxhr != null) {
+						var json = JSON.parse(jqxhr.responseText);
+						if (json.error == 1) { // NOT_AUTHENTICATED
+							alert("You're not authenticated or your session has expired.");
+							document.location.href = "/login";
+						} else {
+							if (json.message != undefined) {
+								alert("An error occurred : " + json.message);
+							} else { 
+								alert("An unknown error occurred.");
+							}
+						}
+					}
+				});
+		}
 	}
 	
 	return Conversation;

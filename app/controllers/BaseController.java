@@ -9,7 +9,7 @@ import models.Project;
 import models.User;
 
 import com.mehteor.db.ModelUtils;
-import com.mehteor.qubuto.ErrorCode;
+import com.mehteor.util.ErrorCode;
 
 import play.Logger;
 import play.libs.Json;

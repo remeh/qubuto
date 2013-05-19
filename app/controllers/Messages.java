@@ -3,8 +3,8 @@ package controllers;
 import java.util.Date;
 
 import com.mehteor.db.ModelUtils;
-import com.mehteor.qubuto.ErrorCode;
 import com.mehteor.qubuto.socket.action.MessageActions;
+import com.mehteor.util.ErrorCode;
 
 import models.Conversation;
 import models.Message;

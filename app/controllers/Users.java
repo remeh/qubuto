@@ -12,8 +12,8 @@ import play.mvc.*;
 import models.User;
 
 import com.mehteor.db.ModelUtils;
-import com.mehteor.qubuto.StringHelper;
-import com.mehteor.qubuto.session.SessionManager;
+import com.mehteor.util.StringHelper;
+import com.mehteor.util.session.SessionManager;
 
 public class Users extends SessionController {
     final static Form<User> userForm = Form.form(User.class);

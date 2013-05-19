@@ -4,11 +4,11 @@ import java.util.Date;
 import java.util.HashSet;
 
 import com.mehteor.db.ModelUtils;
-import com.mehteor.qubuto.ErrorCode;
 import com.mehteor.qubuto.socket.action.TodolistActions;
+import com.mehteor.util.ErrorCode;
 
-import models.Message;
 import models.Task;
+import models.TaskState;
 import models.Todolist;
 import play.data.DynamicForm;
 import play.data.Form;
@@ -32,8 +32,9 @@ public class Tasks extends SessionController {
 	     */
 	    
 		String content = form.get("content");
+		String title = form.get("title");
 		
-		if (content == null || todolist == null) {
+		if (content == null || title == null || todolist == null) {
 			return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
 		}
 		
@@ -43,8 +44,10 @@ public class Tasks extends SessionController {
 		Task task = new Task();
 		task.setAuthor(getUser());
 		task.setContent(content);
+		task.setTitle(title);
 		task.setCreationDate(new Date());
 		task.setTodolist(todolist);
+		task.setState(TaskState.TODO);
 		task.setTags(new HashSet<String>());
 		
 		/*

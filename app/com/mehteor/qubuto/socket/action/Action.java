@@ -3,7 +3,7 @@ package com.mehteor.qubuto.socket.action;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.mehteor.qubuto.ErrorCode;
+import com.mehteor.util.ErrorCode;
 
 import play.libs.Json;
 

@@ -1,5 +1,6 @@
 package models;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -132,6 +133,6 @@ public class Conversation extends MongoModel {
 	
 	public List<Message> getMessages() {
 		ModelUtils<Message> messages = new ModelUtils<Message>(Message.class);
-		return messages.query("{'conversation': #}", this.getId());
+		return Collections.unmodifiableList(messages.query("{'conversation': #}", this.getId()));
 	}
 }

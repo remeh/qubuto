@@ -1,6 +1,6 @@
 import java.util.concurrent.TimeUnit;
 
-import com.mehteor.qubuto.session.SessionCleanJob;
+import com.mehteor.util.session.SessionCleanJob;
 
 import controllers.Application;
 
