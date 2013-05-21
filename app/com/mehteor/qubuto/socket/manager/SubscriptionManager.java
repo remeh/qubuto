@@ -84,10 +84,11 @@ public class SubscriptionManager {
 				for (Action action : actionsQueue) {
 //					int i = 0;
 					for (Subscriber subscriber : channelSubscribers) {
-						// TODO
+						// TODO FIXME send or not send the action to the author ?
 						// do not send the action to the author
 //						if (!action.isAuthor(subscriber.getUser()))
 //						{
+						    System.out.println("Consumed an action : " + action.getClass().getSimpleName() + " : " + action.toJson());
 							subscriber.sendAction(action);
 //							i++;
 //						}

@@ -24,10 +24,10 @@
 			<a href="@routes.Projects.show(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName())" title="@conversation.getProject().getName()">&nbsp;<i class="icon-arrow-left"> </i> <span class="bold">@conversation.getProject().getName()</span></a>
 			<h1 class="green"><span class="light-gray"><i class="icon-comment"> </i></span> @conversation.getTitle()</h1>
 			<span class="topic-author light-gray">
-				<i class="icon-user"></i> Authored by</span> <span class="gray">@conversation.getCreator().getUsername()
+				<i class="icon-user"></i>&nbsp;Authored by</span> <span class="gray">@conversation.getCreator().getUsername()
 			</span> 
     		<span class="topic-creation-date light-gray">
-    			<i class="icon-time"></i> Creation date <span class="gray">@conversation.getCreationDate().format(Application.COMPLETE_DATE_PATTERN)</span>
+    			<i class="icon-time"></i>&nbsp;Creation date <span class="gray">@conversation.getCreationDate().format(Application.COMPLETE_DATE_PATTERN)</span>
         	</span>
 		</header>
 		<article class="conversation-content">
@@ -59,6 +59,7 @@
 		</article>
 		<article>
 			<br />
+            <h3><i class="icon-comments"></i>&nbsp;Messages</h3> 
 			<div class="topic-message-container">
 				<div class="topic-message topic-message-prototype" style="display: none;" data-id="__id__"
 					data-route-update="@routes.Messages.update(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName(), conversation.getCleanTitle(), "__id__")">

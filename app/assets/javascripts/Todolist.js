@@ -3,16 +3,20 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		var self = this;
 		this.websocket = null;
 		this.routeAddTask = null;
+		this.routeAddTag = null;
+		this.routeRemoveTag = null;
 		this.todoTemplate = null;
 	
 		/**
 		 * Init the todolist pages.
 		 */
-		this.init = function(routeAddTask) {
+		this.init                       = function(routeAddTask, routeAddTag, routeRemoveTag) {
 			/*
 			 * init the routes
 			 */
-			this.routeAddTask = routeAddTask;
+			this.routeAddTask   = routeAddTask;
+			this.routeAddTag    = routeAddTag;
+			this.routeRemoveTag = routeRemoveTag;
 			
 			this.initWebsocket();
 			
@@ -25,10 +29,17 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			 * Init tasks.
 			 */
 			this.initTasks();
+
+            /*
+             * Binds DOM events.
+             */
+            this.bindEvents();
+		}
 			
-			/*
-			 * Bind events.
-			 */
+        /**
+         * Binds the DOM events.
+         */
+        this.bindEvents                 = function() {
 			$(document).on("click", "#btn-create-task", function() {
 				self.newTask();
 			});
@@ -36,7 +47,32 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			$(document).on("click", "#add-task", function() {
 				self.addTask($(this));
 			});
-		}
+
+            $(document).on("click", "a.tag", function() {
+                self.tagClick($(this));
+            });
+        }
+
+        /**
+         * Called when a click has been done on a tag.
+         * @param $selector the jQuery selector on the clicked tag.
+         */
+        this.tagClick                   = function($selector) {
+            if ($selector == undefined) {
+                return;
+            }
+
+            var tag = $selector.data('tag');  
+            var taskId = $selector.parents('.todo-entry').first().attr('id');
+
+            if ($selector.hasClass('active')) {
+                // Click to remove
+                self.removeTagAjaxCall(taskId, tag);
+            } else {
+                // Click to add
+                self.addTagAjaxCall(taskId, tag);
+            }
+        }
 		
 		/**
 		 * Prepares the handlebars templates.
@@ -52,7 +88,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		/**
 		 * Init the tasks in the view.
 		 */
-		this.initTasks = function() {
+		this.initTasks                  = function() {
 			// these data has been inserted in the dom in the top of the page
 			// by the scala view.
 			for (var i = 0; i < tasksCount; i++) {
@@ -66,10 +102,10 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		/**
 		 * When an user want to create a new task.
 		 */
-		this.newTask = function() {
+		this.newTask                    = function() {
 			// clear the inputs
 			self.clearInputs();
-			
+
 			// show the popup
 			$("div#new-task").modal({
 				'containerCss': { 'min-width': '350px' },
@@ -79,6 +115,9 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 					dialog.overlay.fadeIn(100, function () {
 						dialog.data.fadeIn(50, function () {
 							dialog.container.show();
+
+                            // Give the focus to the first input
+                            $('input#add-task-title').focus();
 						});
 					});
 				},
@@ -97,7 +136,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		 * When the user has clicked on the Add button to create the task.
 		 * @param $selector the jQuery selector of the button.
 		 */
-		this.addTask = function($selector) {
+		this.addTask                        = function($selector) {
 			/*
 			 * Retrieve values
 			 */
@@ -114,22 +153,12 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			}
 			// TODO else ?
 		}
-		
-		/**
-		 * The AJAX call to create a Task.
-		 * @param serializedForm the serialized form (for parameters values).
-		 */
-		this.addTaskAjaxCall = function(title, content) {
-			var route = self.routeAddTask;
-			var values = {
-				"content": content,
-				"title": title
-			}
-			
+
+        this.sendAjaxCall               = function(route, postValues, doneCallback, failCallback) {
 			$.ajax({
-				type: "POST",
+				type: 'POST',
 				url: route,
-				data: values
+				data: postValues
 				})
 				.done(function(data) {
 					if (data != null) {
@@ -138,14 +167,15 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 							alert("Error: " + json.message);
 						}
 					}
-					// re-enable inputs
-					self.enableAddTask();
-					// close the modal
-					$.modal.close();
-					
+
+                    if (doneCallback != undefined) {
+                        doneCallback(json);
+                    }
 				})
 				.fail(function(jqxhr) {
-					self.enableAddTask();
+                    if (failCallback != undefined) {
+                        failCallback(json);
+                    }
 					if (jqxhr != null) {
 						var json = JSON.parse(jqxhr.responseText);
 						if (json.error == 1) { // NOT_AUTHENTICATED
@@ -160,9 +190,77 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 						}
 					}
 				});
+        }
+		
+		/**
+		 * The AJAX call to create a Task.
+         * @param title the title of the tag
+         * @param content the content of the tag
+		 */
+		this.addTaskAjaxCall            = function(title, content) {
+			var route = self.routeAddTask;
+			var values = {
+				"content": content,
+				"title": title
+			}
+            var doneCallback = function() {
+                // re-enable inputs
+                self.enableAddTask();
+                // close the modal
+                $.modal.close();
+		    }
+            var failCallback = function() {
+                self.enableAddTask();
+            }
+            // sends the AJAX call.
+            self.sendAjaxCall(route, values, doneCallback, failCallback);
 		}
 		
-		this.disableAddTask = function($selector) {
+		/**
+		 * The AJAX call to add a tag on a Task.
+         * @param taskId id of the task on which we add a tag
+         * @param tag the tag to add on the task
+		 */
+		this.addTagAjaxCall             = function(taskId, tag) {
+			var route = self.routeAddTag;
+			var values = {
+                "taskId": taskId,
+                "tag": tag 
+			}
+            var doneCallback = function() {
+                alert('yaaay!'); //TODO
+		    }
+            var failCallback = function() {
+                alert('ooh');   // TODO
+            }
+
+            // sends the AJAX call.
+            self.sendAjaxCall(route, values, doneCallback, failCallback);
+		}
+		
+		/**
+		 * The AJAX call to remove a tag on a Task.
+         * @param taskId id of the task on which we remove a tag
+         * @param tag the tag to remove on the task
+		 */
+		this.removeTagAjaxCall             = function(taskId, tag) {
+			var route = self.routeRemoveTag;
+			var values = {
+                "taskId": taskId,
+                "tag": tag 
+			}
+            var doneCallback = function() {
+                alert('yaaay!'); // TODO
+		    }
+            var failCallback = function() {
+                alert('ooh');    // TODO
+            }
+            
+            // sends the AJAX call.
+            self.sendAjaxCall(route, values, doneCallback, failCallback);
+		}
+		
+		this.disableAddTask             = function($selector) {
 			$("#add-task-title").attr('disabled','disabled');
 			$("#add-task-content").attr('disabled','disabled');
 			$('#add-task').attr('disabled','disabled');
@@ -171,13 +269,13 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			}, 30000);
 		}
 		
-		this.enableAddTask = function() {
+		this.enableAddTask              = function() {
 			$("#add-task-title").removeAttr('disabled');
 			$("#add-task-content").removeAttr('disabled');
 			$('#add-task').removeAttr('disabled');
 		}
 		
-		this.initWebsocket = function() {
+		this.initWebsocket              = function() {
 			// websocketUri comes from the DOM.
 			if (websocketUri != undefined) {
 				this.websocket = new TodolistQubutoWebSocket(this);
@@ -188,7 +286,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		/**
 		 * Clears the input of the "Add task" feature.
 		 */
-		this.clearInputs = function() {
+		this.clearInputs                = function() {
 			$("#add-task-title").val('');
 			$("#add-task-content").val('');
 		}

@@ -3,6 +3,10 @@ package models;
 import java.util.Date;
 import java.util.Set;
 
+import org.codehaus.jackson.node.ObjectNode;
+
+import play.libs.Json;
+
 import com.mehteor.db.ModelUtils;
 import com.mehteor.db.MongoModel;
 
@@ -144,5 +148,19 @@ public class Task extends MongoModel {
 	
 	public void setTodolist(Todolist todolist) {
 		this.todolist = todolist.getId();
+	}
+    
+	// ---------------------
+	
+	/**
+	 * Returns a Task jsoned for Action diffusion.
+	 * @return ObjectNode the Task jsonsed for Action diffusion.
+	 */
+	public ObjectNode toJsonAction() {
+		ObjectNode node = Json.newObject();
+		node.put("title", content);
+		node.put("content", content);
+		node.put("author", getAuthor().getUsername());
+		return node;
 	}
 }

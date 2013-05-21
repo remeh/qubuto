@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import models.TaskState;
+
 import com.mehteor.db.ModelUtils;
 import com.mehteor.db.MongoModel;
 
@@ -121,4 +123,13 @@ public class Todolist extends MongoModel {
 		return Collections.unmodifiableList(tasks.query("{'todolist': #}", this.getId()));
 	}
 
+	public List<Task> getTodoTasks() {
+		ModelUtils<Task> tasks = new ModelUtils<Task>(Task.class);
+		return Collections.unmodifiableList(tasks.query(String.format("{'todolist': #, 'state': '%s'}", TaskState.TODO), this.getId()));
+	}
+
+	public List<Task> getDoneTasks() {
+		ModelUtils<Task> tasks = new ModelUtils<Task>(Task.class);
+		return Collections.unmodifiableList(tasks.query(String.format("{'todolist': #, 'state': '%s'}", TaskState.DONE), this.getId()));
+	}
 }

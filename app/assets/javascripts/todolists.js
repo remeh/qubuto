@@ -6,13 +6,15 @@ require(["Todolist"], function(Todolist) {
 		/*
 		 * Read needed data in the DOM.
 		 */
-		var routeAddTask = $('#main-div').data('route-add-task');
+		var routeAddTask    = $('#main-div').data('route-add-task');
+		var routeAddTag     = $('#main-div').data('route-add-tag');
+		var routeRemoveTag  = $('#main-div').data('route-remove-tag');
 		var todolist = new Todolist();
 		
 		/*
 		 * Init the Todolist.
 		 */
 		 
-		todolist.init(routeAddTask);
+		todolist.init(routeAddTask, routeAddTag, routeRemoveTag);
 	});
 });

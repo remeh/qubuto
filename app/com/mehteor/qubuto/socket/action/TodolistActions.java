@@ -1,7 +1,8 @@
 package com.mehteor.qubuto.socket.action;
 
 import com.mehteor.qubuto.socket.action.todolist.NewTaskAction;
-import com.mehteor.qubuto.socket.manager.ConversationSubscriptionManager;
+import com.mehteor.qubuto.socket.action.todolist.AddTagAction;
+import com.mehteor.qubuto.socket.action.todolist.RemoveTagAction;
 import com.mehteor.qubuto.socket.manager.TodolistSubscriptionManager;
 
 import models.Task;
@@ -16,10 +17,20 @@ public class TodolistActions {
 		TodolistSubscriptionManager.getInstance().addAction(channelId, new NewTaskAction(author, task));
 		consumeActions(channelId);
 	}
+
+	public static void addTagAction(String channelId, User author, Task task, String tag) {
+		TodolistSubscriptionManager.getInstance().addAction(channelId, new AddTagAction(author, task, tag));
+		consumeActions(channelId);
+	}
+
+	public static void removeTagAction(String channelId, User author, Task task, String tag) {
+		TodolistSubscriptionManager.getInstance().addAction(channelId, new RemoveTagAction(author, task, tag));
+		consumeActions(channelId);
+	}
 	
 	// ---------------------
 	
 	public static void consumeActions(String channelId) {
-		ConversationSubscriptionManager.getInstance().consumeActions(channelId);
+		TodolistSubscriptionManager.getInstance().consumeActions(channelId);
 	}
 }

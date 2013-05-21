@@ -13,24 +13,25 @@ import models.Task;
 import models.User;
 
 /**
- * Action created when someone creates a Task in a Todolist.
+ * Action created when someone adds a Tag on a Task.
  * @author Rémy 'remeh' Mathieu
  */
-public class NewTaskAction extends Action {
+public class AddTagAction extends Action {
 	/**
 	 * The {@link ObjectNode} used to render the action.
 	 */
 	private final ObjectNode objectNode;
 	
-	public NewTaskAction(User author, Task task) {
+	public AddTagAction(User author, Task task, String tag) {
 		super(author);
 		
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Application.COMPLETE_DATE_PATTERN);
 		
 		objectNode = Action.createNoErrorsNode();
-		objectNode.put("action", "NewTask");
+		objectNode.put("action", "AddTask");
 		objectNode.putAll(author.toJsonPublic());
-        objectNode.putAll(task.toJsonAction());
+		objectNode.put("taskId", task.getId());
+		objectNode.put("tag", tag);
 		// TODO
 	}
 	
@@ -41,3 +42,4 @@ public class NewTaskAction extends Action {
 		return objectNode;
 	}
 }
+
