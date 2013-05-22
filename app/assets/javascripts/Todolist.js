@@ -115,10 +115,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		this.initTasks                  = function() {
 			// these data has been inserted in the dom in the top of the page
 			// by the scala view.
-			for (var i = 0; i < tasksCount; i++) {
-				if (i in tasks) {
-                    self.insertTask(tasks[i]);
-				}
+			for (var key in tasks) {
+                self.insertTask(tasks[key]);
 			}
 		}
 

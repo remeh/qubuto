@@ -125,11 +125,11 @@ public class Todolist extends MongoModel {
 
 	public List<Task> getTodoTasks() {
 		ModelUtils<Task> tasks = new ModelUtils<Task>(Task.class);
-		return Collections.unmodifiableList(tasks.query(String.format("{'todolist': #, 'state': '%s'}", TaskState.TODO), this.getId()));
+		return Collections.unmodifiableList(tasks.query("{'todolist': #, 'state': #}", this.getId(), TaskState.TODO));
 	}
 
 	public List<Task> getDoneTasks() {
 		ModelUtils<Task> tasks = new ModelUtils<Task>(Task.class);
-		return Collections.unmodifiableList(tasks.query(String.format("{'todolist': #, 'state': '%s'}", TaskState.DONE), this.getId()));
+		return Collections.unmodifiableList(tasks.query("{'todolist': #, 'state': #}", this.getId(), TaskState.DONE));
 	}
 }
