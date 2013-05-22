@@ -41,6 +41,7 @@ GET		/q/:username/:projectCleanName/ws/t/:todolistName								controllers.Todoli
 # ###############
 # Ajax part
 POST	/q/:username/:projectCleanName/a/t/t/add/:todolistName							controllers.Tasks.add(username, projectCleanName, todolistName)
+POST	/q/:username/:projectCleanName/a/t/t/del/:todolistName							controllers.Tasks.delete(username, projectCleanName, todolistName)
 POST	/q/:username/:projectCleanName/a/t/tag/add/:todolistName						controllers.Tasks.addTag(username, projectCleanName, todolistName)
 POST	/q/:username/:projectCleanName/a/t/tag/rem/:todolistName						controllers.Tasks.removeTag(username, projectCleanName, todolistName)
 

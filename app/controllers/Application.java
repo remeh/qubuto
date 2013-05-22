@@ -1,5 +1,6 @@
 package controllers;
 
+import java.text.SimpleDateFormat;
 
 import com.mehteor.qubuto.socket.manager.ConversationSubscriptionManager;
 
@@ -9,7 +10,9 @@ import scala.util.Random;
 
 public class Application extends SessionController {
 	
-	public static String COMPLETE_DATE_PATTERN = "yyyy/MM/dd - HH:mm";
+	public static String COMPLETE_DATE_PATTERN  = "yyyy/MM/dd - HH:mm";
+
+    public static SimpleDateFormat formater     = new SimpleDateFormat(Application.COMPLETE_DATE_PATTERN);
 	
 	// ---------------------
 	

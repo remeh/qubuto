@@ -1,6 +1,7 @@
 package com.mehteor.qubuto.socket.action.todolist;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
@@ -13,22 +14,22 @@ import models.Task;
 import models.User;
 
 /**
- * Action created when someone adds a Tag on a Task.
+ * Action created when someone deletes a Task in a Todolist.
  * @author Rémy 'remeh' Mathieu
  */
-public class AddTagAction extends Action {
+public class DeleteTaskAction extends Action {
 	/**
 	 * The {@link ObjectNode} used to render the action.
 	 */
 	private final ObjectNode objectNode;
 	
-	public AddTagAction(User author, Task task, String tag) {
+	public DeleteTaskAction(User author, Task task) {
 		super(author);
 		objectNode = Action.createNoErrorsNode();
-		objectNode.put("action", "AddTag");
+		objectNode.put("action", "DeleteTask");
 		objectNode.putAll(author.toJsonPublic());
-		objectNode.put("taskId", task.getId());
-		objectNode.put("tag", tag);
+        objectNode.put("deletionDate", Application.formater.format(new Date()));
+        objectNode.putAll(task.toJsonAction());
 	}
 	
 	// ---------------------
@@ -38,4 +39,3 @@ public class AddTagAction extends Action {
 		return objectNode;
 	}
 }
-

@@ -6,15 +6,16 @@
 	var tasksCount = @tasks.size();
 	var tasks = [];
 	@for(task <- tasks) {
-		tasks[@task.getPosition()] = {id:"@task.getId()",state:"@task.getState()",position:@task.getPosition(),author:"@task.getAuthor().getUsername()",creationDate:"@task.getCreationDate().format(Application.COMPLETE_DATE_PATTERN)",title: @Html(Json.stringify(Json.toJson(task.getTitle()))),content: @Html(Json.stringify(Json.toJson(task.getContent())))};
+		tasks[@task.getPosition()] = @Html(task.toJsonView().toString());
 	}
 	websocketUri = "@websocketUri";
 </script>
 @todolists.modalNewTask.render(todolist)
 <div id="main-div"
-				   data-route-add-task="@routes.Tasks.add(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
-				   data-route-add-tag="@routes.Tasks.addTag(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
-				   data-route-remove-tag="@routes.Tasks.removeTag(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())">
+       data-route-add-task="@routes.Tasks.add(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-delete-task="@routes.Tasks.delete(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-add-tag="@routes.Tasks.addTag(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-remove-tag="@routes.Tasks.removeTag(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())">
 	<section>
 		<header>
 		<a href='@routes.Projects.show(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName())' title='Back to @todolist.getProject().getName()'>&nbsp;<i class='icon-arrow-left'> </i> <span class="bold">@todolist.getProject().getName()</span></a>
@@ -46,9 +47,9 @@
                                     <span>
                                         <i class="gray icon-tag" title="Tags"></i>&nbsp;
                                     </span>
-                                    <a class="tag" href="#" data-tag="TODO"><span class="tag">TODO</span></a>
-                                    <a class="tag" href="#" data-tag="FEATURE"><span class="tag">FEATURE</span></a>
-                                    <a class="tag" href="#" data-tag="WISH"><span class="tag">WISH</span></a>
+                                    <a class="tag" href="#" data-tag="1"><span class="tag{{#contains tags 1}} tag-active tag-active-1{{/contains}}">TODO</span></a>
+                                    <a class="tag" href="#" data-tag="2"><span class="tag{{#contains tags 2}} tag-active tag-active-2{{/contains}}">FEATURE</span></a>
+                                    <a class="tag" href="#" data-tag="3"><span class="tag{{#contains tags 3}} tag-active tag-active-3{{/contains}}">WISH</span></a>
                                 </div>
                                 <div class="todo-infos">
                                     <span>

@@ -24,14 +24,10 @@ public class NewTaskAction extends Action {
 	
 	public NewTaskAction(User author, Task task) {
 		super(author);
-		
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Application.COMPLETE_DATE_PATTERN);
-		
 		objectNode = Action.createNoErrorsNode();
 		objectNode.put("action", "NewTask");
 		objectNode.putAll(author.toJsonPublic());
         objectNode.putAll(task.toJsonAction());
-		// TODO
 	}
 	
 	// ---------------------

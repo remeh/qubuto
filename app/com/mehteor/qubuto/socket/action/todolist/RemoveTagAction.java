@@ -24,15 +24,11 @@ public class RemoveTagAction extends Action {
 	
 	public RemoveTagAction(User author, Task task, String tag) {
 		super(author);
-		
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Application.COMPLETE_DATE_PATTERN);
-		
 		objectNode = Action.createNoErrorsNode();
-		objectNode.put("action", "RemoveTask");
+		objectNode.put("action", "RemoveTag");
 		objectNode.putAll(author.toJsonPublic());
 		objectNode.put("taskId", task.getId());
 		objectNode.put("tag", tag);
-		// TODO
 	}
 	
 	// ---------------------

@@ -1,10 +1,11 @@
 define(function() {
 	function TodolistQubutoWebSocket(todolist) {
+        var self = this;
 		this.websocketUri = null;
 		this.websocket = null;
 		this.todolist = todolist;
 		
-		this.open = function(uri) {
+		this.open                       = function(uri) {
 			var $this = this;
 			this.websocketUri = uri;
 			this.websocket = new WebSocket(uri);
@@ -13,7 +14,7 @@ define(function() {
 			this.websocket.onclose = function() { $this.onClose(); };
 		}
 		
-		this.onMessage = function(message) {
+		this.onMessage                  = function(message) {
 			var json = JSON.parse(message.data);
 			if (json != undefined) {
 				if (json.error < 1) {
@@ -29,19 +30,57 @@ define(function() {
 			}
 		}
 		
-		this.onOpen = function() {
+		this.onOpen                     = function() {
 		}
 		
-		this.onClose = function() {
+		this.onClose                    = function() {
 		}
+
+        this.addTag                     = function(json) {
+            if (json == undefined) {
+                return;
+            }
+            self.todolist.activeTag(json.taskId, json.tag);
+        }
+
+        this.removeTag                  = function(json) {
+            if (json == undefined) {
+                return;
+            }
+            self.todolist.removeTag(json.taskId, json.tag);
+        }
+
+        this.newTask                  = function(json) {
+            if (json == undefined) {
+                return;
+            }
+            self.todolist.insertTask(json);
+        }
+
+        this.deleteTask               = function(json) {
+            if (json == undefined) {
+                return;
+            }
+            self.todolist.removeTask(json.id);
+        }
 		
 		/*
 		 * When the websocket receive a message, process the matching action.
 		 */
 		this.processMessage = function(json) {
 			switch (json.action) {
-				case "TopicUpdate":
-					this.topicUpdate(json);
+                // TODO
+                case "AddTag":
+                    this.addTag(json);
+                    break;
+                case "RemoveTag":
+                    this.removeTag(json);
+                    break;
+				case "NewTask":
+					this.newTask(json);
+					break;
+				case "DeleteTask":
+					this.deleteTask(json);
 					break;
 			}
 		}

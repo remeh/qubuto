@@ -73,7 +73,7 @@ public class Tasks extends SessionController {
 		/*
 		 * Broadcast the action
 		 */
-		TodolistActions.removeTagAction(todolist.getId(), getUser(), task, tag);
+		TodolistActions.addTagAction(todolist.getId(), getUser(), task, tag);
 
 		return ok(BaseController.renderNoErrorsJson());
     }
@@ -200,6 +200,66 @@ public class Tasks extends SessionController {
 		 */
 		
 		TodolistActions.newTaskAction(todolist.getId(), getUser(), task);
+
+		return ok(BaseController.renderNoErrorsJson());
+	}
+
+    /**
+     * Ajax
+     * @param username          the username of the owner of the project
+     * @param projectCleanName  the project clean name
+     * @param todolistName      the todolist clean name
+     */
+	public static Result delete(String username, String projectCleanName, String todolistName) {
+		if (!isAuthenticated("You're not authenticated.", true)) {
+			return badRequest(BaseController.renderNotAuthenticatedJson());
+		}
+        
+        // TODO rights
+		
+		/*
+		 * Find the corresponding todolist.
+		 */
+		Todolist todolist = Todolists.findTodolist(username, projectCleanName, todolistName);
+
+        if (todolist == null) {
+            return Results.notFound(""); // 404
+        }
+		
+	    DynamicForm form = Form.form().bindFromRequest();
+
+	    /*
+	     * Required fields.
+	     */
+	    
+		String taskId = form.get("taskId");
+		
+		if (taskId == null) {
+			return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
+		}
+		
+		/*
+		 * Looks for the task.
+		 */
+		ModelUtils<Task> muTask = new ModelUtils<Task>(Task.class);
+		Task task = muTask.find(taskId);
+        
+        if (task == null) {
+			return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
+		}
+
+        System.out.println(task);
+
+		/*
+		 * Finally deletes the task.
+		 */
+		task.remove();
+		
+		/*
+		 * Broadcast the action
+		 */
+		
+		TodolistActions.deleteTaskAction(todolist.getId(), getUser(), task);
 
 		return ok(BaseController.renderNoErrorsJson());
 	}

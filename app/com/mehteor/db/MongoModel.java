@@ -29,7 +29,7 @@ public class MongoModel {
 	}
 
 	public void remove() {
-		models().remove(this.id);
+		models().remove("{_id: #}", this.id);
 	}
 	
 	// ---------------------

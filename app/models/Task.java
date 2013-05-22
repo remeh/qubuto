@@ -2,6 +2,8 @@ package models;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.HashSet;
+import java.text.SimpleDateFormat;
 
 import org.codehaus.jackson.node.ObjectNode;
 
@@ -9,6 +11,8 @@ import play.libs.Json;
 
 import com.mehteor.db.ModelUtils;
 import com.mehteor.db.MongoModel;
+
+import controllers.Application;
 
 /**
  * A task in a todolist.
@@ -66,6 +70,7 @@ public class Task extends MongoModel {
 	// ---------------------
 	
 	public Task() {
+        tags = new HashSet<String>();
 	}
 
 	// ---------------------
@@ -153,14 +158,26 @@ public class Task extends MongoModel {
 	// ---------------------
 	
 	/**
+	 * Returns a Task jsoned for the view.
+	 * @return ObjectNode the Task jsonsed for Action diffusion.
+	 */
+	public ObjectNode toJsonView() {
+		ObjectNode node = Json.newObject();
+        node.put("id",              id);
+		node.put("title",           title);
+		node.put("creationDate",    Application.formater.format(creationDate));
+		node.put("content",         content);
+		node.put("position",        position);
+		node.put("tags",            Json.toJson(tags));
+		node.put("author",          getAuthor().getUsername());
+		return node;
+	}
+
+	/**
 	 * Returns a Task jsoned for Action diffusion.
 	 * @return ObjectNode the Task jsonsed for Action diffusion.
 	 */
 	public ObjectNode toJsonAction() {
-		ObjectNode node = Json.newObject();
-		node.put("title", content);
-		node.put("content", content);
-		node.put("author", getAuthor().getUsername());
-		return node;
+        return toJsonView();
 	}
 }
