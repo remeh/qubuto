@@ -14,6 +14,8 @@
 <div id="main-div"
        data-route-add-task="@routes.Tasks.add(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
        data-route-delete-task="@routes.Tasks.delete(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-close-task="@routes.Tasks.close(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-open-task="@routes.Tasks.open(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
        data-route-add-tag="@routes.Tasks.addTag(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
        data-route-remove-tag="@routes.Tasks.removeTag(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())">
 	<section>
@@ -40,7 +42,7 @@
 						<div class="pretty-entry todo-entry" id="{{id}}">
                             <a href='#' class="task-remove"><i class="float-right light-gray icon-trash"></i></a>
 							<div>
-                                <a href='#' class="task-done" title="Done"><i class="icon-check-empty gray"></i></a> <span class="dark-gray bold">{{title}}</span> - {{content}}
+                                <a href='#' class="task-done" title="Done"><i class="{{#equals state 'TODO'}}icon-check-empty{{else}}icon-check{{/equals}} gray"></i></a> <span class="dark-gray bold">{{title}}</span> - {{content}}
                             </div>
                             <div class="float-left">
                                 <div class="tags">
@@ -59,6 +61,7 @@
                             </div>
                             <div class="float-right">
                                 <div class="todo-actions">
+                                    <span class="loader" id="loader-{{id}}"><i class="icon-spinner icon-spin"></i></span>
                                     <button class="small-btn task-comments"><i class="icon-comments"></i> Comments</button>
                                 </div>
                             </div>
@@ -70,6 +73,8 @@
 			</div>
 			<div class="done">
 				<h3><i class="light-gray icon-check"> </i>Done</h3>
+				<div id="done-container" class="pretty-list">
+                </div>
 			</div>
 		</article>
 		<footer>

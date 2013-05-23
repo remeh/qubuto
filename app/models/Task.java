@@ -167,6 +167,7 @@ public class Task extends MongoModel {
 		node.put("title",           title);
 		node.put("creationDate",    Application.formater.format(creationDate));
 		node.put("content",         content);
+		node.put("state",           state.toString());
 		node.put("position",        position);
 		node.put("tags",            Json.toJson(tags));
 		node.put("author",          getAuthor().getUsername());

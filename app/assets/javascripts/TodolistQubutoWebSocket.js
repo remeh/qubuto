@@ -40,28 +40,42 @@ define(function() {
             if (json == undefined) {
                 return;
             }
-            self.todolist.activeTag(json.taskId, json.tag);
+            self.todolist.activeTag(json.task.id, json.tag);
         }
 
         this.removeTag                  = function(json) {
             if (json == undefined) {
                 return;
             }
-            self.todolist.removeTag(json.taskId, json.tag);
+            self.todolist.removeTag(json.task.id, json.tag);
         }
 
         this.newTask                  = function(json) {
             if (json == undefined) {
                 return;
             }
-            self.todolist.insertTask(json);
+            self.todolist.insertTask(json.task);
+        }
+
+        this.closeTask                = function(json) {
+            if (json == undefined) {
+                return;
+            }
+            self.todolist.closeTask(json.task.id);
+        }
+
+        this.openTask                = function(json) {
+            if (json == undefined) {
+                return;
+            }
+            self.todolist.openTask(json.task.id);
         }
 
         this.deleteTask               = function(json) {
             if (json == undefined) {
                 return;
             }
-            self.todolist.removeTask(json.id);
+            self.todolist.removeTask(json.task.id);
         }
 		
 		/*
@@ -69,7 +83,6 @@ define(function() {
 		 */
 		this.processMessage = function(json) {
 			switch (json.action) {
-                // TODO
                 case "AddTag":
                     this.addTag(json);
                     break;
@@ -78,6 +91,12 @@ define(function() {
                     break;
 				case "NewTask":
 					this.newTask(json);
+					break;
+				case "CloseTask":
+					this.closeTask(json);
+					break;
+                case "OpenTask":
+					this.openTask(json);
 					break;
 				case "DeleteTask":
 					this.deleteTask(json);

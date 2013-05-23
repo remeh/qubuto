@@ -1,9 +1,13 @@
 define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 	function Todolist() {
+        var TIMEOUT = 10000;
+
 		var self = this;
 		this.websocket          = null;
 		this.routeAddTask       = null;
 		this.routeDeleteTask    = null;
+		this.routeCloseTask     = null;
+		this.routeOpenTask      = null;
 		this.routeAddTag        = null;
 		this.routeRemoveTag     = null;
 		this.todoTemplate       = null;
@@ -11,12 +15,14 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		/**
 		 * Init the todolist pages.
 		 */
-		this.init                       = function(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag) {
+		this.init                       = function(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask) {
 			/*
 			 * init the routes
 			 */
 			this.routeAddTask       = routeAddTask;
 			this.routeDeleteTask    = routeDeleteTask;
+			this.routeCloseTask     = routeCloseTask;
+			this.routeOpenTask      = routeOpenTask;
 			this.routeAddTag        = routeAddTag;
 			this.routeRemoveTag     = routeRemoveTag;
 			
@@ -56,6 +62,10 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 
             $(document).on("click", "a.tag", function() {
                 self.tagClick($(this));
+            });
+
+            $(document).on("click", "a.task-done", function() {
+                self.closeTask($(this));
             });
         }
 
@@ -102,6 +112,17 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 }
                 return options.inverse(this);
             });
+
+            Handlebars.registerHelper('equals', function(lvalue, rvalue, options) {
+                if (arguments.length < 3) {
+                    throw new Error("Handlebars Helper contains needs 2 parameters");
+                }
+                if (lvalue == rvalue) {
+                    return options.fn(this);
+                }
+                return options.inverse(this);
+            });
+
 			/*
 			 * Prepare the Handlebars template.
 			 */
@@ -116,7 +137,12 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			// these data has been inserted in the dom in the top of the page
 			// by the scala view.
 			for (var key in tasks) {
-                self.insertTask(tasks[key]);
+                var task = tasks[key];
+                if (task.state == 'TODO') {
+                    self.insertTask(task);
+                } else if (task.state == 'DONE') {
+                    self.insertDoneTask(task);
+                }
 			}
 		}
 
@@ -130,6 +156,15 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
         }
 
         /**
+         * Inserts the given task (json) in the DOM.
+         * @param task  the task (json) to add in the DOM.
+         */
+        this.insertDoneTask                 = function(task) {
+            var html = self.todoTemplate(task);
+            $('#done-container').append(html);
+        }
+
+        /**
          * Removes a Task from the DOM.
          * @param taskId  the task id of the Task to remove from the DOM.
          */
@@ -138,6 +173,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             if ($task != undefined) {
                 $task.remove();
             }
+
+            self.hideTaskLoader(taskId);
         }
 
         /**
@@ -156,6 +193,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                     $this.addClass('tag-active-' + tag);
                 }
             }
+
+            self.hideTaskLoader(taskId);
         }
 
         /**
@@ -171,6 +210,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 $this.removeClass('tag-active');
                 $this.removeClass('tag-active-' + tag);
             }
+
+            self.hideTaskLoader(taskId);
         }
 		
 		/**
@@ -242,6 +283,24 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             self.deleteTaskAjaxCall(taskId);
 		}
 
+		/**
+		 * When the user has clicked on the open task icon.
+		 * @param $selector the jQuery selector of the button.
+		 */
+		this.openTask                        = function($selector) {
+            var taskId = $selector.parents('todo-entry').first().attr('id');
+            self.openTaskAjaxCall(taskId);
+		}
+		
+		/**
+		 * When the user has clicked on the close task icon.
+		 * @param $selector the jQuery selector of the button.
+		 */
+		this.closeTask                        = function($selector) {
+            var taskId = $selector.parents('.todo-entry').first().attr('id');
+            self.closeTaskAjaxCall(taskId);
+		}
+
         /**
          * Sends an AJAX call to the given route, with the given post values then call 
          * either the done callback or the fail callback.
@@ -311,6 +370,38 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             // sends the AJAX call.
             self.sendAjaxCall(route, values, doneCallback, failCallback);
 		}
+
+		/**
+		 * The AJAX call to open a Task.
+         * @param taskId    the task id of the Task to open
+		 */
+		this.openTaskAjaxCall         = function(taskId) {
+			var route = self.routeOpenTask;
+			var values = {
+				"taskId": taskId
+			}
+
+            self.showTaskLoader(taskId);
+
+            // sends the AJAX call.
+            self.sendAjaxCall(route, values);
+		}
+		
+		/**
+		 * The AJAX call to close a Task.
+         * @param taskId    the task id of the Task to close
+		 */
+		this.closeTaskAjaxCall         = function(taskId) {
+			var route = self.routeCloseTask;
+			var values = {
+				"taskId": taskId
+			}
+
+            self.showTaskLoader(taskId);
+
+            // sends the AJAX call.
+            self.sendAjaxCall(route, values);
+		}
 		
 		/**
 		 * The AJAX call to delete a Task.
@@ -321,6 +412,9 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			var values = {
 				"taskId": taskId
 			}
+
+            self.showTaskLoader(taskId);
+
             // sends the AJAX call.
             self.sendAjaxCall(route, values);
 		}
@@ -337,6 +431,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 "tag": tag 
 			}
 
+            self.showTaskLoader(taskId);
+
             // sends the AJAX call.
             self.sendAjaxCall(route, values);
 		}
@@ -352,6 +448,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 "taskId": taskId,
                 "tag": tag 
 			}
+
+            self.showTaskLoader(taskId);
             
             // sends the AJAX call.
             self.sendAjaxCall(route, values);
@@ -361,9 +459,11 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			$("#add-task-title").attr('disabled','disabled');
 			$("#add-task-content").attr('disabled','disabled');
 			$('#add-task').attr('disabled','disabled');
+            $('#modal-loader').show();
+
 			setTimeout(function() {
 				self.enableAddTask();
-			}, 30000);
+			}, TIMEOUT);
 		}
 		
 		this.enableAddTask              = function() {
@@ -387,6 +487,39 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			$("#add-task-title").val('');
 			$("#add-task-content").val('');
 		}
+
+        /**
+         * Shows the Task loader for the given task. (a timeout forbid the loader to be displayed constantly)
+         * @param   taskId  the id of the task
+         */
+        this.showTaskLoader             = function(taskId) {
+            $loader = $('#loader-' + taskId);
+            $loader.show();
+            this.timeoutHide($loader);
+        }
+
+        /**
+         * Hides the Task loader for the given task.
+         * @param   taskId  the id of the task
+         */
+        this.hideTaskLoader             = function(taskId) {
+            $('#loader-' + taskId).fadeOut(50);
+        }
+
+        /**
+         * Hide a DOM after the given amount of time (could be null, default : 5000 ms)
+         * @param   $selector   the DOM part to hide.
+         * @param   timeout     after how many ms the DOM part is automatically hide.
+         */
+        this.timeoutHide                = function($selector, timeout) {
+            var d = TIMEOUT;
+            if (timeout != undefined) {
+                d = timeout;
+            }
+            setTimeout(function() {
+                $selector.fadeOut();
+            },d); 
+        }
 	}
 	
 	return Todolist;

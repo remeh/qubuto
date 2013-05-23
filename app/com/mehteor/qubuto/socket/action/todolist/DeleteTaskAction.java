@@ -27,9 +27,9 @@ public class DeleteTaskAction extends Action {
 		super(author);
 		objectNode = Action.createNoErrorsNode();
 		objectNode.put("action", "DeleteTask");
+        objectNode.put("date", Application.formater.format(new Date()));
 		objectNode.putAll(author.toJsonPublic());
-        objectNode.put("deletionDate", Application.formater.format(new Date()));
-        objectNode.putAll(task.toJsonAction());
+        objectNode.put("task", task.toJsonAction());
 	}
 	
 	// ---------------------

@@ -1,6 +1,7 @@
 package com.mehteor.qubuto.socket.action.todolist;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
@@ -26,8 +27,9 @@ public class RemoveTagAction extends Action {
 		super(author);
 		objectNode = Action.createNoErrorsNode();
 		objectNode.put("action", "RemoveTag");
+        objectNode.put("date", Application.formater.format(new Date()));
 		objectNode.putAll(author.toJsonPublic());
-		objectNode.put("taskId", task.getId());
+		objectNode.put("task", task.toJsonAction());
 		objectNode.put("tag", tag);
 	}
 	

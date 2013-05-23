@@ -14,22 +14,22 @@ import models.Task;
 import models.User;
 
 /**
- * Action created when someone creates a Task in a Todolist.
+ * Action created when someone opens a Task in a Todolist.
  * @author Rémy 'remeh' Mathieu
  */
-public class NewTaskAction extends Action {
+public class OpenTaskAction extends Action {
 	/**
 	 * The {@link ObjectNode} used to render the action.
 	 */
 	private final ObjectNode objectNode;
 	
-	public NewTaskAction(User author, Task task) {
+	public OpenTaskAction(User author, Task task) {
 		super(author);
 		objectNode = Action.createNoErrorsNode();
-		objectNode.put("action", "NewTask");
+		objectNode.put("action", "OpenTask");
         objectNode.put("date", Application.formater.format(new Date()));
 		objectNode.putAll(author.toJsonPublic());
-        objectNode.put("task", task.toJsonAction());
+		objectNode.put("task", task.toJsonAction());
 	}
 	
 	// ---------------------
@@ -39,3 +39,4 @@ public class NewTaskAction extends Action {
 		return objectNode;
 	}
 }
+
