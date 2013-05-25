@@ -50,8 +50,11 @@ public class Messages extends SessionController {
          * Retrieves the higher position.
          */
 		ModelUtils<Message> muMessages = new ModelUtils<Message>(Message.class);
-        Message lMessage = muMessages.bottom("position", "{conversation: #}", conversation.getId());
-        long lastPosition = lMessage.getPosition();
+        Message lMessage = muMessages.last("position", "{conversation: #}", conversation.getId());
+        long lastPosition = 0;
+        if (lMessage != null) {
+            lastPosition = lMessage.getPosition();
+        }
         lastPosition++;
 		message.setPosition(lastPosition);
 		message.save();

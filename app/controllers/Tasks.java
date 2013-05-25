@@ -312,8 +312,11 @@ public class Tasks extends SessionController {
          * Retrieves the higher position.
          */
 		ModelUtils<Task> muTasks = new ModelUtils<Task>(Task.class);
-        Task lTask = muTasks.bottom("position", "{todolist: #}", todolist.getId());
-        long lastPosition = lTask.getPosition();
+        Task lTask = muTasks.last("position", "{todolist: #}", todolist.getId());
+        long lastPosition = 0;
+        if (lTask != null) {
+            lastPosition = lTask.getPosition();
+        }
         lastPosition++;
 		task.setPosition(lastPosition);
 		task.save();

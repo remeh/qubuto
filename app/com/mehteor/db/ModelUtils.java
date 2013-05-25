@@ -48,17 +48,25 @@ public class ModelUtils<T> {
 
     /**
      * Launches a query, sort by the given field and return the entry at the bottom of the list.
+     * Warning: could return null !
      */
-    public T bottom(String fieldSort, String query, Object... parameters) {
+    public T last(String fieldSort, String query, Object... parameters) {
         Iterator<T> it = models().find(query, parameters).sort(String.format("{%s: -1}", fieldSort)).limit(1).as(type).iterator();
+        if (it == null || !it.hasNext()) {
+            return null;
+        }
         return it.next();
     }
 
     /**
      * Launches a query, sort by the given field and return the entry at the bottom of the list.
+     * Warning: could return null !
      */
-    public T top(String fieldSort, String query, Object... parameters) {
+    public T first(String fieldSort, String query, Object... parameters) {
         Iterator<T> it = models().find(query, parameters).sort(String.format("{%s: 1}", fieldSort)).limit(1).as(type).iterator();
+        if (it == null || !it.hasNext()) {
+            return null;
+        }
         return it.next();
     }
 	
