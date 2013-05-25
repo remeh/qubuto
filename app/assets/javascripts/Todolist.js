@@ -73,6 +73,51 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             $(document).on("click", "a.task-done", function() {
                 self.openTask($(this));
             });
+
+            $(document).on("click", "a.filter-tag", function() {
+                self.filterTagClick($(this));
+            });
+        }
+        
+        /**
+         * Called when an a user click on a tag in filters.
+         * @param   $selector   the jQuery selector of the selected tag.
+         */
+        this.filterTagClick             = function($selector) {
+            var tag = $selector.data('tag');
+            var $span = $selector.children('span');
+            if ($span.hasClass('filter-active')) {
+                self.removeFilterTag($span);
+            } else {
+                self.addFilterTag($span);
+            }
+        }
+
+        /**
+         * Called when an a user click on a tag in filters to remove a filter on tags.
+         * @param   $selector   the jQuery selector of the selected tag.
+         */
+        this.removeFilterTag            = function($selector) {
+            var tag = $selector.parent().data('tag');
+            var $tasks = $('.todo-entry');
+            // TODO
+        }
+
+        /**
+         * Called when an a user click on a tag in filters to add a filter on tags.
+         * @param   $selector   the jQuery selector of the selected tag.
+         */
+        this.addFilterTag               = function($selector) {
+            var tag = $selector.parent().data('tag');
+            var $tasks = $('.todo-entry');
+            for (var i = 0; i < $tasks.length; i++) {
+                var $task = $($tasks[i]);
+                if ($task.children().find('.tag-active-' + tag).length == 0) {
+                    $task.fadeOut(100);
+                }
+            }
+            $selector.addClass('tag-active');
+            $selector.addClass('tag-active-' + tag);
         }
 
         /**
