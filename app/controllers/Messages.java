@@ -46,20 +46,19 @@ public class Messages extends SessionController {
 		message.setLastUpdate(new Date());
 		message.setConversation(conversation);
 		
-		/*
-		 * Set its position value.
-		 */
-		
+        /*
+         * Retrieves the higher position.
+         */
 		ModelUtils<Message> muMessages = new ModelUtils<Message>(Message.class);
-		long count = muMessages.count("{conversation: #}", conversation.getId());
-		message.setPosition(count); // FIXME TODO this position is later used in the view, but it could be shared between
-		 							// FIXME TODO many messages if they're saved in the same time....
+        Message lMessage = muMessages.bottom("position", "{conversation: #}", conversation.getId());
+        long lastPosition = lMessage.getPosition();
+        lastPosition++;
+		message.setPosition(lastPosition);
 		message.save();
-		
+
 		/*
 		 * Broadcast the action
 		 */
-		
 		MessageActions.newMessageAction(conversation.getId(), getUser(), message);
 
 		return ok(BaseController.renderNoErrorsJson());

@@ -177,10 +177,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
          * @param   position    the position value of the task.
          */
         this.positionTask               = function(html, destState, position) {
-            console.log(position);
             var $container = $('#' + destState.toLowerCase() + '-container');
             if ($container.children().length == 0) {
-                console.log("append");
                 $container.append(html);
                 return;
             }

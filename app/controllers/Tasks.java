@@ -307,13 +307,15 @@ public class Tasks extends SessionController {
 		task.setState(TaskState.TODO);
 		task.setTags(new HashSet<String>());
 		
-		/*
-		 * Set its position value.
-		 */
-		ModelUtils<Task> muTask = new ModelUtils<Task>(Task.class);
-		long count = muTask.count("{todolist: #}", todolist.getId());
-		task.setPosition(count); // FIXME TODO this position is later used in the view, but it could be shared between
-								 // FIXME TODO many tasks if they're saved in the same time....
+
+        /*
+         * Retrieves the higher position.
+         */
+		ModelUtils<Task> muTasks = new ModelUtils<Task>(Task.class);
+        Task lTask = muTasks.bottom("position", "{todolist: #}", todolist.getId());
+        long lastPosition = lTask.getPosition();
+        lastPosition++;
+		task.setPosition(lastPosition);
 		task.save();
 		
 		/*

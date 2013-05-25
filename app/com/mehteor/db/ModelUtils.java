@@ -45,6 +45,22 @@ public class ModelUtils<T> {
 	public long count(String query, Object... parameters) {
 		return models().count(query, parameters);
 	}
+
+    /**
+     * Launches a query, sort by the given field and return the entry at the bottom of the list.
+     */
+    public T bottom(String fieldSort, String query, Object... parameters) {
+        Iterator<T> it = models().find(query, parameters).sort(String.format("{%s: -1}", fieldSort)).limit(1).as(type).iterator();
+        return it.next();
+    }
+
+    /**
+     * Launches a query, sort by the given field and return the entry at the bottom of the list.
+     */
+    public T top(String fieldSort, String query, Object... parameters) {
+        Iterator<T> it = models().find(query, parameters).sort(String.format("{%s: 1}", fieldSort)).limit(1).as(type).iterator();
+        return it.next();
+    }
 	
 	public List<T> query(String query, Object... parameters) {
 		List<T> list = new ArrayList<T>();
