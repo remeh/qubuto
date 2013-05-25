@@ -57,25 +57,25 @@ define(function() {
             self.todolist.insertTask(json.task);
         }
 
+        this.deleteTask               = function(json) {
+            if (json == undefined) {
+                return;
+            }
+            self.todolist.removeTask(json.task.id);
+        }
+
         this.closeTask                = function(json) {
             if (json == undefined) {
                 return;
             }
-            self.todolist.closeTask(json.task.id);
+            self.todolist.moveTaskToDone(json.task.id);
         }
 
         this.openTask                = function(json) {
             if (json == undefined) {
                 return;
             }
-            self.todolist.openTask(json.task.id);
-        }
-
-        this.deleteTask               = function(json) {
-            if (json == undefined) {
-                return;
-            }
-            self.todolist.removeTask(json.task.id);
+            self.todolist.moveTaskToTodo(json.task.id);
         }
 		
 		/*

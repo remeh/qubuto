@@ -10,6 +10,38 @@
 	}
 	websocketUri = "@websocketUri";
 </script>
+
+<script id="todo-template" type="text/x-handlebars-template">
+    <div class="pretty-entry todo-entry task-{{state}}" id="{{id}}" data-position="{{position}}">
+        <a href='#' class="task-remove"><i class="float-right light-gray icon-trash"></i></a>
+        <div>
+            <a href='#' class="{{#equals state 'TODO'}}task-todo{{else}}task-done{{/equals}}" title="Done"><i class="{{#equals state 'TODO'}}icon-check-empty{{else}}icon-check{{/equals}} gray"></i></a> <span class="dark-gray bold">{{title}}</span> - {{content}}
+        </div>
+        <div class="float-left">
+            <div class="tags">
+                <span>
+                    <i class="gray icon-tag" title="Tags"></i>&nbsp;
+                </span>
+                <a class="tag" href="#" data-tag="1"><span class="tag{{#contains tags 1}} tag-active tag-active-1{{/contains}}">TODO</span></a>
+                <a class="tag" href="#" data-tag="2"><span class="tag{{#contains tags 2}} tag-active tag-active-2{{/contains}}">FEATURE</span></a>
+                <a class="tag" href="#" data-tag="3"><span class="tag{{#contains tags 3}} tag-active tag-active-3{{/contains}}">WISH</span></a>
+            </div>
+            <div class="todo-infos">
+                <span>
+                    <span class="task-author gray"><i class="icon-user"></i>&nbsp;{{author}}</span> <span class="light-gray"><i class="icon-time"></i>&nbsp;{{creationDate}}</span>
+                </span>
+            </div>
+        </div>
+        <div class="float-right">
+            <div class="todo-actions">
+                <span class="loader" id="loader-{{id}}"><i class="icon-spinner icon-spin"></i></span>
+                <button class="small-btn task-comments"><i class="icon-comments"></i> Comments</button>
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+    </div>
+</script>
 @todolists.modalNewTask.render(todolist)
 <div id="main-div"
        data-route-add-task="@routes.Tasks.add(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
@@ -38,37 +70,6 @@
 			<div class="todo">
 				<h3><i class="light-gray icon-check-empty"> </i>Todo</h3>
 				<div id="todo-container" class="pretty-list">
-					<div class="todo-template" style="display: none;">
-						<div class="pretty-entry todo-entry" id="{{id}}">
-                            <a href='#' class="task-remove"><i class="float-right light-gray icon-trash"></i></a>
-							<div>
-                                <a href='#' class="task-done" title="Done"><i class="{{#equals state 'TODO'}}icon-check-empty{{else}}icon-check{{/equals}} gray"></i></a> <span class="dark-gray bold">{{title}}</span> - {{content}}
-                            </div>
-                            <div class="float-left">
-                                <div class="tags">
-                                    <span>
-                                        <i class="gray icon-tag" title="Tags"></i>&nbsp;
-                                    </span>
-                                    <a class="tag" href="#" data-tag="1"><span class="tag{{#contains tags 1}} tag-active tag-active-1{{/contains}}">TODO</span></a>
-                                    <a class="tag" href="#" data-tag="2"><span class="tag{{#contains tags 2}} tag-active tag-active-2{{/contains}}">FEATURE</span></a>
-                                    <a class="tag" href="#" data-tag="3"><span class="tag{{#contains tags 3}} tag-active tag-active-3{{/contains}}">WISH</span></a>
-                                </div>
-                                <div class="todo-infos">
-                                    <span>
-                                        <span class="task-author gray"><i class="icon-user"></i>&nbsp;{{author}}</span> <span class="light-gray"><i class="icon-time"></i>&nbsp;{{creationDate}}</span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="float-right">
-                                <div class="todo-actions">
-                                    <span class="loader" id="loader-{{id}}"><i class="icon-spinner icon-spin"></i></span>
-                                    <button class="small-btn task-comments"><i class="icon-comments"></i> Comments</button>
-                                </div>
-                            </div>
-                            <div class="clear">
-                            </div>
-						</div>
-					</div>
 				</div>
 			</div>
 			<div class="done">

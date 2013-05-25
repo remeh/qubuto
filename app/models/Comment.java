@@ -2,6 +2,12 @@ package models;
 
 import java.util.Date;
 
+import org.codehaus.jackson.node.ObjectNode;
+
+import play.libs.Json;
+
+import controllers.Application;
+
 import com.mehteor.db.ModelUtils;
 import com.mehteor.db.MongoModel;
 
@@ -78,5 +84,26 @@ public class Comment extends MongoModel {
 	
 	public void setTask(Task task) {
 		this.task = task.getId();
+	}
+    
+	// ---------------------
+	
+	/**
+	 * Returns a Task jsoned for the view.
+	 * @return ObjectNode the Task jsonsed for Action diffusion.
+	 */
+	public ObjectNode toJsonView() {
+		ObjectNode node = Json.newObject();
+		node.put("creationDate",    Application.formater.format(creationDate));
+		node.put("content",         content);
+		return node;
+	}
+
+	/**
+	 * Returns a Task jsoned for Action diffusion.
+	 * @return ObjectNode the Task jsonsed for Action diffusion.
+	 */
+	public ObjectNode toJsonAction() {
+        return toJsonView();
 	}
 }

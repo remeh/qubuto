@@ -2,6 +2,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 	function Todolist() {
         var TIMEOUT = 10000;
 
+        var TASK_TRANSITION = 100;
+
 		var self = this;
 		this.websocket          = null;
 		this.routeAddTask       = null;
@@ -64,8 +66,12 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 self.tagClick($(this));
             });
 
-            $(document).on("click", "a.task-done", function() {
+            $(document).on("click", "a.task-todo", function() {
                 self.closeTask($(this));
+            });
+
+            $(document).on("click", "a.task-done", function() {
+                self.openTask($(this));
             });
         }
 
@@ -126,7 +132,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			/*
 			 * Prepare the Handlebars template.
 			 */
-			var todoTemplateSource = $(".todo-template").html();
+			var todoTemplateSource = $("script#todo-template").html();
 			self.todoTemplate = Handlebars.compile(todoTemplateSource);
 		}
 		
@@ -152,16 +158,47 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
          */
         this.insertTask                 = function(task) {
             var html = self.todoTemplate(task);
-            $('#todo-container').append(html);
+            self.positionTask(html, 'TODO', task.position);
         }
 
         /**
          * Inserts the given task (json) in the DOM.
          * @param task  the task (json) to add in the DOM.
          */
-        this.insertDoneTask                 = function(task) {
+        this.insertDoneTask             = function(task) {
             var html = self.todoTemplate(task);
-            $('#done-container').append(html);
+            self.positionTask(html, 'DONE', task.position);
+        }
+        
+        /**
+         * Positions the HTML content at the right position.
+         * @param   html        the HTML content of the task.
+         * @param   destState   the destination state. (possible values : 'TODO', 'DONE')
+         * @param   position    the position value of the task.
+         */
+        this.positionTask               = function(html, destState, position) {
+            console.log(position);
+            var $container = $('#' + destState.toLowerCase() + '-container');
+            if ($container.children().length == 0) {
+                console.log("append");
+                $container.append(html);
+                return;
+            }
+
+            var $todos = $container.children('.task-' + destState);
+            var $pos = null;
+            for (var i = 0; i < $todos.length; i++) {
+                var $todo = $($todos[i]);
+                if ($todo.data('position') < position) {
+                    $pos = $todo;
+                }
+            }
+
+            if (!$pos) {
+                $container.prepend(html);
+            } else {
+                $pos.after(html);
+            }
         }
 
         /**
@@ -251,7 +288,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		 * When the user has clicked on the Add button to create the task.
 		 * @param $selector the jQuery selector of the button.
 		 */
-		this.addTask                        = function($selector) {
+		this.addTask                    = function($selector) {
 			/*
 			 * Retrieve values
 			 */
@@ -273,7 +310,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		 * When the user has clicked on the delete icon to delete the task.
 		 * @param $selector the jQuery selector of the button.
 		 */
-		this.deleteTask                        = function($selector) {
+		this.deleteTask                 = function($selector) {
             if (!confirm('Are you sure to delete this task ?'))
             {
                 return;
@@ -287,8 +324,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		 * When the user has clicked on the open task icon.
 		 * @param $selector the jQuery selector of the button.
 		 */
-		this.openTask                        = function($selector) {
-            var taskId = $selector.parents('todo-entry').first().attr('id');
+		this.openTask                   = function($selector) {
+            var taskId = $selector.parents('.todo-entry').first().attr('id');
             self.openTaskAjaxCall(taskId);
 		}
 		
@@ -296,10 +333,86 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		 * When the user has clicked on the close task icon.
 		 * @param $selector the jQuery selector of the button.
 		 */
-		this.closeTask                        = function($selector) {
+		this.closeTask                  = function($selector) {
             var taskId = $selector.parents('.todo-entry').first().attr('id');
             self.closeTaskAjaxCall(taskId);
 		}
+
+        /**
+         * Moves the Task identified by the given taskId to "Done"
+         * @param   taskId  the Task id
+         */
+        this.moveTaskToDone             = function(taskId) {
+            $('#' + taskId).fadeOut(TASK_TRANSITION);
+            setTimeout(function() {
+                $task = $('#' + taskId);
+
+                self.switchTaskToDone($task);
+
+                // move in the 'done' container at the right position.
+                var position = $('#' + taskId).data('position');
+                self.positionTask($task, 'DONE', position);
+
+                $task.fadeIn(TASK_TRANSITION);
+                
+                // hides the task loader.
+                self.hideTaskLoader(taskId);
+            }, TASK_TRANSITION);
+        }
+
+        /**
+         * Moves the Task identified by the given taskId to "Todo"
+         * @param   taskId  the Task id
+         */
+        this.moveTaskToTodo             = function(taskId) {
+            $('#' + taskId).fadeOut(TASK_TRANSITION);
+            setTimeout(function() {
+                $task = $('#' + taskId);
+
+                self.switchTaskToTodo($task);
+
+                // move in the 'done' container at the right position
+                var position = $('#' + taskId).data('position');
+                self.positionTask($task, 'TODO', position);
+
+                $task.fadeIn(TASK_TRANSITION);
+                
+                // hides the task loader.
+                self.hideTaskLoader(taskId);
+            }, TASK_TRANSITION);
+        }
+
+        /**
+         * Switches the Task to done.
+         * @param   $task   jQuery selector on the task to switch in the DOM.
+         */
+        this.switchTaskToDone           = function($task) {
+            $task.removeClass('task-TODO');
+            $task.addClass('task-DONE');
+
+            $a = $task.find('.task-todo');                        
+            $a.addClass('task-done');
+            $a.removeClass('task-todo');
+            $i = $a.children('i');
+            $i.addClass('icon-check');
+            $i.removeClass('icon-check-empty');
+        }
+
+        /**
+         * Switches the Task to todo.
+         * @param   $task   jQuery selector on the task to switch in the DOM.
+         */
+        this.switchTaskToTodo           = function($task) {
+            $task.removeClass('task-DONE');
+            $task.addClass('task-TODO');
+
+            $a = $task.find('.task-done');                        
+            $a.addClass('task-todo');
+            $a.removeClass('task-done');
+            $i = $a.children('i');
+            $i.addClass('icon-check-empty');
+            $i.removeClass('icon-check');
+        }
 
         /**
          * Sends an AJAX call to the given route, with the given post values then call 
