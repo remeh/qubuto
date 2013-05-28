@@ -5,6 +5,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
         var TASK_TRANSITION = 100;
 
 		var self = this;
+
 		this.websocket          = null;
 		this.routeAddTask       = null;
 		this.routeDeleteTask    = null;
@@ -13,6 +14,11 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		this.routeAddTag        = null;
 		this.routeRemoveTag     = null;
 		this.todoTemplate       = null;
+
+        /**
+         * On which tags the view is currently filtering.
+         */
+        this.filterTags         = [];
 	
 		/**
 		 * Init the todolist pages.
@@ -86,7 +92,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
         this.filterTagClick             = function($selector) {
             var tag = $selector.data('tag');
             var $span = $selector.children('span');
-            if ($span.hasClass('filter-active')) {
+            if ($span.hasClass('tag-active')) {
                 self.removeFilterTag($span);
             } else {
                 self.addFilterTag($span);
@@ -99,8 +105,17 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
          */
         this.removeFilterTag            = function($selector) {
             var tag = $selector.parent().data('tag');
-            var $tasks = $('.todo-entry');
-            // TODO
+            $selector.removeClass('tag-active');
+            $selector.removeClass('tag-active-'+tag);
+
+            for (var i = 0; i < self.filterTags.length; i++) {
+                if (self.filterTags[i] == tag) {
+                    self.filterTags.splice(i, 1);
+                    break;
+                }
+            }
+
+            self.applyFilterTags();
         }
 
         /**
@@ -109,15 +124,52 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
          */
         this.addFilterTag               = function($selector) {
             var tag = $selector.parent().data('tag');
-            var $tasks = $('.todo-entry');
-            for (var i = 0; i < $tasks.length; i++) {
-                var $task = $($tasks[i]);
-                if ($task.children().find('.tag-active-' + tag).length == 0) {
-                    $task.fadeOut(100);
-                }
-            }
             $selector.addClass('tag-active');
             $selector.addClass('tag-active-' + tag);
+            self.filterTags.push(tag);
+
+            self.applyFilterTags();
+        }
+
+        this.applyFilterTags            = function() {
+            var $tasks          = $('.todo-entry:visible');
+            var $hiddenTasks    = $('.todo-entry:hidden');
+            
+            // compute every task to hide
+            var tasksToHide = [];
+            for (var i = 0; i < $tasks.length; i++) {
+                var $task = $($tasks[i]);
+                for (var j = 0; j < self.filterTags.length; j++) {
+                    var tag = self.filterTags[j];
+                    if ($task.children().find('.tag-active-' + tag).length == 0) {
+                        tasksToHide.push($task);
+                        break;
+                    }
+                }
+            }
+            
+            // compute every task to re-show
+            var tasksToShow = [];
+            for (var i = 0; i < $hiddenTasks.length; i++) {
+                var $task = $($hiddenTasks[i]);
+                var hidden = false;
+                for (var j = 0; j < self.filterTags.length; j++) {
+                    var tag = self.filterTags[j];
+                    if ($task.children().find('.tag-active-' + tag).length == 0) {
+                        hidden = true;
+                    }
+                }
+                if (!hidden) {
+                    tasksToShow.push($task);
+                }
+            }
+
+            for (var i = 0; i < tasksToHide.length; i++) {
+                tasksToHide[i].fadeOut(TASK_TRANSITION);
+            }
+            for (var i = 0; i < tasksToShow.length; i++) {
+                tasksToShow[i].fadeIn(TASK_TRANSITION);
+            }
         }
 
         /**
