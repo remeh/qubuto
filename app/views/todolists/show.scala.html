@@ -27,9 +27,7 @@
                 <a class="tag" href="#" data-tag="3"><span class="tag{{#contains tags 3}} tag-active tag-active-3{{/contains}}">BUG</span></a>
             </div>
             <div class="todo-infos">
-                <span>
-                    <span class="task-author gray"><i class="icon-user"></i>&nbsp;{{author}}</span> <span class="light-gray"><i class="icon-time"></i>&nbsp;{{creationDate}}</span>
-                </span>
+                <span class="task-author gray"><i class="icon-user"></i>&nbsp;{{author}}</span> <span class="light-gray"><i class="icon-time"></i>&nbsp;{{creationDate}}</span>
             </div>
         </div>
         <div class="float-right">
@@ -39,6 +37,28 @@
             </div>
         </div>
         <div class="clear">
+        </div>
+        <div class="comments-container" id="comments-container-{{id}}" style="display: none;">
+            <hr class="comment-separation" />
+            <div class="comments">
+            {{#each comments}}
+                <div class="comment">
+                    <div><span>{{content}}</span></div>
+                    <span class="task-author gray"><i class="icon-user"></i>&nbsp;{{author}}</span> <span class="light-gray"><i class="icon-time"></i>&nbsp;{{creationDate}}</span>
+                </div>
+            {{/each}}
+            <div class="comment" id="add-comment">
+                <i class="icon-plus"></i> Click here to add a comment.
+            </div>
+            <div class="comment form-comment" id="form-comment-{{id}}" style="display: none;">
+                <input type="text" class="comment" id="comment-{{id}}" name="comment-{{id}}">
+                <div class="button-comment-container float-right">
+                    <button class="small-btn button-comment"><i class="icon-plus"></i> Send</button>
+                </div>
+                <div class="clear">
+                </div>
+            </div>
+            <div>
         </div>
     </div>
 </script>

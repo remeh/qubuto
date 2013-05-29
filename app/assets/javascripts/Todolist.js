@@ -83,6 +83,44 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             $(document).on("click", "a.filter-tag", function() {
                 self.filterTagClick($(this));
             });
+
+            $(document).on("click", "button.task-comments", function() {
+                self.showComments($(this));
+            });
+
+            $(document).on("click", "#add-comment", function() {
+                self.showFormComment($(this));
+            });
+        }
+
+        /**
+         * Display the edit to add a comment.
+         * @param   $selector   the jQuery selector of the div.
+         */
+        this.showFormComment            = function($selector) {
+            var taskId = $selector.parents('.todo-entry').first().attr('id');
+
+            if (taskId == undefined) {
+                return;
+            }
+
+            $selector.hide();
+            $('#form-comment-'+taskId).fadeIn();
+        }
+
+        /**
+         * Display the comments for a Task.
+         * @param   $selector   the jQuery selector of the button.
+         */
+        this.showComments               = function($selector) {
+            var taskId = $selector.parents('.todo-entry').first().attr('id');
+
+            if (taskId == undefined) {
+                return;
+            }
+
+            $selector.fadeOut(TASK_TRANSITION);
+            $('#comments-container-'+taskId).slideDown(TASK_TRANSITION);
         }
         
         /**
@@ -482,15 +520,20 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
          * @param   $task   jQuery selector on the task to switch in the DOM.
          */
         this.switchTaskToDone           = function($task) {
+            // Changes the type of the task.
             $task.removeClass('task-TODO');
             $task.addClass('task-DONE');
 
+            // Changes the todo/done action and icons.
             $a = $task.find('.task-todo');                        
             $a.addClass('task-done');
             $a.removeClass('task-todo');
             $i = $a.children('i');
             $i.addClass('icon-check');
             $i.removeClass('icon-check-empty');
+
+            // Hides the comments whether there were opened.
+            $task.find('.comments-container').hide();
         }
 
         /**
@@ -498,9 +541,11 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
          * @param   $task   jQuery selector on the task to switch in the DOM.
          */
         this.switchTaskToTodo           = function($task) {
+            // Change the type of the task.
             $task.removeClass('task-DONE');
             $task.addClass('task-TODO');
 
+            // Changes the todo/done action and icons.
             $a = $task.find('.task-done');                        
             $a.addClass('task-todo');
             $a.removeClass('task-done');

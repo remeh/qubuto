@@ -1,0 +1,44 @@
+<!DOCTYPE project>
+<project name="Qubuto" basedir="." default="prepare">
+
+    <property name="build" value="${basedir}/build" />
+
+    <target name="-check">
+        <exec command="dirname" outputproperty="path">
+            <arg value="${basedir}" />
+        </exec>
+        <!--
+        <exec command="${path}/script.sh" failonerror="true">
+            <arg value="${path}" />
+        </exec>
+        -->
+    </target>
+
+    <target name="-clean">
+            <delete dir="${build}" />
+    </target>
+
+    <target name="prepare" depends="-clean,-check">
+            <copy todir="${build}/qubuto" preservelastmodified="true">
+                    <fileset dir="${basedir}">
+                            <exclude name="logs/" />
+                            <exclude name="project/project/" />
+                            <exclude name="project/target/" />
+                            <exclude name="target/" />
+                            <exclude name="tmp/" />
+                            <exclude name=".git/" />
+                            <exclude name="dist/" />
+                            <exclude name=".classpath" />
+                            <exclude name=".project/" />
+                            <exclude name="RUNNING_PID" />
+                            <exclude name=".settings/" />
+                            <exclude name=".target/" />
+                            <exclude name="build.xml" />
+                    </fileset>
+            </copy>
+            <exec executable="play2">
+                    <arg value="clean" />
+            </exec>
+            <zip destfile="${build}/qubuto.zip" basedir="${build}/qubuto" />
+    </target>
+</project>

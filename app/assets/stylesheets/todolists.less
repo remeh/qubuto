@@ -1,3 +1,4 @@
+@import "constants.less";
 @import "external/elements.less";
 
 // remeh's functions
@@ -38,16 +39,6 @@ div.new-task-container {
 	background: #fff;
 }
 
-div.filter-tags {
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-
-div.tags {
-    padding-top: 0.5em;
-    margin-top: 4px;
-}
-
 div.create-task {
     margin-top: 12px;
 }
@@ -62,6 +53,18 @@ div.todo-infos {
 
 div.todo-actions {
     margin-top: 33px;
+}
+
+// Tags
+
+div.filter-tags {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+div.tags {
+    padding-top: 0.5em;
+    margin-top: 4px;
 }
 
 span.tag {
@@ -91,3 +94,43 @@ span.tag-active-3 {
     background-color: #ce2929; // red
     border: 1px solid #ce2929;
 }
+
+// Comments
+
+hr.comment-separation {
+    padding-top: 5px;
+}
+
+div.comments {
+    margin-top: 14px;
+}
+
+div.comment {
+    margin-top: 2px;
+    padding: 1em;
+    border: 1px dashed @light-gray;
+}
+
+#add-comment {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: #e5e5e5;
+    border: 1px dashed #efefef;
+    text-align: center;
+}
+
+div.form-comment {
+    padding-right: 23px;
+    margin-bottom: 2px;
+}
+
+div.button-comment-container {
+    margin: 0px;
+    padding: 0px;
+    padding-top: 5px;
+}
+
+input.comment {
+    width: 100%;
+}
+

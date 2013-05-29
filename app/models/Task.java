@@ -1,16 +1,23 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.text.SimpleDateFormat;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import play.libs.Json;
 
 import com.mehteor.db.ModelUtils;
 import com.mehteor.db.MongoModel;
+
+import models.Comment;
 
 import controllers.Application;
 
@@ -154,6 +161,11 @@ public class Task extends MongoModel {
 	public void setTodolist(Todolist todolist) {
 		this.todolist = todolist.getId();
 	}
+	
+	public List<Comment> getComments() {
+		ModelUtils<Comment> comments = new ModelUtils<Comment>(Comment.class);
+		return Collections.unmodifiableList(comments.query("{'task': #}", this.getId()));
+	}
     
 	// ---------------------
 	
@@ -170,6 +182,7 @@ public class Task extends MongoModel {
 		node.put("state",           state.toString());
 		node.put("position",        position);
 		node.put("tags",            Json.toJson(tags));
+		node.put("comments",        Json.toJson(generateCommentsNode()));
 		node.put("author",          getAuthor().getUsername());
 		return node;
 	}
@@ -181,4 +194,19 @@ public class Task extends MongoModel {
 	public ObjectNode toJsonAction() {
         return toJsonView();
 	}
+
+    // ---------------------- 
+
+    /**
+     * Generates an ArrayNode of the comments.
+     */
+    private ArrayNode generateCommentsNode() {
+        ArrayNode array = new ObjectMapper().createArrayNode();
+        List<Comment> comments = getComments();
+        for (Comment comment : comments) {
+            array.add(comment.toJsonView());
+        }
+        return array;
+    }
 }
+

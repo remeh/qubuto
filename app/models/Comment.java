@@ -96,6 +96,7 @@ public class Comment extends MongoModel {
 		ObjectNode node = Json.newObject();
 		node.put("creationDate",    Application.formater.format(creationDate));
 		node.put("content",         content);
+        node.put("author",          getAuthor().getUsername());
 		return node;
 	}
 
