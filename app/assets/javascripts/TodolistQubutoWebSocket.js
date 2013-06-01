@@ -43,6 +43,13 @@ define(function() {
             self.todolist.activeTag(json.task.id, json.tag);
         }
 
+        this.addComment                 = function(json) {
+            if (json == undefined) {
+                return;
+            }
+            self.todolist.insertComment(json.taskId, json.comment);
+        }
+
         this.removeTag                  = function(json) {
             if (json == undefined) {
                 return;
@@ -83,6 +90,9 @@ define(function() {
 		 */
 		this.processMessage = function(json) {
 			switch (json.action) {
+                case "AddComment":
+                    this.addComment(json);
+                    break;
                 case "AddTag":
                     this.addTag(json);
                     break;

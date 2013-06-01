@@ -45,13 +45,14 @@
                 <div class="comment">
                     <div><span>{{content}}</span></div>
                     <span class="task-author gray"><i class="icon-user"></i>&nbsp;{{author}}</span> <span class="light-gray"><i class="icon-time"></i>&nbsp;{{creationDate}}</span>
+                    <a href='#' class="comment-remove"><i class="float-right light-gray icon-trash"></i></a>
                 </div>
             {{/each}}
-            <div class="comment" id="add-comment">
+            <div class="comment add-comment">
                 <i class="icon-plus"></i> Click here to add a comment.
             </div>
             <div class="comment form-comment" id="form-comment-{{id}}" style="display: none;">
-                <input type="text" class="comment" id="comment-{{id}}" name="comment-{{id}}">
+                <input type="text" class="comment" id="comment-{{id}}" name="comment-{{id}}" placeholder="Enter your comment">
                 <div class="button-comment-container float-right">
                     <button class="small-btn button-comment"><i class="icon-plus"></i> Send</button>
                 </div>
@@ -62,6 +63,13 @@
         </div>
     </div>
 </script>
+<script id="comment-template" type="text/x-handlebars-template">
+    <div class="comment">
+        <div><span>{{content}}</span></div>
+        <span class="task-author gray"><i class="icon-user"></i>&nbsp;{{author}}</span> <span class="light-gray"><i class="icon-time"></i>&nbsp;{{creationDate}}</span>
+        <a href='#' class="comment-remove"><i class="float-right light-gray icon-trash"></i></a>
+    </div>
+</script>
 @todolists.modalNewTask.render(todolist)
 <div id="main-div"
        data-route-add-task="@routes.Tasks.add(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
@@ -69,7 +77,8 @@
        data-route-close-task="@routes.Tasks.close(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
        data-route-open-task="@routes.Tasks.open(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
        data-route-add-tag="@routes.Tasks.addTag(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
-       data-route-remove-tag="@routes.Tasks.removeTag(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())">
+       data-route-remove-tag="@routes.Tasks.removeTag(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-add-comment="@routes.Comments.add(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())">
 	<section>
 		<header>
 		<a href='@routes.Projects.show(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName())' title='Back to @todolist.getProject().getName()'>&nbsp;<i class='icon-arrow-left'> </i> <span class="bold">@todolist.getProject().getName()</span></a>

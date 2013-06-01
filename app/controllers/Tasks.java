@@ -147,34 +147,34 @@ public class Tasks extends SessionController {
      * @param projectCleanName  the project clean name
      * @param todolistName      the todolist clean name
      */
-	public static Result addTag(String username, String projectCleanName, String todolistName) {
-		if (!isAuthenticated("You're not authenticated.", true)) {
-			return badRequest(BaseController.renderNotAuthenticatedJson());
-		}
-        
-//      // TODO rights
+    public static Result addTag(String username, String projectCleanName, String todolistName) {
+        if (!isAuthenticated("You're not authenticated.", true)) {
+            return badRequest(BaseController.renderNotAuthenticatedJson());
+        }
 
-    	/*
-    	 * Find the corresponding todolist.
-    	 */
-    	Todolist todolist = Todolists.findTodolist(username, projectCleanName, todolistName);
+        //      // TODO rights
+
+        /*
+         * Find the corresponding todolist.
+         */
+        Todolist todolist = Todolists.findTodolist(username, projectCleanName, todolistName);
 
         if (todolist == null) {
             return Results.notFound(""); // 404
         }
-    	
+
         // Binds the request
         DynamicForm form = Form.form().bindFromRequest();
 
         /*
          * Required fields.
          */
-        
-    	String taskId = form.get("taskId");
-    	String tag = form.get("tag");
-    	
-    	if (taskId == null || tag == null) {
-    		return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
+
+        String taskId = form.get("taskId");
+        String tag = form.get("tag");
+
+        if (taskId == null || tag == null) {
+            return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
         }
 
         ModelUtils<Task> muTask = new ModelUtils<Task>(Task.class);
@@ -184,7 +184,7 @@ public class Tasks extends SessionController {
             return Results.notFound(""); // 404
         } else if (tasks.size() >= 2) {
             // TODO log something here ?
-    		return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
+            return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
         }
 
         Task task = tasks.get(0);

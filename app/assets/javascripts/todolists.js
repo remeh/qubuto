@@ -12,12 +12,13 @@ require(["Todolist"], function(Todolist) {
 		var routeDeleteTask = $('#main-div').data('route-delete-task');
 		var routeAddTag     = $('#main-div').data('route-add-tag');
 		var routeRemoveTag  = $('#main-div').data('route-remove-tag');
+		var routeAddComment = $('#main-div').data('route-add-comment');
 		var todolist = new Todolist();
 		
 		/*
 		 * Init the Todolist.
 		 */
 		 
-		todolist.init(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask);
+		todolist.init(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask, routeAddComment);
 	});
 });

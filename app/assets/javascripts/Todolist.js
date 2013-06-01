@@ -13,7 +13,10 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		this.routeOpenTask      = null;
 		this.routeAddTag        = null;
 		this.routeRemoveTag     = null;
+		this.routeAddComment    = null;
+
 		this.todoTemplate       = null;
+		this.commentTemplate    = null;
 
         /**
          * On which tags the view is currently filtering.
@@ -23,7 +26,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		/**
 		 * Init the todolist pages.
 		 */
-		this.init                       = function(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask) {
+		this.init                       = function(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask, routeAddComment) {
 			/*
 			 * init the routes
 			 */
@@ -33,6 +36,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			this.routeOpenTask      = routeOpenTask;
 			this.routeAddTag        = routeAddTag;
 			this.routeRemoveTag     = routeRemoveTag;
+			this.routeAddComment    = routeAddComment;
 			
 			this.initWebsocket();
 			
@@ -88,9 +92,65 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 self.showComments($(this));
             });
 
-            $(document).on("click", "#add-comment", function() {
+            $(document).on("click", ".add-comment", function() {
                 self.showFormComment($(this));
             });
+
+            $(document).on("click", ".button-comment", function() {
+                self.addComment($(this));
+            });
+        }
+
+        /**
+         * Adds a Comment to a Task.
+         * @param   $selector   the jQuery selector of the button.
+         */
+        this.addComment                = function($selector) {
+            var taskId = $selector.parents('.todo-entry').first().attr('id');
+
+            if (taskId == undefined) {
+                return;
+            }
+
+            // retrieves the content
+            
+
+            var content = $('#comment-' + taskId).val();
+
+            var $commentsContainer = $('#comments-container-' + taskId);
+            $commentsContainer.find('.form-comment').hide();
+            $commentsContainer.find('.add-comment').fadeIn(TASK_TRANSITION);
+
+            self.sendCommentAjaxCall(taskId, content);
+        }
+
+        /**
+         * Inserts the comment in the given Task.
+         * @param   taskId      the Task in which we want to insert the comment.
+         * @param   comment     the json comment to append.
+         */
+        this.insertComment              = function(taskId, comment) {
+            var html = self.commentTemplate(comment);
+            $('#' + taskId).find('.add-comment').before(html);
+        }
+
+        /**
+         * Sends the AJAX request to add the Comment.
+         * @param   taskId      on which task the comment is added
+         * @param   content     the content of the Comment to add.
+         */
+        this.sendCommentAjaxCall        = function(taskId, content)
+        {
+			var route = self.routeAddComment;
+			var values = {
+                "taskId": taskId,
+                "content": content
+			}
+
+            self.showTaskLoader(taskId);
+            
+            // sends the AJAX call.
+            self.sendAjaxCall(route, values);
         }
 
         /**
@@ -105,6 +165,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             }
 
             $selector.hide();
+            $('#comment-' + taskId).val('');
             $('#form-comment-'+taskId).fadeIn();
         }
 
@@ -120,7 +181,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             }
 
             $selector.fadeOut(TASK_TRANSITION);
-            $('#comments-container-'+taskId).slideDown(TASK_TRANSITION);
+            $commentsContainer = $('#comments-container-'+taskId);
+            $commentsContainer.slideDown(TASK_TRANSITION);
         }
         
         /**
@@ -269,6 +331,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			 */
 			var todoTemplateSource = $("script#todo-template").html();
 			self.todoTemplate = Handlebars.compile(todoTemplateSource);
+            var commentTemplateSource = $("script#comment-template").html();
+			self.commentTemplate = Handlebars.compile(commentTemplateSource);
 		}
 		
 		/**
