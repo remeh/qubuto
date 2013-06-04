@@ -52,6 +52,7 @@ POST	/q/:username/:projectCleanName/a/t/tag/rem/:todolistName						controllers.T
 # ###############
 # Ajax part
 POST	/q/:username/:projectCleanName/a/t/c/add/:todolistName					        controllers.Comments.add(username, projectCleanName, todolistName)
+POST	/q/:username/:projectCleanName/a/t/c/del/:todolistName					        controllers.Comments.delete(username, projectCleanName, todolistName)
 
 # ###############
 # Conversations

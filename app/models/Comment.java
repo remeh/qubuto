@@ -94,6 +94,7 @@ public class Comment extends MongoModel {
 	 */
 	public ObjectNode toJsonView() {
 		ObjectNode node = Json.newObject();
+        node.put("id",              getId());
 		node.put("creationDate",    Application.formater.format(creationDate));
 		node.put("content",         content);
         node.put("author",          getAuthor().getUsername());

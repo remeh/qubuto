@@ -93,7 +93,7 @@ public class Comments extends SessionController {
      * @param projectCleanName  the project clean name
      * @param todolistName      the todolist clean name
      */
-    public static Result remove(String username, String projectCleanName, String todolistName) {
+    public static Result delete(String username, String projectCleanName, String todolistName) {
         if (!isAuthenticated("You're not authenticated.", true)) {
             return badRequest(BaseController.renderNotAuthenticatedJson());
         }
@@ -116,10 +116,9 @@ public class Comments extends SessionController {
          * Required fields.
          */
 
-        String taskId       = form.get("taskId");
         String commentId    = form.get("commentId");
 
-        if (taskId == null || commentId == null) {
+        if (commentId == null) {
             return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
         }
 
@@ -139,7 +138,7 @@ public class Comments extends SessionController {
 		/*
 		 * Broadcast the action
 		 */
-		CommentActions.removeCommentAction(todolist.getId(), getUser(), comment);
+		CommentActions.deleteCommentAction(todolist.getId(), getUser(), comment);
 
 		return ok(BaseController.renderNoErrorsJson());
     }

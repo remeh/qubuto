@@ -14,6 +14,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		this.routeAddTag        = null;
 		this.routeRemoveTag     = null;
 		this.routeAddComment    = null;
+		this.routeDeleteComment = null;
 
 		this.todoTemplate       = null;
 		this.commentTemplate    = null;
@@ -26,7 +27,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		/**
 		 * Init the todolist pages.
 		 */
-		this.init                       = function(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask, routeAddComment) {
+		this.init                       = function(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask, routeAddComment, routeDeleteComment) {
 			/*
 			 * init the routes
 			 */
@@ -37,6 +38,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			this.routeAddTag        = routeAddTag;
 			this.routeRemoveTag     = routeRemoveTag;
 			this.routeAddComment    = routeAddComment;
+			this.routeDeleteComment = routeDeleteComment;
 			
 			this.initWebsocket();
 			
@@ -96,9 +98,71 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 self.showFormComment($(this));
             });
 
-            $(document).on("click", ".button-comment", function() {
-                self.addComment($(this));
+            $(document).on("keydown", "input.comment", function(event) {
+                self.keypressComment($(this), event);
             });
+
+            $(document).on("click", ".comment-remove", function() {
+                self.deleteComment($(this));
+            });
+        }
+
+        /**
+         * The AJAX call to delete a Comment.
+         * @param commentId     the comment id of the Comment to delete
+         */
+        this.deleteCommentAjaxCall      = function(taskId, commentId) {
+            var route = self.routeDeleteComment;
+            var values = {
+                "commentId": commentId
+            }
+
+            self.showTaskLoader(taskId);
+
+            // sends the AJAX call.
+            self.sendAjaxCall(route, values);
+		}
+
+        /**
+         * Removes a Comment from the DOM.
+         * @param taskId        the task id of the Task containing the comment.
+         * @param comment       the json comment.
+         */
+        this.removeComment              = function(taskId, comment) {
+            $comment = $('#' + comment.id);
+            if ($comment != undefined) {
+                $comment.remove();
+            }
+
+            self.hideTaskLoader(taskId);
+        }
+		
+        /**
+         * When a clicked to delete a comment has been done.
+         * @param   $selector   the a jQuery selector
+         */
+        this.deleteComment              = function($selector) {
+            if (!confirm('Are you sure to delete this comment ?'))
+            {
+                return;
+            }
+
+            var taskId = $selector.parents('.todo-entry').first().attr('id');
+
+            var commentId = $selector.parents('.comment').first().attr('id');
+            self.deleteCommentAjaxCall(taskId, commentId);
+        }
+
+        /**
+         * When a key has been pressed while typing in a Comment input.
+         * @param   $selector   the input jQuery selector
+         * @param   event       the keypress event.
+         */
+        this.keypressComment            = function($selector, event) {
+             if (event.which == 13) {
+                 self.addComment($selector);
+                 event.preventDefault();
+             }
         }
 
         /**
@@ -132,6 +196,9 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
         this.insertComment              = function(taskId, comment) {
             var html = self.commentTemplate(comment);
             $('#' + taskId).find('.add-comment').before(html);
+            
+            // hides the task loader.
+            self.hideTaskLoader(taskId);
         }
 
         /**
@@ -598,6 +665,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 
             // Hides the comments whether there were opened.
             $task.find('.comments-container').hide();
+            $task.find('.task-comments').hide();
         }
 
         /**
@@ -616,6 +684,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             $i = $a.children('i');
             $i.addClass('icon-check-empty');
             $i.removeClass('icon-check');
+
+            $task.find('.task-comments').fadeIn(TASK_TRANSITION);
         }
 
         /**
@@ -720,15 +790,15 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             self.sendAjaxCall(route, values);
 		}
 		
-		/**
-		 * The AJAX call to delete a Task.
+        /**
+         * The AJAX call to delete a Task.
          * @param taskId    the task id of the Task to delete
-		 */
-		this.deleteTaskAjaxCall         = function(taskId) {
-			var route = self.routeDeleteTask;
-			var values = {
-				"taskId": taskId
-			}
+         */
+        this.deleteTaskAjaxCall         = function(taskId) {
+            var route = self.routeDeleteTask;
+            var values = {
+                "taskId": taskId
+            }
 
             self.showTaskLoader(taskId);
 
