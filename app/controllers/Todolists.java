@@ -25,6 +25,10 @@ import com.mehteor.qubuto.socket.manager.ConversationSubscriptionManager;
 import com.mehteor.util.ErrorCode;
 import com.mehteor.util.StringHelper;
 
+// XXX
+import models.UserRight;
+import com.mehteor.qubuto.right.*;
+
 public class Todolists extends SessionController {
 	public static Form<Todolist> todolistForm = Form.form(Todolist.class);
 	
@@ -108,7 +112,19 @@ public class Todolists extends SessionController {
 		if (todolist == null ) {
 			return notFound(Application.renderNotFound());
 		}
-		
+
+        /*
+         * Rights
+         */
+        // TODO
+        ModelUtils<UserRight> ur = new ModelUtils<UserRight>(UserRight.class);
+        long rights = ur.count("{'category': #, 'objectId': #, 'user': #, 'type': #}", "TODOLIST", todolist.getId(), getUser().getId(), "READ");
+        if (rights == 0) {
+            System.out.println("Forbidden!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        } else {
+            System.out.println("OK!!!!!!!!!!!!!!!!!!");
+        }
+
 		/*
 		 * Generate the websocket URI.
 		 */

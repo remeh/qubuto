@@ -19,10 +19,6 @@ public class MongoModel {
 	protected String id;
 
 	// ---------------------
-	
-	
-	
-	// ---------------------
 
 	public void save() {
 		models().save(this);
