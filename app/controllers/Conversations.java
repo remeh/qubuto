@@ -27,6 +27,9 @@ import com.mehteor.qubuto.socket.manager.ConversationSubscriptionManager;
 import com.mehteor.util.ErrorCode;
 import com.mehteor.util.StringHelper;
 
+import com.mehteor.qubuto.right.RightType;
+import com.mehteor.qubuto.right.RightCategory;
+
 public class Conversations extends SessionController {
 	public static Form<Conversation> conversationForm = Form.form(Conversation.class);
 
@@ -58,6 +61,15 @@ public class Conversations extends SessionController {
 			flash("error", "An error occurred with project.");
 			Logger.warn(String.format("The user[%s] tried to create a conversation for a project without its id.", getUser().getId()));
 		}
+
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.PROJECT, project, RightType.CREATE_CONVERSATION);
+        if (!right) {
+            return SessionController.forbid(RightCategory.PROJECT, RightType.CREATE_CONVERSATION); 
+        }
 		
         /*
          *  Other required fields
@@ -108,6 +120,15 @@ public class Conversations extends SessionController {
 		if (conversation == null) {
 			return badRequest(Application.renderNotFound());
 		}
+
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.CONVERSATION, conversation, RightType.READ);
+        if (!right) {
+            return SessionController.forbid(RightCategory.CONVERSATION, RightType.READ);
+        }
 		
 		/*
 		 * Generate the websocket URI.
@@ -151,6 +172,15 @@ public class Conversations extends SessionController {
 			return badRequest(renderJson(ErrorCode.NOT_ENOUGH_PARAMETERS.getErrorCode(), ErrorCode.NOT_ENOUGH_PARAMETERS.getDefaultMessage()));
 		}
 		
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.CONVERSATION, conversation, RightType.UPDATE);
+        if (!right) {
+            return SessionController.forbid(RightCategory.CONVERSATION, RightType.UPDATE);
+        }
+
 		/*
 		 * Remove html tags! Normally already done by Pagedown
 		 * but to avoid injection or something else. 

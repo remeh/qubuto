@@ -9,6 +9,8 @@ import models.Todolist;
 import models.User;
 
 import com.mehteor.db.ModelUtils;
+import com.mehteor.qubuto.right.RightType;
+import com.mehteor.qubuto.right.RightCategory;
 import com.mehteor.util.StringHelper;
 
 import play.Logger;
@@ -42,11 +44,6 @@ public class Projects extends SessionController {
 			return redirect(routes.Users.login());
 		}
 		
-		// TODO access to the project of another user
-		if (!getUser().getUsername().equals(username)) {
-			return TODO;
-		}
-		
 		String userId = SessionController.getUserId(username);
 		
 		/*
@@ -56,6 +53,15 @@ public class Projects extends SessionController {
 		if (project == null) {
 			return notFound(Application.renderNotFound());
 		}
+
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.PROJECT, project, RightType.READ);
+        if (!right) {
+            return SessionController.forbid(RightCategory.PROJECT, RightType.READ); 
+        }
 
 		return ok(views.html.projects.show.render(project, Form.form(Todolist.class), Form.form(Conversation.class)));
 	}

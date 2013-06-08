@@ -5,6 +5,6 @@ import play.Logger;
 public class SessionCleanJob implements Runnable {
 	@Override
 	public void run() {
-		Logger.info(String.format("%d sessions cleaned.", SessionManager.cleanTimeoutedSessions()));
+		//Logger.info(String.format("%d sessions cleaned.", SessionManager.cleanTimeoutedSessions()));
 	}
 }

@@ -4,10 +4,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import com.mehteor.db.ModelUtils;
-import com.mehteor.db.MongoModel;
+import models.QubutoModel;
 
-public class Conversation extends MongoModel {
+import com.mehteor.db.ModelUtils;
+
+public class Conversation extends QubutoModel {
 	private static int CONVERSATION_SUMMARY = 270;
 	
 	// ---------------------
@@ -66,6 +67,7 @@ public class Conversation extends MongoModel {
 		this.creationDate = creationDate;
 	}
 
+    @Override
 	public User getCreator() {
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (creator != null) {

@@ -2,14 +2,15 @@ package models;
 
 import java.util.Date;
 
+import models.QubutoModel;
+
 import com.mehteor.db.ModelUtils;
-import com.mehteor.db.MongoModel;
 
 /**
  * Conversation's message.
  * @author Rémy 'remeh' Mathieu
  */
-public class Message extends MongoModel {
+public class Message extends QubutoModel {
 	/**
 	 * Content of the message.
 	 */
@@ -74,6 +75,11 @@ public class Message extends MongoModel {
 		}
 		return null;
 	}
+
+    @Override
+    public User getCreator() {
+        return getAuthor();
+    }
 	
 	public void setAuthor(User author) {
 		this.author = author.getId();

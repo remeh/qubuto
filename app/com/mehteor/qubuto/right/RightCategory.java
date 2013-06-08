@@ -1,9 +1,7 @@
 package com.mehteor.qubuto.right;
 
-import com.mehteor.qubuto.right.RightType;
-		
 /**
- * TODO
+ * The RightCategory.
  */
 public enum RightCategory {
     /**
@@ -13,6 +11,10 @@ public enum RightCategory {
     /**
      * Rights about the Todolists.
      */
-    TODOLIST
+    TODOLIST,
+    /**
+     * Rights about the Conversations.
+     */
+    CONVERSATION
 }
 

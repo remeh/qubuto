@@ -15,9 +15,9 @@ import org.codehaus.jackson.node.ObjectNode;
 import play.libs.Json;
 
 import com.mehteor.db.ModelUtils;
-import com.mehteor.db.MongoModel;
 
 import models.Comment;
+import models.QubutoModel;
 
 import controllers.Application;
 
@@ -26,7 +26,7 @@ import controllers.Application;
  * 
  * @author Rémy 'remeh' Mathieu
  */
-public class Task extends MongoModel {
+public class Task extends QubutoModel {
 	/**
 	 * Author of the task.
 	 */
@@ -145,6 +145,10 @@ public class Task extends MongoModel {
 		}
 		return null;
 	}
+
+    public User getCreator() {
+        return getAuthor();
+    }
 	
 	public void setAuthor(User author) {
 		this.author = author.getId();

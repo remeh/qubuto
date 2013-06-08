@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.mehteor.db.ModelUtils;
 import com.mehteor.qubuto.socket.action.CommentActions;
+import com.mehteor.qubuto.right.RightCategory;
+import com.mehteor.qubuto.right.RightType;
 import com.mehteor.util.ErrorCode;
 
 import models.Task;
@@ -32,8 +34,6 @@ public class Comments extends SessionController {
             return badRequest(BaseController.renderNotAuthenticatedJson());
         }
 
-//      // TODO rights
-
         /*
          * Find the corresponding todolist.
          */
@@ -42,7 +42,14 @@ public class Comments extends SessionController {
         if (todolist == null) {
             return Results.notFound(""); // 404
         }
-
+        
+//      // TODO rights
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist.getId(), RightType.COMMENT);
+        if (!right) {
+            return SessionController.forbid(RightCategory.TODOLIST, RightType.COMMENT);
+        }
+        
+        
         // Binds the request
         DynamicForm form = Form.form().bindFromRequest();
 
@@ -98,8 +105,6 @@ public class Comments extends SessionController {
             return badRequest(BaseController.renderNotAuthenticatedJson());
         }
 
-//      // TODO rights
-
         /*
          * Find the corresponding todolist.
          */
@@ -107,6 +112,15 @@ public class Comments extends SessionController {
 
         if (todolist == null) {
             return Results.notFound(""); // 404
+        }
+
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist.getId(), RightType.COMMENT);
+        if (!right) {
+            return SessionController.forbid(RightCategory.TODOLIST, RightType.COMMENT);
         }
 
         // Binds the request

@@ -1,11 +1,27 @@
 package controllers;
 
+import java.util.List;
+
 import com.mehteor.util.session.SessionManager;
 
+import models.QubutoModel;
 import models.Session;
 import models.User;
+import models.UserRight;
+
+import com.mehteor.db.ModelUtils;
+import com.mehteor.db.MongoModel;
+import com.mehteor.qubuto.right.RightType;
+import com.mehteor.qubuto.right.RightCategory;
+
+import play.mvc.Result;
+import play.mvc.Results;
 
 public class SessionController extends BaseController {
+    public static ModelUtils<UserRight> mu = new ModelUtils<UserRight>(UserRight.class);
+
+    // ---------------------- 
+
 	/**
 	 * Returns true if the user is authenticated, false otherwise.
 	 * @return true if the user is authenticated, false otherwise.
@@ -55,4 +71,50 @@ public class SessionController extends BaseController {
 		
 		return session.getUser();
 	}
+
+    /**
+     * Tests if the currently logger user has the given right.
+     * @param category      the RightCategory to test for
+     * @param objectId      the object to test for
+     * @param type          the RightType to test for.
+     * @return true whether the currently logged user has the wanted rights.
+     */
+    public static boolean hasRight(RightCategory category, QubutoModel object, RightType type) {
+        if (object.getCreator().getUsername().equals(getUser().getUsername())) {
+            return true;
+        }
+        if (object instanceof MongoModel) {
+            return hasRight(category, ((MongoModel)object).getId(), type);
+        }
+        return false;
+    }
+
+    /**
+     * Tests if the currently logger user has the given right.
+     * @param category      the RightCategory to test for
+     * @param objectId      the object to test for
+     * @param type          the RightType to test for.
+     * @return true whether the currently logged user has the wanted rights.
+     */
+    public static boolean hasRight(RightCategory category, String objectId, RightType type) {
+        long rights = mu.count("{'category': #, 'objectId': #, 'user': #, 'type': #}", category.toString(), objectId, getUser().getId(), type.toString());
+        return rights > 0;
+    }
+
+    /**
+     * Tests if the currently logger user has the given right.
+     * @param category      the RightCategory to test for
+     * @param objectId      the object to test for
+     * @param types         the RightTypes to test for.
+     * @return true whether the currently logged user has the wanted rights.
+     TODO
+    public static boolean hasRights(RightCategory category, String objectId, List<RightType> types) {
+        //long rights = mu.count("{'category': #, 'objectId': #, 'user': #, 'type': #}", category.toString(), objectId, getUser().getId(), type.toString());
+        return false; // TODO
+    }
+     */
+
+    public static Result forbid(RightCategory category, RightType type) {
+        return Results.unauthorized(String.format("You don't have the %s.%s permission, bitch.", category.toString(), type.toString()), "utf8");
+    }
 }

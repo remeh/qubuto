@@ -3,15 +3,16 @@ package models;
 import java.util.Date;
 import java.util.List;
 
+import models.QubutoModel;
+
 import com.mehteor.db.ModelUtils;
-import com.mehteor.db.MongoModel;
 
 /**
  * Qubuto projects.
  * 
  * @author Rémy 'remeh' Mathieu
  */
-public class Project extends MongoModel
+public class Project extends QubutoModel
 {
 	/**
 	 * Project's name.
@@ -85,6 +86,7 @@ public class Project extends MongoModel
 		this.creationDate = creationDate;
 	}
 
+    @Override
 	public User getCreator() {
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (creator != null) {

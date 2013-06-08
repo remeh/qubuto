@@ -6,6 +6,8 @@ import java.util.HashSet;
 
 import com.mehteor.db.ModelUtils;
 import com.mehteor.qubuto.socket.action.TodolistActions;
+import com.mehteor.qubuto.right.RightCategory;
+import com.mehteor.qubuto.right.RightType;
 import com.mehteor.util.ErrorCode;
 
 import models.Task;
@@ -32,8 +34,6 @@ public class Tasks extends SessionController {
 			return badRequest(BaseController.renderNotAuthenticatedJson());
 		}
         
-//      // TODO rights
-
     	/*
     	 * Find the corresponding todolist.
     	 */
@@ -41,6 +41,15 @@ public class Tasks extends SessionController {
 
         if (todolist == null) {
             return Results.notFound(""); // 404
+        }
+
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CLOSE_TASK);
+        if (!right) {
+            return SessionController.forbid(RightCategory.TODOLIST, RightType.CLOSE_TASK); 
         }
     	
         // Binds the request
@@ -91,8 +100,6 @@ public class Tasks extends SessionController {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return badRequest(BaseController.renderNotAuthenticatedJson());
 		}
-        
-//      // TODO rights
 
     	/*
     	 * Find the corresponding todolist.
@@ -101,6 +108,15 @@ public class Tasks extends SessionController {
 
         if (todolist == null) {
             return Results.notFound(""); // 404
+        }
+        
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.OPEN_TASK);
+        if (!right) {
+            return SessionController.forbid(RightCategory.TODOLIST, RightType.OPEN_TASK); 
         }
     	
         // Binds the request
@@ -152,8 +168,6 @@ public class Tasks extends SessionController {
             return badRequest(BaseController.renderNotAuthenticatedJson());
         }
 
-        //      // TODO rights
-
         /*
          * Find the corresponding todolist.
          */
@@ -161,6 +175,15 @@ public class Tasks extends SessionController {
 
         if (todolist == null) {
             return Results.notFound(""); // 404
+        }
+        
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.ADD_TAG);
+        if (!right) {
+            return SessionController.forbid(RightCategory.TODOLIST, RightType.ADD_TAG); 
         }
 
         // Binds the request
@@ -213,8 +236,6 @@ public class Tasks extends SessionController {
 			return badRequest(BaseController.renderNotAuthenticatedJson());
 		}
         
-//      // TODO rights
-
     	/*
     	 * Find the corresponding todolist.
     	 */
@@ -222,6 +243,15 @@ public class Tasks extends SessionController {
 
         if (todolist == null) {
             return Results.notFound(""); // 404
+        }
+        
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.REMOVE_TAG);
+        if (!right) {
+            return SessionController.forbid(RightCategory.TODOLIST, RightType.REMOVE_TAG); 
         }
     	
         // Binds the request
@@ -270,8 +300,6 @@ public class Tasks extends SessionController {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return badRequest(BaseController.renderNotAuthenticatedJson());
 		}
-        
-        // TODO rights
 		
 		/*
 		 * Find the corresponding todolist.
@@ -280,6 +308,15 @@ public class Tasks extends SessionController {
 
         if (todolist == null) {
             return Results.notFound(""); // 404
+        }
+        
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CREATE_TASK);
+        if (!right) {
+            return SessionController.forbid(RightCategory.TODOLIST, RightType.CREATE_TASK); 
         }
 		
 	    DynamicForm form = Form.form().bindFromRequest();
@@ -340,8 +377,6 @@ public class Tasks extends SessionController {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return badRequest(BaseController.renderNotAuthenticatedJson());
 		}
-        
-        // TODO rights
 		
 		/*
 		 * Find the corresponding todolist.
@@ -350,6 +385,15 @@ public class Tasks extends SessionController {
 
         if (todolist == null) {
             return Results.notFound(""); // 404
+        }
+        
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.DELETE_TASK);
+        if (!right) {
+            return SessionController.forbid(RightCategory.TODOLIST, RightType.DELETE_TASK); 
         }
 		
 	    DynamicForm form = Form.form().bindFromRequest();

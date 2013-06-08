@@ -8,15 +8,16 @@ import play.libs.Json;
 
 import controllers.Application;
 
+import models.QubutoModel;
+
 import com.mehteor.db.ModelUtils;
-import com.mehteor.db.MongoModel;
 
 /**
  * Comments on a task.
  * 
  * @author Rémy 'remeh' Mathieu
  */
-public class Comment extends MongoModel {
+public class Comment extends QubutoModel {
 	/**
 	 * Content of the comment.
 	 */
@@ -46,6 +47,10 @@ public class Comment extends MongoModel {
 	
 	// ---------------------
 	
+    public User getCreator() {
+        return getAuthor();
+    }
+
 	public User getAuthor() {
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (author != null) {

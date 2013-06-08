@@ -5,12 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import models.QubutoModel;
 import models.TaskState;
 
 import com.mehteor.db.ModelUtils;
-import com.mehteor.db.MongoModel;
 
-public class Todolist extends MongoModel {
+public class Todolist extends QubutoModel {
 	/**
 	 * Todolist's name.
 	 */
@@ -70,6 +70,7 @@ public class Todolist extends MongoModel {
 		this.cleanName = cleanName;
 	}
 	
+    @Override
 	public User getCreator() {
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (creator != null) {

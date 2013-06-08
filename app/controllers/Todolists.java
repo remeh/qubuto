@@ -25,15 +25,15 @@ import com.mehteor.qubuto.socket.manager.ConversationSubscriptionManager;
 import com.mehteor.util.ErrorCode;
 import com.mehteor.util.StringHelper;
 
-// XXX
-import models.UserRight;
-import com.mehteor.qubuto.right.*;
+import com.mehteor.qubuto.right.RightType;
+import com.mehteor.qubuto.right.RightCategory;
 
 public class Todolists extends SessionController {
 	public static Form<Todolist> todolistForm = Form.form(Todolist.class);
 	
 	/**
 	 * Creates a todolist.
+     *
 	 * @return Result
 	 */
 	public static Result submit() {
@@ -60,6 +60,15 @@ public class Todolists extends SessionController {
 			flash("error", "An error occurred with project.");
 			Logger.warn(String.format("The user[%s] tried to create a todolist for a project without its id.", getUser().getId()));
 		}
+
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.PROJECT, project, RightType.CREATE_TODOLIST);
+        if (!right) {
+            return SessionController.forbid(RightCategory.PROJECT, RightType.CREATE_TODOLIST); 
+        }
 		
         /*
          *  Other required fields
@@ -116,13 +125,10 @@ public class Todolists extends SessionController {
         /*
          * Rights
          */
-        // TODO
-        ModelUtils<UserRight> ur = new ModelUtils<UserRight>(UserRight.class);
-        long rights = ur.count("{'category': #, 'objectId': #, 'user': #, 'type': #}", "TODOLIST", todolist.getId(), getUser().getId(), "READ");
-        if (rights == 0) {
-            System.out.println("Forbidden!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        } else {
-            System.out.println("OK!!!!!!!!!!!!!!!!!!");
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.READ);
+        if (!right) {
+            return SessionController.forbid(RightCategory.TODOLIST, RightType.READ); 
         }
 
 		/*
@@ -157,6 +163,15 @@ public class Todolists extends SessionController {
 		if (todolist == null) {
 			return null; // TODO 404 ?
 		}
+
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.READ);
+        if (!right) {
+            return null; // TODO 403 ?
+        }
 		
 		// Opens the websocket
 		return new WebSocket<JsonNode>() {

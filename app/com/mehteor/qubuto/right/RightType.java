@@ -1,11 +1,32 @@
 package com.mehteor.qubuto.right;
 
-import com.mehteor.qubuto.right.RightType;
-		
 /**
  * TODO
  */
 public enum RightType {
-    READ
+    READ,
+    UPDATE,
+
+    /*
+     * Projects
+     */
+    CREATE_TODOLIST,
+    CREATE_CONVERSATION,
+
+    /*
+     * Todolists
+     */
+    CREATE_TASK,
+    CLOSE_TASK,
+    DELETE_TASK,
+    OPEN_TASK,
+    ADD_TAG,
+    REMOVE_TAG,
+    COMMENT,
+
+    /*
+     * Conversations
+     */
+    CREATE_MESSAGE
 }
 
