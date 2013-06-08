@@ -43,8 +43,12 @@ public class Comments extends SessionController {
             return Results.notFound(""); // 404
         }
         
-//      // TODO rights
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist.getId(), RightType.COMMENT);
+        
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.COMMENT);
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.COMMENT);
         }
@@ -118,7 +122,7 @@ public class Comments extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist.getId(), RightType.COMMENT);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.COMMENT);
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.COMMENT);
         }

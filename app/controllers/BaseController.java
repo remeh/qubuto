@@ -24,6 +24,10 @@ public class BaseController extends Controller {
 	public static String renderNotAuthenticatedJson() {
 		return renderJson(ErrorCode.NOT_AUTHENTICATED.getErrorCode(), ErrorCode.NOT_AUTHENTICATED.getDefaultMessage());
 	}
+
+    public static String renderNotAuthorizedJson() {
+        return renderJson(ErrorCode.NOT_AUTHORIZED.getErrorCode(), ErrorCode.NOT_AUTHORIZED.getDefaultMessage());
+    }
 	
 	public static String renderJson(int error, String message) {
 		ObjectNode node = Json.newObject();

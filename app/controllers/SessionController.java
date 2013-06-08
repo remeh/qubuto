@@ -2,8 +2,6 @@ package controllers;
 
 import java.util.List;
 
-import com.mehteor.util.session.SessionManager;
-
 import models.QubutoModel;
 import models.Session;
 import models.User;
@@ -13,6 +11,7 @@ import com.mehteor.db.ModelUtils;
 import com.mehteor.db.MongoModel;
 import com.mehteor.qubuto.right.RightType;
 import com.mehteor.qubuto.right.RightCategory;
+import com.mehteor.util.session.SessionManager;
 
 import play.mvc.Result;
 import play.mvc.Results;
@@ -115,6 +114,6 @@ public class SessionController extends BaseController {
      */
 
     public static Result forbid(RightCategory category, RightType type) {
-        return Results.unauthorized(String.format("You don't have the %s.%s permission, bitch.", category.toString(), type.toString()), "utf8");
+        return Results.unauthorized(BaseController.renderNotAuthorizedJson(), "utf8");
     }
 }

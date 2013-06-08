@@ -725,7 +725,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 							document.location.href = "/login";
 						} else {
 							if (json.message != undefined) {
-								alert("An error occurred : " + json.message);
+								alert("An problem occurred : " + json.message);
 							} else { 
 								alert("An unknown error occurred.");
 							}
