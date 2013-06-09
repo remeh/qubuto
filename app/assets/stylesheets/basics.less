@@ -2,9 +2,9 @@
 @import "mixins.less";
 @import "external/elements.less";
 
-// ------------
+// ---------------------- 
 // Basic classes
-// ------------
+// ---------------------- 
 
 .random-image { // of cats
 	.box-shadow(0px 4px 4px 2px #ddd);
@@ -15,9 +15,9 @@
     display: none;
 }
 
-// ------------
+// ---------------------- 
 // Positions
-// ------------
+// ---------------------- 
 
 .inline-block {
 	display: inline-block;
@@ -58,9 +58,9 @@
     visibility: hidden;
 }                
 
-// ------------
+// ---------------------- 
 // Colors
-// ------------
+// ---------------------- 
 
 .green {
 	color: @green;
@@ -82,9 +82,9 @@
 	color: @red;
 }
 
-// ------------
+// ---------------------- 
 // Styles
-// ------------
+// ---------------------- 
 
 .bold {
 	font-weight: bold;
@@ -102,9 +102,9 @@ span.error {
 	color: @red;
 }
 
-//------------
+// ---------------------- 
 // Pretty lists
-//------------
+// ---------------------- 
 
 div.pretty-list {
 	width: 95%;
@@ -116,11 +116,38 @@ div.pretty-entry {
 	.padded;
 	margin-top: 2px;
 	background-color: #fff;
-	border: 1px solid #f5f5f5;
-	border-right: 1px solid #eee;
-	border-bottom: 1px solid #eee;
+	border: 1px solid #f0f0f0;
+	border-right: 1px solid #dcdcdc;
+	border-bottom: 1px solid #dcdcdc;
 }
 
 div.pretty-entry:hover {
 	.box-shadow(0px 2px 3px 1px #eee);
+}
+
+// ---------------------- 
+// Tabulation
+// ---------------------- 
+
+.tab {
+    .padded;
+}
+.tab-active {
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #eee; 
+	.box-shadow(0px 2px 3px 1px #eee);
+    .rounded;
+}
+.tab-inactive {
+    color: #666;
+}
+.tab-inactive:hover {
+	.box-shadow(0px 2px 3px 1px #eee);
+}
+.tabs {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.tab-content {
 }
