@@ -1,5 +1,5 @@
 define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
-	function Todolist() {
+	function Todolist(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask, routeAddComment, routeDeleteComment) {
         var TIMEOUT = 10000;
 
         var TASK_TRANSITION = 100;
@@ -27,7 +27,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		/**
 		 * Init the todolist pages.
 		 */
-		this.init                       = function(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask, routeAddComment, routeDeleteComment) {
+		this.construct                  = function(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask, routeAddComment, routeDeleteComment) {
 			/*
 			 * init the routes
 			 */
@@ -907,6 +907,10 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 $selector.fadeOut();
             },d); 
         }
+
+        // ---------------------- 
+        
+        self.construct(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask, routeAddComment, routeDeleteComment);
 	}
 	
 	return Todolist;

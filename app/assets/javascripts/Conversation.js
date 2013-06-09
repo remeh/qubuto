@@ -1,5 +1,5 @@
 define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
-	function Conversation() {
+	function Conversation(routeGetTopic, routeSaveTopic, routeNewMessage, routeSaveMessage) {
 		var self = this;
 		this.editorTopic = null;
 		this.editors = [];
@@ -119,24 +119,30 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 		 * Init the conversations pages.
 		 * @param routeGetTopic the route to get the conversation topic content
 		 */
-		this.init = function(routeGetTopic, routeSaveTopic, routeNewMessage) {
-			this.routeGetTopic = routeGetTopic;
-			this.routeSaveTopic = routeSaveTopic;
-			this.routeNewMessage = routeNewMessage;
+		this.construct = function(routeGetTopic, routeSaveTopic, routeNewMessage) {
+			self.routeGetTopic = routeGetTopic;
+			self.routeSaveTopic = routeSaveTopic;
+			self.routeNewMessage = routeNewMessage;
 			
 			// init the topic editor
 			// the var 'content' used here come from the view	
-			this.initAnEditor("topic", -1, content);
+			self.initAnEditor("topic", -1, content);
 			
-			this.initWebsocket();
+			self.initWebsocket();
 			
-			this.switchEditMode('hide', 1, "topic");
+			self.switchEditMode('hide', 1, "topic");
+
+            self.bindEvents();
 			
+		    self.initMessages();
+		}
+		
+        this.bindEvents                 = function() {
 			$(document).on("click", "#conversation-add-message", function() {
 				self.newMessage();
 			});
-		}
-		
+        }
+
 		this.newMessage = function() {
 			$(".conversation-add-message").hide();
 			
@@ -313,6 +319,10 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 					}
 				});
 		}
+
+        // ---------------------- 
+    
+        self.construct(routeGetTopic, routeSaveTopic, routeNewMessage, routeSaveMessage);
 	}
 	
 	return Conversation;

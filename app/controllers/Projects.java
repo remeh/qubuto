@@ -66,6 +66,9 @@ public class Projects extends SessionController {
 		return ok(views.html.projects.show.render(project, Form.form(Todolist.class), Form.form(Conversation.class)));
 	}
 	
+    /**
+     * Page to create a Project.
+     */
 	public static Result create() {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return redirect(routes.Users.login());
@@ -74,6 +77,9 @@ public class Projects extends SessionController {
 		return ok(views.html.projects.create.render(projectForm));
 	}
 	
+    /**
+     * Creation of a Project.
+     */
 	public static Result submit() {
 		/*
          * Bind the form
@@ -105,6 +111,29 @@ public class Projects extends SessionController {
 		project.save();
         
 		return redirect(routes.Projects.list(creator.getUsername()));
+	}
+	
+    /**
+     * Page to configure a Project.
+     */
+	public static Result settings(String username, String projectname) {
+		if (!isAuthenticated("You're not authenticated.", true)) {
+			return redirect(routes.Users.login());
+		}
+		
+		String userId = SessionController.getUserId(username);
+		
+		/*
+		 * Look for the project 
+		 */
+		Project project = findProject(userId, projectname);
+		if (project == null) {
+			return notFound(Application.renderNotFound());
+		}
+
+        // TODO rights
+		
+		return ok(views.html.projects.settings.render(project));
 	}
 	
 	// ---------------------

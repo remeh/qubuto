@@ -14,12 +14,10 @@ require(["Todolist"], function(Todolist) {
 		var routeRemoveTag      = $('#main-div').data('route-remove-tag');
 		var routeAddComment     = $('#main-div').data('route-add-comment');
 		var routeDeleteComment  = $('#main-div').data('route-delete-comment');
-		var todolist = new Todolist();
-		
+
 		/*
-		 * Init the Todolist.
+		 * Create the Todolist.
 		 */
-		 
-		todolist.init(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask, routeAddComment, routeDeleteComment);
+		var todolist = new Todolist(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask, routeAddComment, routeDeleteComment);
 	});
 });

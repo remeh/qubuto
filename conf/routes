@@ -27,6 +27,8 @@ GET		/logout																			controllers.Users.logout()
 # ###############
 GET		/project/create																	controllers.Projects.create()
 POST	/project/create																	controllers.Projects.submit()
+GET		/q/:username/:projectCleanName													controllers.Projects.show(username, projectCleanName)
+GET     /q/:username/:projectCleanName/settings                                         controllers.Projects.settings(username, projectCleanName)
 
 # ###############
 # Todolists
@@ -76,7 +78,6 @@ POST	/q/:username/:projectCleanName/a/c/save-message/:conversationName/:messageI
 # Users dashboard
 # ###############
 GET		/q/:username																	controllers.Projects.list(username)
-GET		/q/:username/:projectCleanName													controllers.Projects.show(username, projectCleanName)
 
 ###############
 ###############

@@ -1,0 +1,20 @@
+@(project: Project)
+@import helper._
+@main("Qubuto - " + project.getName()) {
+<div id="main-div">
+	<section>
+		<header>
+			<h2 class="dark-gray">@project.getName()</h2>
+			<span class="light-gray">@project.getDescription()</span>
+            <span class="float-right"><button class="small-btn"><i class="icon-cog"></i>&nbsp; Configuration</button></span>
+		</header>
+		<br />		
+		<article>
+            TODo
+		</article>
+		<footer>
+		</footer>
+	</section>
+</div>
+<script src="@routes.Assets.at("javascripts/projects.js")" type="text/javascript"></script>
+}
