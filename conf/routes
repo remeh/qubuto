@@ -29,6 +29,9 @@ GET		/project/create																	controllers.Projects.create()
 POST	/project/create																	controllers.Projects.submit()
 GET		/q/:username/:projectCleanName													controllers.Projects.show(username, projectCleanName)
 GET     /q/:username/:projectCleanName/settings                                         controllers.Projects.settings(username, projectCleanName)
+POST    /q/:username/:projectCleanName/settings/:action                                 controllers.Projects.save(username, projectCleanName, action)
+# Ajax part
+POST    /q/:username/:projectCleanName/users/add                                        controllers.Projects.addCollaborator(username, projectCleanName)
 
 # ###############
 # Todolists

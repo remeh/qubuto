@@ -1,4 +1,4 @@
-package com.mehteor.qubuto.socket.action.comment;
+package com.mehteor.qubuto.ajax.action;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -6,32 +6,29 @@ import java.util.Date;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
-import com.mehteor.qubuto.socket.action.Action;
-
 import controllers.Application;
 
-import models.Comment;
-import models.Task;
+import models.Project;
 import models.User;
 
 /**
- * Action created when someone adds a Comment on a Task.
+ * Used to render the action of adding a Collaborator.
  * @author Rémy 'remeh' Mathieu
  */
-public class AddCommentAction extends Action {
+public class AddCollaboratorAction extends AjaxAction {
 	/**
 	 * The {@link ObjectNode} used to render the action.
 	 */
 	private final ObjectNode objectNode;
-    
-	public AddCommentAction(User author, Comment comment) {
-        super(author);
-		objectNode = Action.createNoErrorsNode();
-		objectNode.put("action", "AddComment");
+	
+	public AddCollaboratorAction(User author, Project project, User collaborator) {
+		super(author);
+		objectNode = AjaxAction.createNoErrorsNode();
+		objectNode.put("action", "AddCollaborator");
         objectNode.put("date", Application.formater.format(new Date()));
 		objectNode.putAll(author.toJsonPublic());
-		objectNode.put("comment", comment.toJsonAction());
-		objectNode.put("taskId", comment.getTask().getId());
+		objectNode.put("project", project.toJsonAction());
+        objectNode.put("collaborator", collaborator.toJsonPublic());
 	}
 	
 	// ---------------------

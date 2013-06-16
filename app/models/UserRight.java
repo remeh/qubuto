@@ -52,11 +52,23 @@ public class UserRight extends MongoModel {
 	// ---------------------
 	
 	public UserRight() {
+        this.creationDate = new Date();
 	}
 
     public UserRight(String right) {
+        this();
         init(right);
     }
+
+    public UserRight(String user, String category, String objectId, String type) {
+        this();
+        this.user       = user;
+        this.category   = category;
+        this.objectId   = objectId;
+        this.type       = type;
+    }
+
+    // ---------------------- 
 
     private void init(String right) {
         if (right == null || right.isEmpty()) {

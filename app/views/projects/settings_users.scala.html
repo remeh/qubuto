@@ -1,0 +1,27 @@
+@(project: Project, projectForm: Form[Project])
+<div id="rights-container"
+       data-route-add-collaborator="@routes.Projects.addCollaborator(project.getCreator().getUsername(), project.getCleanName())">
+    <h4><i class="icon-plus-sign"> </i> Add a new collaborator</h4>
+    <div>
+        <table>
+            <tr>
+                <td class="label">
+                    <label for="collaborator-name">Name of the collaborator</label></td>
+                <td class="field">
+                    <input type="text" name="collaborator-name" id="collaborator-name" value="">
+                    <br /><span class="red" id="collaborator-error"></span>
+                </td>
+                <td class="description">
+                    <button id="add-collaborator">Add</button>
+                    <span class="loader" id="add-loader" style="display: none;">&nbsp;<i class="icon-spinner icon-spin"></i></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div>
+    <h4><i class="icon-lock"> </i> Roles configuration</h4>
+    <div>
+
+    </div>
+</div>

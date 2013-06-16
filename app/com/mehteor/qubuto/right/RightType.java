@@ -12,6 +12,7 @@ public enum RightType {
      */
     CREATE_TODOLIST,
     CREATE_CONVERSATION,
+    CONFIGURE,
 
     /*
      * Todolists

@@ -3,6 +3,10 @@ package models;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.node.ObjectNode;
+
+import play.libs.Json;
+
 import models.QubutoModel;
 
 import com.mehteor.db.ModelUtils;
@@ -118,4 +122,26 @@ public class Project extends QubutoModel
 		ModelUtils<Conversation> conversations = new ModelUtils<Conversation>(Conversation.class);
 		return conversations.query("{'project': #}", this.getId());
 	}
+
+	// ---------------------
+	
+	/**
+	 * Returns a Project jsoned for the view.
+	 * @return ObjectNode the Task jsonsed for Action diffusion.
+	 */
+	public ObjectNode toJsonView() {
+		ObjectNode node = Json.newObject();
+        node.put("creator",         getCreator().getUsername());
+        node.put("cleanName",       getCleanName());
+		return node;
+	}
+
+	/**
+	 * Returns a Project jsoned for Action diffusion.
+	 * @return ObjectNode the Task jsonsed for Action diffusion.
+	 */
+	public ObjectNode toJsonAction() {
+        return toJsonView();
+	}
+    
 }

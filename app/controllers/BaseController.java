@@ -8,6 +8,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import models.Project;
 import models.User;
 
+import services.ProjectService;
+
 import com.mehteor.db.ModelUtils;
 import com.mehteor.util.ErrorCode;
 
@@ -93,11 +95,11 @@ public class BaseController extends Controller {
 		if (userId == null) {
 			return null;
 		}
-		
+
 		/*
 		 * Then, look for the project.
 		 */
-		Project project = Projects.findProject(userId, projectCleanName);
+		Project project = ProjectService.findProject(userId, projectCleanName);
 		
 		return project;
 	}

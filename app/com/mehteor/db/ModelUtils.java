@@ -33,6 +33,10 @@ public class ModelUtils<T> {
 	public T find(String id) {
 		return models().findOne("{_id: #}", id).as(type);
 	}
+
+	public T findOne(String field, String value) {
+		return models().findOne(String.format("{%s: #}",field), value).as(type);
+	}
 	
 	public int remove(String query, Object...parameters) {
 		return models().remove(query, parameters).getN();
@@ -78,4 +82,14 @@ public class ModelUtils<T> {
 		}
 		return list;
 	}
+
+    public List<T> queryWithSort(String query, String sort, Object... parameters)
+    {
+		List<T> list = new ArrayList<T>();
+		Iterator<T> it = models().find(query, parameters).sort(sort).as(type).iterator();
+		while (it.hasNext()) {
+			list.add(it.next());
+		}
+		return list;
+    }
 }

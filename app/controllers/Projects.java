@@ -8,12 +8,18 @@ import models.Project;
 import models.Todolist;
 import models.User;
 
+import services.ProjectService;
+import services.UserService;
+
 import com.mehteor.db.ModelUtils;
+import com.mehteor.qubuto.ajax.action.AddCollaboratorAction;
 import com.mehteor.qubuto.right.RightType;
 import com.mehteor.qubuto.right.RightCategory;
 import com.mehteor.util.StringHelper;
+import com.mehteor.util.ErrorCode;
 
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.Form;
 import play.mvc.Result;
 
@@ -29,7 +35,7 @@ public class Projects extends SessionController {
 		
 		User user = SessionController.getUser();
 		if (username.equals(user.getUsername())) {
-			List<Project> userProjects = Projects.findProjectsOfUser(SessionController.getUser());
+			List<Project> userProjects = ProjectService.findProjectsOfUser(SessionController.getUser());
 			return ok(views.html.projects.list.render(userProjects));
 		} else {
 			// TODO What to do when an user want to see another users page
@@ -49,7 +55,7 @@ public class Projects extends SessionController {
 		/*
 		 * Look for the project 
 		 */
-		Project project = findProject(userId, projectname);
+		Project project = ProjectService.findProject(userId, projectname);
 		if (project == null) {
 			return notFound(Application.renderNotFound());
 		}
@@ -126,67 +132,123 @@ public class Projects extends SessionController {
 		/*
 		 * Look for the project 
 		 */
-		Project project = findProject(userId, projectname);
+		Project project = ProjectService.findProject(userId, projectname);
 		if (project == null) {
 			return notFound(Application.renderNotFound());
 		}
 
         // TODO rights
-		
-		return ok(views.html.projects.settings.render(project));
+
+		return ok(views.html.projects.settings.render(project, projectForm.fill(project)));
 	}
-	
-	// ---------------------
-	
-	/**
-	 * Finds the projects of the provided user. 
-	 * @param user the user for which we want to find the projects
-	 * @return the projects of this user.
-	 */
-	private static List<Project> findProjectsOfUser(User user) {
-		if (user == null) {
-			return new ArrayList<Project>();
+
+    public static Result save(String username, String projectName, String action)
+    {
+		if (!isAuthenticated("You're not authenticated.", true)) {
+			return redirect(routes.Users.login());
 		}
-		
-		ModelUtils<Project> muProject = new ModelUtils<Project>(Project.class);
-		List<Project> projects = muProject.query("{'creator': # }", getUser().getId());
-		
-		if (projects == null) {
-			return new ArrayList<Project>();
-		}
-		
-		return projects;
-	}
-	
-	/**
-	 * Finds a project with the owners' id and the project's clean name.
-	 * @param userId the owners' id
-	 * @param projectCleanName the project clean name
-	 * @return the found project, null otherwise
-	 */
-	public static Project findProject(String userId, String projectCleanName) {
-		ModelUtils<Project> muProjects = new ModelUtils<Project>(Project.class);
-		List<Project> projects = muProjects.query("{'creator': #, 'cleanName': #}", userId, projectCleanName);
-		
-		if (projects.size() == 0) {
-			// TODO project not found
-			// TODO want to create a project ?
-			return null;
-		} else if (projects.size() > 1) {
-			// This should never happened !
-			// This user has many projects with the same name.
-			Logger.warn(String.format("The user[%s] has many projects called \"%s\" !", userId, projectCleanName));
-		}	
-		
+		String userId = SessionController.getUserId(username);
+
 		/*
-		 * Gets the project
+		 * Look for the project 
 		 */
-		Project project = projects.get(0);
+		Project project = ProjectService.findProject(userId, projectName);
 		if (project == null) {
-			// should never happen but heh..
-			Logger.warn(String.format("A null project has been extracted from the database for the user[%s], projectCleanName[%s]", userId, projectCleanName));
+			return notFound(Application.renderNotFound());
 		}
 		
-		return project;
-	}
+        if (action.equals("basics")) {
+            return saveBasics(project);
+        } 
+
+        return badRequest();
+    }
+
+    // ---------------------- 
+    // AJAX Calls
+    
+    public static Result addCollaborator(String username, String projectName) {
+		if (!isAuthenticated("You're not authenticated.", true)) {
+			return redirect(routes.Users.login());
+		}
+		String userId = SessionController.getUserId(username);
+
+		/*
+		 * Look for the project 
+		 */
+		Project project = ProjectService.findProject(userId, projectName);
+		if (project == null) {
+			return notFound(Application.renderNotFound());
+		}
+
+        // Binds the request
+        DynamicForm form = Form.form().bindFromRequest();
+
+        /*
+         * Required fields.
+         */
+    	String collaboratorName = form.get("collaborator");
+    	
+    	if (collaboratorName == null) {
+    		return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
+        }
+
+        ModelUtils<User> muUser = new ModelUtils<User>(User.class);
+        User collaborator = muUser.findOne("username", collaboratorName);
+
+        if (collaborator == null) {
+    		return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), "Unknown user."));
+        }
+        
+        AddCollaboratorAction action = new AddCollaboratorAction(getUser(), project, collaborator);
+
+        UserService.addCollaborator(project, collaborator);
+
+        return ok(action.toJson());
+    }
+
+    // ---------------------- 
+    
+    /**
+     * Saves the basics of the given project with the information provided in the projectForm.
+     * @param project       the project to modify
+     * @return Result of the request.
+     */
+    private static Result saveBasics(Project project) {
+		if (project == null) {
+            return notFound(Application.renderNotFound());
+        }
+
+		/*
+         * Bind the form
+         */
+        Form<Project> form = projectForm.bindFromRequest(); 
+
+        /*
+         *  Required fields
+         */
+        if (form.field("name").valueOr("").isEmpty()) {
+        	form.reject("name", "Required.");
+        } else if (StringHelper.validateString(form.field("name").value()) == false) {
+    		form.reject("name", "Must be composed of letters, numbers or underscores.");
+    	}
+        	
+        if (form.field("description").valueOr("").isEmpty()) {
+        	form.reject("description", "Required.");
+        }
+
+        if (form.hasErrors()) {
+        	return badRequest(views.html.projects.settings.render(project, form));
+        }
+
+        // TODO rights
+
+        Project newProject = form.get();
+        project.setName(newProject.getName());
+        project.setCleanName(StringHelper.cleanString(form.field("name").value(), "-"));
+        project.setDescription(newProject.getDescription());
+        project.save();
+
+		return ok(views.html.projects.settings.render(project, form));
+    }
 }

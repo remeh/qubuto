@@ -120,7 +120,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             self.showTaskLoader(taskId);
 
             // sends the AJAX call.
-            self.sendAjaxCall(route, values);
+            sendAjaxCall(route, values);
 		}
 
         /**
@@ -217,7 +217,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             self.showTaskLoader(taskId);
             
             // sends the AJAX call.
-            self.sendAjaxCall(route, values);
+            sendAjaxCall(route, values);
         }
 
         /**
@@ -687,52 +687,6 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 
             $task.find('.task-comments').fadeIn(TASK_TRANSITION);
         }
-
-        /**
-         * Sends an AJAX call to the given route, with the given post values then call 
-         * either the done callback or the fail callback.
-         * @param route         the route to call using POST
-         * @param postValues    the parameters
-         * @param doneCallback  the function to call when everything went fine (could be undefined)
-         * @param failCallback  the function to call when something went wrong (could be undefined)
-         */
-        this.sendAjaxCall               = function(route, postValues, doneCallback, failCallback) {
-			$.ajax({
-				type: 'POST',
-				url: route,
-				data: postValues
-				})
-				.done(function(data) {
-					if (data != null) {
-						var json = JSON.parse(data);
-						if (json.error != 0) {
-							alert("Error: " + json.message);
-						}
-					}
-
-                    if (doneCallback != undefined) {
-                        doneCallback(json);
-                    }
-				})
-				.fail(function(jqxhr) {
-                    if (failCallback != undefined) {
-                        failCallback(json);
-                    }
-					if (jqxhr != null) {
-						var json = JSON.parse(jqxhr.responseText);
-						if (json.error == 1) { // NOT_AUTHENTICATED
-							alert("You're not authenticated or your session has expired.");
-							document.location.href = "/login";
-						} else {
-							if (json.message != undefined) {
-								alert("An problem occurred : " + json.message);
-							} else { 
-								alert("An unknown error occurred.");
-							}
-						}
-					}
-				});
-        }
 		
 		/**
 		 * The AJAX call to create a Task.
@@ -755,7 +709,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 self.enableAddTask();
             }
             // sends the AJAX call.
-            self.sendAjaxCall(route, values, doneCallback, failCallback);
+            sendAjaxCall(route, values, doneCallback, failCallback);
 		}
 
 		/**
@@ -771,7 +725,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             self.showTaskLoader(taskId);
 
             // sends the AJAX call.
-            self.sendAjaxCall(route, values);
+            sendAjaxCall(route, values);
 		}
 		
 		/**
@@ -787,7 +741,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             self.showTaskLoader(taskId);
 
             // sends the AJAX call.
-            self.sendAjaxCall(route, values);
+            sendAjaxCall(route, values);
 		}
 		
         /**
@@ -803,7 +757,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             self.showTaskLoader(taskId);
 
             // sends the AJAX call.
-            self.sendAjaxCall(route, values);
+            sendAjaxCall(route, values);
 		}
 		
 		/**
@@ -821,7 +775,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             self.showTaskLoader(taskId);
 
             // sends the AJAX call.
-            self.sendAjaxCall(route, values);
+            sendAjaxCall(route, values);
 		}
 		
 		/**
@@ -839,7 +793,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             self.showTaskLoader(taskId);
             
             // sends the AJAX call.
-            self.sendAjaxCall(route, values);
+            sendAjaxCall(route, values);
 		}
 		
 		this.disableAddTask             = function($selector) {

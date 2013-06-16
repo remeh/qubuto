@@ -96,22 +96,10 @@ public class SessionController extends BaseController {
      * @return true whether the currently logged user has the wanted rights.
      */
     public static boolean hasRight(RightCategory category, String objectId, RightType type) {
+        //System.out.println("%s %s %s %s", category.toString(), objectId, getUser().getId(), type.toString());
         long rights = mu.count("{'category': #, 'objectId': #, 'user': #, 'type': #}", category.toString(), objectId, getUser().getId(), type.toString());
         return rights > 0;
     }
-
-    /**
-     * Tests if the currently logger user has the given right.
-     * @param category      the RightCategory to test for
-     * @param objectId      the object to test for
-     * @param types         the RightTypes to test for.
-     * @return true whether the currently logged user has the wanted rights.
-     TODO
-    public static boolean hasRights(RightCategory category, String objectId, List<RightType> types) {
-        //long rights = mu.count("{'category': #, 'objectId': #, 'user': #, 'type': #}", category.toString(), objectId, getUser().getId(), type.toString());
-        return false; // TODO
-    }
-     */
 
     public static Result forbid(RightCategory category, RightType type) {
         return Results.unauthorized(BaseController.renderNotAuthorizedJson(), "utf8");
