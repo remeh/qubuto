@@ -2,18 +2,44 @@ package services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import models.Project;
 import models.User;
+import models.UserRight;
 
 import com.mehteor.db.ModelUtils;
+import com.mehteor.qubuto.right.RightCategory;
+import com.mehteor.qubuto.right.RightType;
 
 import play.Logger;
 import play.data.Form;
 import play.mvc.Result;
 
 public class ProjectService {
+    /**
+     * Finds the projects shared with the given user.
+     * @param user      the user for which you want to find shared projects.
+     * @return the projects shared with the user.
+     */
+    public static Set<Project> findSharedProjectsOfUser(User user) {
+        if (user == null) {
+            return new HashSet<Project>();
+        }
+
+        ModelUtils<UserRight> muRights = new ModelUtils<UserRight>(UserRight.class);
+        List<UserRight> rights = muRights.query("{type: #, user: #, category: #}", RightType.READ, user.getId(), RightCategory.PROJECT);
+
+        Set<Project> projects = new HashSet<Project>();
+        for (UserRight right : rights) {
+            projects.add(right.getProject());
+        }
+
+        return projects;
+    }
+
 	/**
 	 * Finds the projects of the provided user. 
 	 * @param user the user for which we want to find the projects

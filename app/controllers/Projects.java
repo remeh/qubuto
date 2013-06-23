@@ -35,10 +35,11 @@ public class Projects extends SessionController {
 			return redirect(routes.Users.login());
 		}
 		
-		User user = SessionController.getUser();
+        User user = getUser();
 		if (username.equals(user.getUsername())) {
-			List<Project> userProjects = ProjectService.findProjectsOfUser(SessionController.getUser());
-			return ok(views.html.projects.list.render(userProjects));
+			List<Project> userProjects = ProjectService.findProjectsOfUser(user);
+            Set<Project> userSharedProjects = ProjectService.findSharedProjectsOfUser(user);
+			return ok(views.html.projects.list.render(userProjects, userSharedProjects));
 		} else {
 			// TODO What to do when an user want to see another users page
 			Logger.info(String.format("The user[%s] tried to access to the user \"%s\" page.", user.getId(), username));
@@ -232,6 +233,10 @@ public class Projects extends SessionController {
          * Required fields.
          */
     	String collaboratorName = form.get("collaborator");
+
+    	if (collaboratorName.equals(username)) {
+    		return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), "You can't add the creator as a collaborator"));
+        }
     	
     	if (collaboratorName == null) {
     		return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
@@ -293,6 +298,6 @@ public class Projects extends SessionController {
         project.setDescription(newProject.getDescription());
         project.save();
 
-		return ok();
+		return redirect(routes.Projects.settings(project.getCreator().getUsername(), project.getCleanName()));
     }
 }

@@ -4,6 +4,8 @@ define([], function() {
 
         var collaboratorTemplate = null;
 
+        var projectTemplate      = null;
+
         this.bindEvents                  = function() {
             $(document).on("click", "a.new-todolist", function() {
                 self.newTodolist();
