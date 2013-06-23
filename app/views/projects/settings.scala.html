@@ -1,4 +1,4 @@
-@(project: Project, projectForm: Form[Project])
+@(project: Project, projectForm: Form[Project], collaborators: Set[String])
 @import helper._
 @main("Qubuto - " + project.getName()) {
 <div id="main-div">
@@ -20,7 +20,7 @@
                     @projects.settings_basics.render(project, projectForm)
                 </div>
                 <div class="tab-content" id="users" style="display: none;">
-                    @projects.settings_users.render(project, projectForm)
+                    @projects.settings_users.render(project, projectForm, collaborators)
                 </div>
                 <div class="tab-content" id="advanced" style="display: none;">
                     <span class="red bold">DELETION OF THE PROJECT BITCH</span>

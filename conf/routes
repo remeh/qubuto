@@ -32,6 +32,7 @@ GET     /q/:username/:projectCleanName/settings                                 
 POST    /q/:username/:projectCleanName/settings/:action                                 controllers.Projects.save(username, projectCleanName, action)
 # Ajax part
 POST    /q/:username/:projectCleanName/users/add                                        controllers.Projects.addCollaborator(username, projectCleanName)
+POST    /q/:username/:projectCleanName/users/rem                                        controllers.Projects.removeCollaborator(username, projectCleanName)
 
 # ###############
 # Todolists

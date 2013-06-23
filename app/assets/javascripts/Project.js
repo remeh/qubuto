@@ -2,6 +2,8 @@ define([], function() {
 	function Project() {
 		var self = this;
 
+        var collaboratorTemplate = null;
+
         this.bindEvents                  = function() {
             $(document).on("click", "a.new-todolist", function() {
                 self.newTodolist();
@@ -12,9 +14,43 @@ define([], function() {
             $(document).on("click", "#add-collaborator", function() {
                 self.addCollaborator($(this));
             });
+            $(document).on("click", ".remove-collaborator", function() {
+                self.removeCollaborator($(this));
+            });
             $(document).on("click", ".tab-toggle", function() {
                 self.tabToggle($(this));
             });
+        }
+
+        /**
+         * Triggered when an user clicks to remove a collaborator
+         * @param $a            the jQuery selector of the a element.
+         */
+        this.removeCollaborator            = function($a) {
+            // clean the error message
+            $('#collaborator-error').text('');
+
+            var collaboratorName = $a.data('collaborator');
+
+            // Loader!
+            $('#add-loader').show();
+
+            // Prepares the call
+			var route = $('#rights-container').data('route-remove-collaborator');
+			var values = {
+				"collaborator": collaboratorName
+			}
+            var doneCallback = function(json) {
+                $a.parents('li').remove();
+                self.hideLoaders();
+		    }
+            var failCallback = function(json) {
+                $('#collaborator-error').text(json.message);
+                self.hideLoaders();
+            }
+
+            // sends the AJAX call.
+            sendAjaxCall(route, values, doneCallback, failCallback);
         }
 
         /**
@@ -41,6 +77,7 @@ define([], function() {
 				"collaborator": collaboratorName
 			}
             var doneCallback = function(json) {
+                self.addCollaboratorName(json.collaborator.username);
                 self.hideLoaders();
 		    }
             var failCallback = function(json) {
@@ -50,6 +87,22 @@ define([], function() {
 
             // sends the AJAX call.
             sendAjaxCall(route, values, doneCallback, failCallback);
+        }
+
+        this.addCollaboratorName        = function(username) {
+            var html = self.collaboratorTemplate({collaborator: username});
+            var existing = false;
+            var collaboratorsName = $('span.collaborator-name');
+            for (var i = 0; i < collaboratorsName.length; i++) {
+                console.log($(collaboratorsName[i]).text());
+                if ($(collaboratorsName[i]).text() == username) {
+                    existing = true;
+                    break;
+                }
+            }
+            if (!existing) {
+                $('ul.collaborators').append(html);
+            }
         }
 
         this.hideLoaders                =  function() {
@@ -153,9 +206,18 @@ define([], function() {
            .removeAttr('selected');
        } 
 
+		this.initHandlebars              = function() {
+			/*
+			 * Prepare the Handlebars template.
+			 */
+			var collaboratorTemplateSource = $("script#collaborator-template").html();
+			self.collaboratorTemplate = Handlebars.compile(collaboratorTemplateSource);
+        }
+
         // ---------------------- 
         
         this.construct                  = function() {
+            self.initHandlebars();
             self.bindEvents();
         }
 

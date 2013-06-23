@@ -1,7 +1,9 @@
 package services;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import models.Conversation;
 import models.Project;
@@ -9,6 +11,7 @@ import models.Todolist;
 import models.User;
 import models.UserRight;
 
+import com.mehteor.db.ModelUtils;
 import com.mehteor.qubuto.right.RightType;
 import com.mehteor.qubuto.right.RightCategory;
 
@@ -46,18 +49,49 @@ public class UserService {
 
         return rights;
     }
+
+    /**
+     * Removes the UserRights for the given user on the given project.
+     *
+     * @param   project             for which project we want to remove UserRights
+     * @param   user                for which user we remove UserRights
+     * @return the number of UserRights removed.
+     */
+    public static int removeCollaborator(Project project, User user) {
+        ModelUtils<UserRight> muRights = new ModelUtils<UserRight>(UserRight.class);
+        int nbRemoved = muRights.remove("{project: #, user: #}", project.getId(), user.getId());
+        return nbRemoved;
+    }
+
+    /**
+     * Returns the collaborators of a Project.
+     * @param project       the project for which we want the collaborators
+     * @return the collaborators of a Project
+     */
+    public static Set<String> findCollaboratorsName(Project project) {
+        Set<String> users = new HashSet<String>();
+
+        ModelUtils<UserRight> muUserRights = new ModelUtils<UserRight>(UserRight.class);
+        List<UserRight> userrights = muUserRights.query("{project: #}", project.getId());
+
+        for (UserRight right : userrights) {
+            users.add(right.getUser().getUsername());
+        }
+
+        return users;
+    }
    
     // ---------------------- 
     
     private static List<UserRight> createFor(User user, Project project) {
         List<UserRight> rights = new ArrayList<UserRight>();
 
-        rights.add(new UserRight(user.getId(), RightCategory.PROJECT.toString(), project.getId(), RightType.READ.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.PROJECT.toString(), project.getId(), RightType.UPDATE.toString()));
+        rights.add(new UserRight(user, project, RightType.READ));
+        rights.add(new UserRight(user, project, RightType.UPDATE));
 
-        rights.add(new UserRight(user.getId(), RightCategory.PROJECT.toString(), project.getId(), RightType.CREATE_TODOLIST.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.PROJECT.toString(), project.getId(), RightType.CREATE_CONVERSATION.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.PROJECT.toString(), project.getId(), RightType.CONFIGURE.toString()));
+        rights.add(new UserRight(user, project, RightType.CREATE_TODOLIST));
+        rights.add(new UserRight(user, project, RightType.CREATE_CONVERSATION));
+        rights.add(new UserRight(user, project, RightType.CONFIGURE));
 
         return rights;
     }
@@ -65,15 +99,15 @@ public class UserService {
     private static List<UserRight> createFor(User user, Todolist todolist) {
         List<UserRight> rights = new ArrayList<UserRight>();
 
-        rights.add(new UserRight(user.getId(), RightCategory.TODOLIST.toString(), todolist.getId(), RightType.READ.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.TODOLIST.toString(), todolist.getId(), RightType.UPDATE.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.TODOLIST.toString(), todolist.getId(), RightType.CREATE_TASK.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.TODOLIST.toString(), todolist.getId(), RightType.CLOSE_TASK.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.TODOLIST.toString(), todolist.getId(), RightType.DELETE_TASK.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.TODOLIST.toString(), todolist.getId(), RightType.OPEN_TASK.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.TODOLIST.toString(), todolist.getId(), RightType.ADD_TAG.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.TODOLIST.toString(), todolist.getId(), RightType.REMOVE_TAG.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.TODOLIST.toString(), todolist.getId(), RightType.COMMENT.toString()));
+        rights.add(new UserRight(user, todolist, RightType.READ));
+        rights.add(new UserRight(user, todolist, RightType.UPDATE));
+        rights.add(new UserRight(user, todolist, RightType.CREATE_TASK));
+        rights.add(new UserRight(user, todolist, RightType.CLOSE_TASK));
+        rights.add(new UserRight(user, todolist, RightType.DELETE_TASK));
+        rights.add(new UserRight(user, todolist, RightType.OPEN_TASK));
+        rights.add(new UserRight(user, todolist, RightType.ADD_TAG));
+        rights.add(new UserRight(user, todolist, RightType.REMOVE_TAG));
+        rights.add(new UserRight(user, todolist, RightType.COMMENT));
 
         return rights;
     }
@@ -81,9 +115,9 @@ public class UserService {
     private static List<UserRight> createFor(User user, Conversation conversation) {
         List<UserRight> rights = new ArrayList<UserRight>();
 
-        rights.add(new UserRight(user.getId(), RightCategory.CONVERSATION.toString(), conversation.getId(), RightType.READ.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.CONVERSATION.toString(), conversation.getId(), RightType.UPDATE.toString()));
-        rights.add(new UserRight(user.getId(), RightCategory.CONVERSATION.toString(), conversation.getId(), RightType.CREATE_MESSAGE.toString()));
+        rights.add(new UserRight(user, conversation, RightType.READ));
+        rights.add(new UserRight(user, conversation, RightType.UPDATE));
+        rights.add(new UserRight(user, conversation, RightType.CREATE_MESSAGE));
 
         return rights;
     }

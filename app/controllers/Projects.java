@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import models.Conversation;
 import models.Project;
@@ -13,6 +14,7 @@ import services.UserService;
 
 import com.mehteor.db.ModelUtils;
 import com.mehteor.qubuto.ajax.action.AddCollaboratorAction;
+import com.mehteor.qubuto.ajax.action.RemoveCollaboratorAction;
 import com.mehteor.qubuto.right.RightType;
 import com.mehteor.qubuto.right.RightCategory;
 import com.mehteor.util.StringHelper;
@@ -139,7 +141,9 @@ public class Projects extends SessionController {
 
         // TODO rights
 
-		return ok(views.html.projects.settings.render(project, projectForm.fill(project)));
+        Set<String> collaborators = UserService.findCollaboratorsName(project); 
+
+		return ok(views.html.projects.settings.render(project, projectForm.fill(project), collaborators));
 	}
 
     public static Result save(String username, String projectName, String action)
@@ -166,6 +170,46 @@ public class Projects extends SessionController {
 
     // ---------------------- 
     // AJAX Calls
+    
+    public static Result removeCollaborator(String username, String projectName) {
+		if (!isAuthenticated("You're not authenticated.", true)) {
+			return redirect(routes.Users.login());
+		}
+		String userId = SessionController.getUserId(username);
+
+		/*
+		 * Look for the project 
+		 */
+		Project project = ProjectService.findProject(userId, projectName);
+		if (project == null) {
+			return notFound(Application.renderNotFound());
+		}
+
+        // Binds the request
+        DynamicForm form = Form.form().bindFromRequest();
+
+        /*
+         * Required fields.
+         */
+    	String collaboratorName = form.get("collaborator");
+
+    	if (collaboratorName == null) {
+    		return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
+        }
+
+        ModelUtils<User> muUser = new ModelUtils<User>(User.class);
+        User collaborator = muUser.findOne("username", collaboratorName);
+
+        if (collaborator == null) {
+    		return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), "Unknown user."));
+        }
+        
+        RemoveCollaboratorAction action = new RemoveCollaboratorAction(getUser(), project, collaborator);
+
+        UserService.removeCollaborator(project, collaborator);
+
+        return ok(action.toJson());
+    }
     
     public static Result addCollaborator(String username, String projectName) {
 		if (!isAuthenticated("You're not authenticated.", true)) {
@@ -238,7 +282,7 @@ public class Projects extends SessionController {
         }
 
         if (form.hasErrors()) {
-        	return badRequest(views.html.projects.settings.render(project, form));
+        	return badRequest();
         }
 
         // TODO rights
@@ -249,6 +293,6 @@ public class Projects extends SessionController {
         project.setDescription(newProject.getDescription());
         project.save();
 
-		return ok(views.html.projects.settings.render(project, form));
+		return ok();
     }
 }

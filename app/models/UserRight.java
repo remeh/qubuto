@@ -32,6 +32,11 @@ public class UserRight extends MongoModel {
     private String category;
 
     /**
+     * The project on which impacts this right.
+     */
+    private String project;
+
+    /**
      * The objectId of this Right.
      *
      * Represents for exemple the id of a Todolist.
@@ -60,12 +65,40 @@ public class UserRight extends MongoModel {
         init(right);
     }
 
-    public UserRight(String user, String category, String objectId, String type) {
+    public UserRight(User user, RightCategory category, Project project, String objectId, RightType type) {
         this();
-        this.user       = user;
-        this.category   = category;
+        this.user       = user.getId();
+        this.category   = category.toString();
+        this.project    = project.getId();
         this.objectId   = objectId;
-        this.type       = type;
+        this.type       = type.toString();
+    }
+
+    public UserRight(User user, Project project, RightType type) {
+        this();
+        this.user       = user.getId();
+        this.category   = RightCategory.PROJECT.toString();
+        this.project    = project.getId();
+        this.objectId   = project.getId();
+        this.type       = type.toString();
+    }
+
+    public UserRight(User user, Conversation conversation, RightType type) {
+        this();
+        this.user       = user.getId();
+        this.category   = RightCategory.CONVERSATION.toString();
+        this.project    = conversation.getProject().getId();
+        this.objectId   = conversation.getId();
+        this.type       = type.toString();
+    }
+
+    public UserRight(User user, Todolist todolist, RightType type) {
+        this();
+        this.user       = user.getId();
+        this.category   = RightCategory.TODOLIST.toString();
+        this.project    = todolist.getProject().getId();
+        this.objectId   = todolist.getId();
+        this.type       = type.toString();
     }
 
     // ---------------------- 
@@ -76,19 +109,21 @@ public class UserRight extends MongoModel {
         }
 
         String[] parts = right.split(":"); 
-        if (parts.length != 3) {
-            throw new IllegalArgumentException("Bad format for the string description. Must be \"Category:id:Type\"");
+        if (parts.length != 4) {
+            throw new IllegalArgumentException("Bad format for the string description. Must be \"Category:projectId:id:Type\"");
         }
 
         this.category = parts[0];
 
+        this.project = parts[1];
+
         if (parts[2].isEmpty()) {
             this.objectId = null;
         } else {
-            this.objectId = parts[1];
+            this.objectId = parts[2];
         }
 
-        this.type = parts[2];
+        this.type = parts[3];
     }
 
     // ---------------------- 
@@ -102,6 +137,18 @@ public class UserRight extends MongoModel {
     }
 
 	// ---------------------
+
+	public Project getProject() {
+		ModelUtils<Project> mu = new ModelUtils<Project>(Project.class);
+		if (project != null) {
+			return mu.find(project);
+		}
+		return null;
+	}
+
+    public void setProject(Project project) {
+        this.project = project.getId();
+    }
 
 	public User getUser() {
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
@@ -146,14 +193,6 @@ public class UserRight extends MongoModel {
             return null;
         }
 		ModelUtils<Conversation> mu = new ModelUtils<Conversation>(Conversation.class);
-        return mu.find(objectId);
-    }
-
-    public Project getProject() {
-        if (objectId == null) {
-            return null;
-        }
-		ModelUtils<Project> mu = new ModelUtils<Project>(Project.class);
         return mu.find(objectId);
     }
 

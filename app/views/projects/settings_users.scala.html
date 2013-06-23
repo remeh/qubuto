@@ -1,8 +1,12 @@
-@(project: Project, projectForm: Form[Project])
+@(project: Project, projectForm: Form[Project], collaborators: Set[String])
+<script id="collaborator-template" type="text/x-handlebars-template">
+    <li>{{collaborator}} <a href='#' class='remove-collaborator' data-collaborator="{{collaborator}}"><i class="gray icon-remove"></i></a></li>
+</script>
 <div id="rights-container"
-       data-route-add-collaborator="@routes.Projects.addCollaborator(project.getCreator().getUsername(), project.getCleanName())">
-    <h4><i class="icon-plus-sign"> </i> Add a new collaborator</h4>
+       data-route-add-collaborator="@routes.Projects.addCollaborator(project.getCreator().getUsername(), project.getCleanName())"
+       data-route-remove-collaborator="@routes.Projects.removeCollaborator(project.getCreator().getUsername(), project.getCleanName())">
     <div>
+        <h4><i class="icon-plus-sign"> </i> Add a new collaborator</h4>
         <table>
             <tr>
                 <td class="label">
@@ -18,10 +22,22 @@
             </tr>
         </table>
     </div>
-</div>
-<div>
-    <h4><i class="icon-lock"> </i> Roles configuration</h4>
     <div>
-
+        <h4><i class="icon-minus-sign"> </i> Remove a collaborator</h4>
+        <div id="collaborators-container">
+            <p>The collaborators of <em>@project.getName()</em> are</p>
+            <ul class="collaborators">
+                @for(collaborator <- collaborators) {
+                    <li><span class="collaborator-name">@collaborator</span> <a href='#' class='remove-collaborator' data-collaborator="@collaborator"><i class="gray icon-remove"></i></a></li>
+                }
+            </ul>
+        </div>  
+    </div>
+    <div>
+        <h4><i class="icon-lock"> </i> Roles configuration</h4>
+        <div>
+            <span class="dark-gray">Coming soon</span><br />
+            <span class="gray"><em>In the next version, you'll be able to more precisely configure the rights of your collaborators on the project.</em></span> 
+        </div>
     </div>
 </div>
