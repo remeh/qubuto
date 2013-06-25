@@ -133,4 +133,11 @@ public class Todolist extends QubutoModel {
 		ModelUtils<Task> tasks = new ModelUtils<Task>(Task.class);
 		return Collections.unmodifiableList(tasks.query("{'todolist': #, 'state': #}", this.getId(), TaskState.DONE));
 	}
+
+    @Override
+    public void remove() {
+        for (Task task : getTasks()) {
+            task.remove();
+        }
+    }
 }

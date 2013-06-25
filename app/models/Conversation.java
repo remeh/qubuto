@@ -137,4 +137,13 @@ public class Conversation extends QubutoModel {
 		ModelUtils<Message> messages = new ModelUtils<Message>(Message.class);
 		return Collections.unmodifiableList(messages.query("{'conversation': #}", this.getId()));
 	}
+
+    // ---------------------- 
+
+    @Override
+    public void remove() {
+        for (Message message : getMessages()) {
+            message.remove();
+        }
+    }
 }

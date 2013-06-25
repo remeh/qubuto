@@ -81,6 +81,21 @@ public class SessionManager {
         
         return session;
     }
+
+    /**
+     * Finds a session in the opened sessions for the provided session ID and refresh it last action date.
+     * Returns null if there is no open session for this user.
+     * @param sessionId the session ID to look for.
+     * @return the found session (the first if there is many, should never happen), null if none Session were found.
+     */
+    public static Session findAndUpdateSession(String sessionId) {
+        Session session = findSession(sessionId);
+        if (session != null) {
+            session.setLastUpdate(new Date());
+            session.save();
+        }
+        return session;
+    }
     
     /**
      * Cleans the session in the Http Session.

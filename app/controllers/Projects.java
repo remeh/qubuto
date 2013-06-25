@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ import services.ProjectService;
 import services.UserService;
 
 import com.mehteor.db.ModelUtils;
+import com.mehteor.qubuto.ajax.AjaxConsumer;
 import com.mehteor.qubuto.ajax.action.AddCollaboratorAction;
 import com.mehteor.qubuto.ajax.action.RemoveCollaboratorAction;
 import com.mehteor.qubuto.right.RightType;
@@ -104,9 +106,11 @@ public class Projects extends SessionController {
     		form.reject("name", "Must be composed of letters, numbers or underscores.");
     	}
         	
+        /* Description isn't required.
         if (form.field("description").valueOr("").isEmpty()) {
         	form.reject("description", "Required.");
         }
+        */
 
         if (form.hasErrors()) {
         	return badRequest(views.html.projects.create.render(form));
@@ -142,7 +146,10 @@ public class Projects extends SessionController {
 
         // TODO rights
 
-        Set<String> collaborators = UserService.findCollaboratorsName(project); 
+        Set<String> collaborators = new HashSet<String>();
+        for (User user : UserService.findCollaborators(project)) {
+            collaborators.add(user.getUsername());
+        }
 
 		return ok(views.html.projects.settings.render(project, projectForm.fill(project), collaborators));
 	}
@@ -206,6 +213,7 @@ public class Projects extends SessionController {
         }
         
         RemoveCollaboratorAction action = new RemoveCollaboratorAction(getUser(), project, collaborator);
+        AjaxConsumer.consume(action);
 
         UserService.removeCollaborator(project, collaborator);
 
@@ -250,6 +258,7 @@ public class Projects extends SessionController {
         }
         
         AddCollaboratorAction action = new AddCollaboratorAction(getUser(), project, collaborator);
+        AjaxConsumer.consume(action);
 
         UserService.addCollaborator(project, collaborator);
 

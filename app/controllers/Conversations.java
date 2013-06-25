@@ -12,6 +12,8 @@ import models.Conversation;
 import models.Message;
 import models.Project;
 import models.User;
+import services.UserService;
+
 import play.Logger;
 import play.api.templates.Html;
 import play.data.DynamicForm;
@@ -107,6 +109,14 @@ public class Conversations extends SessionController {
         conversation.setLastUpdate(new Date());
         conversation.setCreator(getUser());
         conversation.save();
+
+        /*
+         * Adds the rights to project collaborator.
+         */
+        List<User> users = UserService.findCollaborators(project);
+        for (User user : users) {
+            UserService.saveRightsFor(user, conversation);
+        }
 		
         return redirect(routes.Conversations.show(getUser().getUsername(), project.getCleanName(), cleanTitle));
 	}

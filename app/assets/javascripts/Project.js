@@ -28,7 +28,7 @@ define([], function() {
          * Triggered when an user clicks to remove a collaborator
          * @param $a            the jQuery selector of the a element.
          */
-        this.removeCollaborator            = function($a) {
+        this.removeCollaborator         = function($a) {
             // clean the error message
             $('#collaborator-error').text('');
 
@@ -213,7 +213,9 @@ define([], function() {
 			 * Prepare the Handlebars template.
 			 */
 			var collaboratorTemplateSource = $("script#collaborator-template").html();
-			self.collaboratorTemplate = Handlebars.compile(collaboratorTemplateSource);
+            if (collaboratorTemplateSource != undefined) {
+                self.collaboratorTemplate = Handlebars.compile(collaboratorTemplateSource);
+            }
         }
 
         // ---------------------- 

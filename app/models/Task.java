@@ -199,6 +199,13 @@ public class Task extends QubutoModel {
         return toJsonView();
 	}
 
+    @Override
+    public void remove() {
+        for (Comment comment : getComments()) {
+            comment.remove();
+        }
+    }
+
     // ---------------------- 
 
     /**

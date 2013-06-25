@@ -15,7 +15,7 @@
     <div class="pretty-entry todo-entry task-{{state}}" id="{{id}}" data-position="{{position}}">
         <a href='#' class="task-remove"><i class="float-right light-gray icon-trash"></i></a>
         <div>
-            <a href='#' class="{{#equals state 'TODO'}}task-todo{{else}}task-done{{/equals}}" title="Done"><i class="{{#equals state 'TODO'}}icon-check-empty{{else}}icon-check{{/equals}} gray"></i></a> <span class="dark-gray bold">{{title}}</span> - {{content}}
+            <a href='#' class="{{#equals state 'TODO'}}task-todo{{else}}task-done{{/equals}}" title="Done"><i class="{{#equals state 'TODO'}}icon-check-empty{{else}}icon-check{{/equals}} gray"></i></a> <span id="task-content-{{id}}"><span class="dark-gray bold">{{title}}</span> - {{content}}</span>
         </div>
         <div class="float-left">
             <div class="tags">
@@ -33,7 +33,7 @@
         <div class="float-right">
             <div class="todo-actions">
                 <span class="loader" id="loader-{{id}}"><i class="icon-spinner icon-spin"></i></span>
-                <button class="small-btn task-comments"><i class="icon-comments"></i> Comments</button>
+                <button class="small-btn task-comments"><i class="icon-comments"></i> Comments <span class="gray">({{comments.length}})</span></button>
             </div>
         </div>
         <div class="clear">
@@ -94,11 +94,18 @@
         <article>
             <hr />
             <div><strong><i class="icon-filter"></i>&nbsp;Filters</strong></div>
-            <div class="filter-tags">
-                <i class="icon-tag gray"></i> Tags
-                <a class="filter-tag" href="#" data-tag="1"><span class="tag">TODO</span></a>
-                <a class="filter-tag" href="#" data-tag="2"><span class="tag">FEATURE</span></a>
-                <a class="filter-tag" href="#" data-tag="3"><span class="tag">BUG</span></a>
+            <div>
+                <div class="inline-block filter-tags">
+                    <i class="icon-tag gray"></i> Tags
+                    <a class="filter-tag" href="#" data-tag="1"><span class="tag">TODO</span></a>
+                    <a class="filter-tag" href="#" data-tag="2"><span class="tag">FEATURE</span></a>
+                    <a class="filter-tag" href="#" data-tag="3"><span class="tag">BUG</span></a>
+                </div>
+                <div class="inline-block filter-content">
+                    <i class="icon-search gray"></i> Content
+                    <input type="text" id="filter-content" placeholder="Type to filter on content">
+                     <a href='#' id="remove-filter-content" style="display: none;"><i class="icon-remove gray"></i></a>
+                </div>
             </div>
             <hr />
         </article>

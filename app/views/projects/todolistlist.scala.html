@@ -10,7 +10,11 @@
 					<span class="light-gray"><i class="icon-check-empty"> @todolist.getTodoTasks().size()</i></span> <span class="light-gray" style="margin-left: 5px;"> <i class="icon-check"> @todolist.getDoneTasks().size()</i></span>
 				</div>
 				<div>
+                    @if( todolist.getDescription().length() == 0) {
+                    <span>&nbsp;</span>
+                    } else {
 					<span class="light-gray">@todolist.getDescription()</span>
+                    }
 				</div>
 			</div>
 		</a>

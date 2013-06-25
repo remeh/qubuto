@@ -12,6 +12,9 @@ import models.Project;
 import models.Task;
 import models.Todolist;
 import models.User;
+import services.ProjectService;
+import services.UserService;
+
 import play.Logger;
 import play.data.Form;
 import play.libs.F.Callback;
@@ -88,9 +91,12 @@ public class Todolists extends SessionController {
         	}
         	
         }
+
+        /* Description not mandatory ?
         if (form.field("description").valueOr("").isEmpty()) {
         	form.reject("description", "Required");
         }
+        */
 	        
         /*
          * Redirect to the create form if there is errors
@@ -108,6 +114,14 @@ public class Todolists extends SessionController {
         todolist.setCreator(getUser());
         todolist.setCleanName(cleanName);
         todolist.save();
+
+        /*
+         * Adds the rights to project collaborator.
+         */
+        List<User> users = UserService.findCollaborators(project);
+        for (User user : users) {
+            UserService.saveRightsFor(user, todolist);
+        }
 		
         return redirect(routes.Todolists.show(getUser().getUsername(), project.getCleanName(), cleanName));
 	}

@@ -105,6 +105,70 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             $(document).on("click", ".comment-remove", function() {
                 self.deleteComment($(this));
             });
+
+            $(document).on("keyup", "#filter-content", function(event) {
+                self.keypressFilterContent($(this), event);
+            });
+
+            $(document).on("click", "#remove-filter-content", function() {
+                self.removeFilterContent($(this));
+            });
+
+        }
+
+        /**
+         * Triggered when the user remove the "filter content"
+         * @param $a            the jQuery selector of the a
+         */
+        this.removeFilterContent        = function($a) {
+            $('#filter-content').val('');
+            $('#remove-filter-content').hide();
+            self.applyFilterContent('');
+        }
+
+        /**
+         * Triggered when the user has typed something to filter on the content.
+         * @param $input        the jQuery selector of the input
+         * @param event         the received event
+         */
+        this.keypressFilterContent      = function($input, event) {
+            var val = $input.val();
+            if (val == 0) {
+                $('#remove-filter-content').hide();
+            } else {
+                $('#remove-filter-content').show();
+            }
+            self.applyFilterContent($input.val().toLowerCase());
+        }
+
+        this.applyFilterContent         = function(content) {
+            var $tasks          = $('.todo-entry:visible');
+            var $hiddenTasks    = $('.todo-entry:hidden');
+            
+            // compute every task to hide
+            var tasksToHide = [];
+            for (var i = 0; i < $tasks.length; i++) {
+                var $task = $($tasks[i]);
+                if ($('#task-content-' + $task.attr('id')).text().toLowerCase().indexOf(content) == -1) {
+                    tasksToHide.push($task);
+                }
+            }
+            
+            // compute every task to re-show
+            var tasksToShow = [];
+            for (var i = 0; i < $hiddenTasks.length; i++) {
+                var $task = $($hiddenTasks[i]);
+                if ($('#task-content-' + $task.attr('id')).text().toLowerCase().indexOf(content) != -1) {
+                    tasksToShow.push($task);
+                }
+            }
+
+            for (var i = 0; i < tasksToHide.length; i++) {
+                tasksToHide[i].fadeOut(TASK_TRANSITION);
+            }
+            for (var i = 0; i < tasksToShow.length; i++) {
+                tasksToShow[i].fadeIn(TASK_TRANSITION);
+            }
         }
 
         /**
@@ -298,6 +362,9 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             self.applyFilterTags();
         }
 
+        /**
+         * Applies the filter on tags.
+         */
         this.applyFilterTags            = function() {
             var $tasks          = $('.todo-entry:visible');
             var $hiddenTasks    = $('.todo-entry:hidden');

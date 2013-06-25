@@ -45,7 +45,7 @@ public class SessionController extends BaseController {
 			return false;
 		}
 		
-		Session session = SessionManager.findSession(sessionId);
+		Session session = SessionManager.findAndUpdateSession(sessionId);
 		
 		if (session == null) {
 			BaseController.setFlashError(error);

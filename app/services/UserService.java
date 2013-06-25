@@ -2,6 +2,8 @@ package services;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Set;
 
@@ -63,11 +65,11 @@ public class UserService {
         return nbRemoved;
     }
 
+    /*
     /**
-     * Returns the collaborators of a Project.
-     * @param project       the project for which we want the collaborators
+     * Returns the collaborators names of a Project.
+     * @param project       the project for which we want the collaborators names
      * @return the collaborators of a Project
-     */
     public static Set<String> findCollaboratorsName(Project project) {
         Set<String> users = new HashSet<String>();
 
@@ -80,7 +82,54 @@ public class UserService {
 
         return users;
     }
+    */
+
+    /**
+     * Returns the collaborators of a Project.
+     * @param project       the project for which we want the collaborators ids
+     * @return the collaborators of a Project
+     */
+    public static List<User> findCollaborators(Project project) {
+        ModelUtils<UserRight> muUserRights = new ModelUtils<UserRight>(UserRight.class);
+        List<UserRight> userrights = muUserRights.query("{project: #}", project.getId());
+
+        Map<String, User> users = new HashMap<String,User>();
+
+        for (UserRight right : userrights) {
+            User user = right.getUser();
+            users.put(user.getId(), user);
+        }
+
+        return new ArrayList(users.values());
+    }
+
+    /**
+     * Creates and saves right for an user and a project.
+     */
+    public static void saveRightsFor(User user, Project project) {
+        for (UserRight right : createFor(user, project)) {
+            right.save();
+        }
+    }
+
+    /**
+     * Creates and saves right for an user and a conversation.
+     */
+    public static void saveRightsFor(User user, Conversation conversation) {
+        for (UserRight right : createFor(user, conversation)) {
+            right.save();
+        }
+    }
    
+    /**
+     * Creates and saves right for an user and a todolist.
+     */
+    public static void saveRightsFor(User user, Todolist todolist) {
+        for (UserRight right : createFor(user, todolist)) {
+            right.save();
+        }
+    }
+
     // ---------------------- 
     
     private static List<UserRight> createFor(User user, Project project) {
