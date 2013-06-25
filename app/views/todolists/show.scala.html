@@ -22,9 +22,9 @@
                 <span>
                     <i class="gray icon-tag" title="Tags"></i>&nbsp;
                 </span>
-                <a class="tag" href="#" data-tag="1"><span class="tag{{#contains tags 1}} tag-active tag-active-1{{/contains}}">TODO</span></a>
-                <a class="tag" href="#" data-tag="2"><span class="tag{{#contains tags 2}} tag-active tag-active-2{{/contains}}">FEATURE</span></a>
-                <a class="tag" href="#" data-tag="3"><span class="tag{{#contains tags 3}} tag-active tag-active-3{{/contains}}">BUG</span></a>
+                <a class="tag" href="#" data-tag="1"><span class="tag{{#contains tags 1}} tag-active tag-active-1{{/contains}}">@todolist.getTags().get("1")</span></a>
+                <a class="tag" href="#" data-tag="2"><span class="tag{{#contains tags 2}} tag-active tag-active-2{{/contains}}">@todolist.getTags().get("2")</span></a>
+                <a class="tag" href="#" data-tag="3"><span class="tag{{#contains tags 3}} tag-active tag-active-3{{/contains}}">@todolist.getTags().get("3")</span></a>
             </div>
             <div class="todo-infos">
                 <span class="task-author gray"><i class="icon-user"></i>&nbsp;{{author}}</span> <span class="light-gray"><i class="icon-time"></i>&nbsp;{{creationDate}}</span>
@@ -97,9 +97,9 @@
             <div>
                 <div class="inline-block filter-tags">
                     <i class="icon-tag gray"></i> Tags
-                    <a class="filter-tag" href="#" data-tag="1"><span class="tag">TODO</span></a>
-                    <a class="filter-tag" href="#" data-tag="2"><span class="tag">FEATURE</span></a>
-                    <a class="filter-tag" href="#" data-tag="3"><span class="tag">BUG</span></a>
+                    <a class="filter-tag" href="#" data-tag="1"><span class="tag">@todolist.getTags().get("1")</span></a>
+                    <a class="filter-tag" href="#" data-tag="2"><span class="tag">@todolist.getTags().get("2")</span></a>
+                    <a class="filter-tag" href="#" data-tag="3"><span class="tag">@todolist.getTags().get("3")</span></a>
                 </div>
                 <div class="inline-block filter-content">
                     <i class="icon-search gray"></i> Content

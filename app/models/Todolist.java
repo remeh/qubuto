@@ -2,7 +2,9 @@ package models;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import models.QubutoModel;
@@ -34,7 +36,7 @@ public class Todolist extends QubutoModel {
 	/**
 	 * Tags configuration for this todolist.
 	 */
-	private Set<String> tags;
+	private Map<String, String> tags;
 	
 	/**
 	 * Creator of the project.
@@ -52,6 +54,10 @@ public class Todolist extends QubutoModel {
 	
 	public Todolist() {
 		this.creationDate = new Date();
+        this.tags = new HashMap<String,String>();
+        this.tags.put("1", "TODO");
+        this.tags.put("2", "FEATURE");
+        this.tags.put("3", "BUG");
 	}
 
 	public String getName() {
@@ -99,11 +105,11 @@ public class Todolist extends QubutoModel {
 		this.creationDate = creationDate;
 	}
 
-	public Set<String> getTags() {
+	public Map<String, String> getTags() {
 		return tags;
 	}
 
-	public void setTags(Set<String> tags) {
+	public void setTags(Map<String, String> tags) {
 		this.tags = tags;
 	}
 
