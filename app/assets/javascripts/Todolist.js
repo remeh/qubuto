@@ -2,6 +2,9 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 	function Todolist(routeAddTask, routeDeleteTask, routeAddTag, routeRemoveTag, routeCloseTask, routeOpenTask, routeAddComment, routeDeleteComment) {
         var TIMEOUT = 10000;
 
+        var LONG_DURATION   = 10000;
+        var SHORT_DURATION  = 2000;
+
         var TASK_TRANSITION = 100;
 
 		var self = this;
@@ -18,6 +21,11 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 
 		this.todoTemplate       = null;
 		this.commentTemplate    = null;
+
+        /**
+         * Username of the currently logged user.
+         */
+        this.username           = null;
 
         /**
          * On which tags the view is currently filtering.
@@ -39,6 +47,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			this.routeRemoveTag     = routeRemoveTag;
 			this.routeAddComment    = routeAddComment;
 			this.routeDeleteComment = routeDeleteComment;
+
+            this.username           = $('.username').data('username');
 			
 			this.initWebsocket();
 			
@@ -46,6 +56,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			 * Prepare the handlebars templates.
 			 */
 			this.initHandlebars();
+
+            this.initNotify();
 			
 			/*
 			 * Init tasks.
@@ -67,7 +79,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			});
 			
 			$(document).on("click", "#add-task", function() {
-				self.addTask($(this));
+				self.addTask();
 			});
 
             $(document).on("click", "a.task-remove", function() {
@@ -114,6 +126,29 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 self.removeFilterContent($(this));
             });
 
+            $(document).on("keydown", "#add-task-title", function(event) {
+                if (event.keyCode == 13) {
+                    self.addTask();
+                    event.preventDefault();
+                    return false;
+                }
+            });
+        }
+
+        /**
+         * Configures the Notifyjs lib default behavior.
+         */
+        this.initNotify                 = function() {
+            $.notify.defaults({
+                style: "meh",
+                elementPosition: 'top right',
+                globalPosition: 'top right',
+                autoHideDelay: LONG_DURATION,
+                showAnimation: "fadeIn",
+                hideAnimation: "fadeOut",
+                showDuration: TASK_TRANSITION,
+                arrowShow: false
+                });
         }
 
         /**
@@ -191,11 +226,25 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
          * Removes a Comment from the DOM.
          * @param taskId        the task id of the Task containing the comment.
          * @param comment       the json comment.
+         * @param user          the user who removed the comment.
          */
-        this.removeComment              = function(taskId, comment) {
+        this.removeComment              = function(task, comment, user) {
+            if (task == undefined || comment == undefined) {
+                return;
+            }
+
+            var taskId = task.id;
+
             $comment = $('#' + comment.id);
             if ($comment != undefined) {
                 $comment.remove();
+            }
+
+            if (!self.isUser(user)) {
+                $('#task-comments-'+taskId).notify(
+                        '<em>'+user+'</em> removed a comment', {
+                        autoHideDelay: SHORT_DURATION 
+                });
             }
 
             self.hideTaskLoader(taskId);
@@ -257,9 +306,21 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
          * @param   taskId      the Task in which we want to insert the comment.
          * @param   comment     the json comment to append.
          */
-        this.insertComment              = function(taskId, comment) {
+        this.insertComment              = function(task, comment) {
+            if (task == undefined || comment == undefined) {
+                return;
+            }
+
+            var taskId = task.id;
             var html = self.commentTemplate(comment);
             $('#' + taskId).find('.add-comment').before(html);
+
+            if (!self.isUser(comment.author)) {
+                $('#task-comments-'+taskId).notify(
+                        '<em>'+comment.author+'</em> added a comment', {
+                        autoHideDelay: SHORT_DURATION 
+                });
+            }
             
             // hides the task loader.
             self.hideTaskLoader(taskId);
@@ -478,7 +539,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			for (var key in tasks) {
                 var task = tasks[key];
                 if (task.state == 'TODO') {
-                    self.insertTask(task);
+                    self.insertTask(task, true);
                 } else if (task.state == 'DONE') {
                     self.insertDoneTask(task);
                 }
@@ -486,11 +547,31 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		}
 
         /**
-         * Inserts the given task (json) in the DOM.
-         * @param task  the task (json) to add in the DOM.
+         * Tests whether the current user is the given one. Based on the username.
+         * @param username      the username to compare to.
+         * @return true if the current user is the same as the given one.
          */
-        this.insertTask                 = function(task) {
+        this.isUser                     = function(username) {
+            if (username == undefined) {
+                return false;
+            }
+            return self.username == username;
+        }
+
+        /**
+         * Inserts the given task (json) in the DOM.
+         * @param task      the task (json) to add in the DOM.
+         * @param startup   if this insertion is for the loading of the page
+         */
+        this.insertTask                 = function(task, startup) {
             var html = self.todoTemplate(task);
+
+            if (startup != true) {
+                if (!self.isUser(task.author)) {
+                    $.notify('<em>'+task.author+'</em> created the task : <strong>' + task.title + '</strong>');
+                }
+            }
+
             self.positionTask(html, 'TODO', task.position);
         }
 
@@ -534,12 +615,17 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 
         /**
          * Removes a Task from the DOM.
-         * @param taskId  the task id of the Task to remove from the DOM.
+         * @param task      the json of the removed task.
+         * @param user      the username of the user which has removed the task
          */
-        this.removeTask                 = function(taskId) {
-            $task = $('#' + taskId);
+        this.removeTask                 = function(task, user) {
+            $task = $('#' + task.id);
             if ($task != undefined) {
                 $task.remove();
+            }
+
+            if (!self.isUser(user)) {
+                $.notify('<em>'+user+'</em> deleted the task : <strong>' + task.title + '</strong>');
             }
 
             self.hideTaskLoader(taskId);
@@ -617,9 +703,8 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 		
 		/**
 		 * When the user has clicked on the Add button to create the task.
-		 * @param $selector the jQuery selector of the button.
 		 */
-		this.addTask                    = function($selector) {
+		this.addTask                    = function() {
 			/*
 			 * Retrieve values
 			 */
@@ -629,8 +714,7 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
 			/*
 			 * If values not null, make the ajax call.
 			 */
-			if (content != undefined && content.length > 0
-			  && title != undefined && title.length > 0) {
+			if (title != undefined && title.length > 0) {
 				self.disableAddTask();
 				self.addTaskAjaxCall(title, content);
 			}
@@ -673,7 +757,11 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
          * Moves the Task identified by the given taskId to "Done"
          * @param   taskId  the Task id
          */
-        this.moveTaskToDone             = function(taskId) {
+        this.moveTaskToDone             = function(task, username) {
+            if (task == undefined) {
+                return;
+            }
+            var taskId = task.id;
             $('#' + taskId).fadeOut(TASK_TRANSITION);
             setTimeout(function() {
                 $task = $('#' + taskId);
@@ -685,6 +773,11 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 self.positionTask($task, 'DONE', position);
 
                 $task.fadeIn(TASK_TRANSITION);
+
+                // notifications
+                if (!self.isUser(username)) {
+                    $.notify('<em>'+username+'</em> closed the task : <strong>' + task.title + '</strong>');
+                }
                 
                 // hides the task loader.
                 self.hideTaskLoader(taskId);
@@ -695,7 +788,11 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
          * Moves the Task identified by the given taskId to "Todo"
          * @param   taskId  the Task id
          */
-        this.moveTaskToTodo             = function(taskId) {
+        this.moveTaskToTodo             = function(task, username) {
+            if (task == undefined) {
+                return;
+            }
+            var taskId = task.id;
             $('#' + taskId).fadeOut(TASK_TRANSITION);
             setTimeout(function() {
                 $task = $('#' + taskId);
@@ -707,6 +804,11 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 self.positionTask($task, 'TODO', position);
 
                 $task.fadeIn(TASK_TRANSITION);
+                
+                // notifications
+                if (!self.isUser(username)) {
+                    $.notify('<em>'+username+'</em> re-opened the task : <strong>' + task.title + '</strong>');
+                }
                 
                 // hides the task loader.
                 self.hideTaskLoader(taskId);

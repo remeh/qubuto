@@ -38,9 +38,11 @@ POST    /q/:username/:projectCleanName/users/rem                                
 # Todolists
 # ###############
 POST	/todolist/create																controllers.Todolists.submit()
-GET		/q/:username/:projectCleanName/t/:todolistName									controllers.Todolists.show(username, projectCleanName, todolistName)
+GET		/q/:username/:projectCleanName/t/:todolistName                                  controllers.Todolists.show(username, projectCleanName, todolistName)
+GET     /q/:username/:projectCleanName/t/:todolistName/settings                         controllers.Todolists.settings(username, projectCleanName, todolistName)
+POST    /q/:username/:projectCleanName/t/:todolistName/settings                         controllers.Todolists.save(username, projectCleanName, todolistName)
 # Websocket part
-GET		/q/:username/:projectCleanName/ws/t/:todolistName								controllers.Todolists.subscribe(username, projectCleanName, todolistName)
+GET		/q/:username/:projectCleanName/ws/t/:todolistName                               controllers.Todolists.subscribe(username, projectCleanName, todolistName)
 
 # ###############
 # Tasks

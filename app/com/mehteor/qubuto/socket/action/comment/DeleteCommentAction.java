@@ -31,7 +31,7 @@ public class DeleteCommentAction extends Action {
         objectNode.put("date", Application.formater.format(new Date()));
 		objectNode.putAll(author.toJsonPublic());
 		objectNode.put("comment", comment.toJsonAction());
-		objectNode.put("taskId", comment.getTask().getId());
+		objectNode.put("task", comment.getTask().toJsonAction());
 	}
 	
 	// ---------------------

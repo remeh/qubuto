@@ -204,6 +204,7 @@ public class Task extends QubutoModel {
         for (Comment comment : getComments()) {
             comment.remove();
         }
+        super.remove();
     }
 
     // ---------------------- 

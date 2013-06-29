@@ -145,5 +145,6 @@ public class Conversation extends QubutoModel {
         for (Message message : getMessages()) {
             message.remove();
         }
+        super.remove();
     }
 }

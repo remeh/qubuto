@@ -109,6 +109,10 @@ public class Todolist extends QubutoModel {
 		return tags;
 	}
 
+    public String getTag(String tag) {
+        return tags.get(tag);
+    }
+
 	public void setTags(Map<String, String> tags) {
 		this.tags = tags;
 	}
@@ -145,5 +149,6 @@ public class Todolist extends QubutoModel {
         for (Task task : getTasks()) {
             task.remove();
         }
+        super.remove();
     }
 }

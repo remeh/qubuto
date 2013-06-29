@@ -47,14 +47,14 @@ define(function() {
             if (json == undefined) {
                 return;
             }
-            self.todolist.insertComment(json.taskId, json.comment);
+            self.todolist.insertComment(json.task, json.comment);
         }
 
         this.deleteComment                 = function(json) {
             if (json == undefined) {
                 return;
             }
-            self.todolist.removeComment(json.taskId, json.comment);
+            self.todolist.removeComment(json.task, json.comment, json.username);
         }
 
         this.removeTag                  = function(json) {
@@ -75,21 +75,21 @@ define(function() {
             if (json == undefined) {
                 return;
             }
-            self.todolist.removeTask(json.task.id);
+            self.todolist.removeTask(json.task, json.username);
         }
 
         this.closeTask                = function(json) {
             if (json == undefined) {
                 return;
             }
-            self.todolist.moveTaskToDone(json.task.id);
+            self.todolist.moveTaskToDone(json.task, json.username);
         }
 
         this.openTask                = function(json) {
             if (json == undefined) {
                 return;
             }
-            self.todolist.moveTaskToTodo(json.task.id);
+            self.todolist.moveTaskToTodo(json.task, json.username);
         }
 		
 		/*

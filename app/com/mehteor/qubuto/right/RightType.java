@@ -6,13 +6,13 @@ package com.mehteor.qubuto.right;
 public enum RightType {
     READ,
     UPDATE,
+    CONFIGURE,
 
     /*
      * Projects
      */
     CREATE_TODOLIST,
     CREATE_CONVERSATION,
-    CONFIGURE,
 
     /*
      * Todolists

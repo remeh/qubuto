@@ -328,7 +328,7 @@ public class Tasks extends SessionController {
 		String content = form.get("content");
 		String title = form.get("title");
 		
-		if (content == null || title == null || todolist == null) {
+		if (title == null || todolist == null) {
 			return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
 		}
 		
@@ -338,6 +338,9 @@ public class Tasks extends SessionController {
 		Task task = new Task();
 		task.setAuthor(getUser());
 		task.setContent(content);
+        if (content == null) {
+            task.setTitle(" ");
+        }
 		task.setTitle(title);
 		task.setCreationDate(new Date());
 		task.setTodolist(todolist);

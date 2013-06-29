@@ -3,6 +3,7 @@ package controllers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
@@ -16,6 +17,7 @@ import services.ProjectService;
 import services.UserService;
 
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.Form;
 import play.libs.F.Callback;
 import play.libs.F.Callback0;
@@ -31,8 +33,83 @@ import com.mehteor.util.StringHelper;
 import com.mehteor.qubuto.right.RightType;
 import com.mehteor.qubuto.right.RightCategory;
 
+/**
+ * Todolists controller.
+ *
+ * @author Rémy 'remeh' MATHIEU
+ */
 public class Todolists extends SessionController {
 	public static Form<Todolist> todolistForm = Form.form(Todolist.class);
+
+    /**
+     * Todolist's settings.
+     *
+     * @return Result
+     */
+    public static Result settings(String username, String projectCleanName, String todolistName) {
+		if (!isAuthenticated("You're not authenticated.", true)) {
+			return redirect(routes.Users.login());
+		}
+
+		Todolist todolist = Todolists.findTodolist(username, projectCleanName, todolistName);
+		if (todolist == null ) {
+			return notFound(Application.renderNotFound());
+		}
+		
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CONFIGURE);
+        if (!right) {
+            return SessionController.forbid(RightCategory.TODOLIST, RightType.CONFIGURE); 
+        }
+		
+		return ok(views.html.todolists.settings.render(todolist, todolistForm.fill(todolist)));
+    }
+
+    /**
+     * Saves todolist's settings.
+     * @return Result
+     */
+    public static Result save(String username, String projectCleanName, String todolistName) {
+		if (!isAuthenticated("You're not authenticated.", true)) {
+			return redirect(routes.Users.login());
+		}
+		
+		Todolist todolist = Todolists.findTodolist(username, projectCleanName, todolistName);
+		if (todolist == null ) {
+			return notFound(Application.renderNotFound());
+		}
+		
+        /*
+         * Rights
+         */
+
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CONFIGURE);
+        if (!right) {
+            return SessionController.forbid(RightCategory.TODOLIST, RightType.CONFIGURE); 
+        }
+		
+        DynamicForm form = Form.form().bindFromRequest();
+
+        String tag1 = form.field("tag-1").value();
+        String tag2 = form.field("tag-2").value();
+        String tag3 = form.field("tag-3").value();
+        
+        /*
+         * Saves the todolist
+         */
+        
+        Map<String, String> tags = todolist.getTags();
+        tags.put("1",tag1);
+        tags.put("2",tag2);
+        tags.put("3",tag3);
+        todolist.setTags(tags);
+        todolist.save();
+        
+        return redirect(routes.Todolists.show(getUser().getUsername(), projectCleanName, todolistName));
+    }
 	
 	/**
 	 * Creates a todolist.

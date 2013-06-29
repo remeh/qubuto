@@ -157,6 +157,7 @@ public class UserService {
         rights.add(new UserRight(user, todolist, RightType.ADD_TAG));
         rights.add(new UserRight(user, todolist, RightType.REMOVE_TAG));
         rights.add(new UserRight(user, todolist, RightType.COMMENT));
+        rights.add(new UserRight(user, todolist, RightType.CONFIGURE));
 
         return rights;
     }
