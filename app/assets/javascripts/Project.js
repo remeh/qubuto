@@ -22,6 +22,13 @@ define([], function() {
             $(document).on("click", ".tab-toggle", function() {
                 self.tabToggle($(this));
             });
+            $(document).on("keydown", "input#collaborator-name", function(event) {
+                if (event.keyCode == 13) {
+                    self.addCollaborator();
+                    event.preventDefault();
+                    return false;
+                }
+            });
         }
 
         /**
@@ -44,10 +51,12 @@ define([], function() {
 			}
             var doneCallback = function(json) {
                 $a.parents('li').remove();
+                $('input#collaborator-name').val('');
                 self.hideLoaders();
 		    }
             var failCallback = function(json) {
                 $('#collaborator-error').text(json.message);
+                $('input#collaborator-name').val('');
                 self.hideLoaders();
             }
 
@@ -57,9 +66,8 @@ define([], function() {
 
         /**
          * Triggered when an user clicks to add a collaborator
-         * @param $button       the jQuery selector of the button element.
          */
-        this.addCollaborator            = function($button) {
+        this.addCollaborator            = function() {
             // clean the error message
             $('#collaborator-error').text('');
 
@@ -80,10 +88,12 @@ define([], function() {
 			}
             var doneCallback = function(json) {
                 self.addCollaboratorName(json.collaborator.username);
+                $('input#collaborator-name').val('');
                 self.hideLoaders();
 		    }
             var failCallback = function(json) {
                 $('#collaborator-error').text(json.message);
+                $('input#collaborator-name').val('');
                 self.hideLoaders();
             }
 
@@ -96,7 +106,6 @@ define([], function() {
             var existing = false;
             var collaboratorsName = $('span.collaborator-name');
             for (var i = 0; i < collaboratorsName.length; i++) {
-                console.log($(collaboratorsName[i]).text());
                 if ($(collaboratorsName[i]).text() == username) {
                     existing = true;
                     break;
