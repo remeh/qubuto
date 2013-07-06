@@ -2,6 +2,9 @@ package com.mehteor.db;
 
 import javax.persistence.Id;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import plugins.JongoPlugin;
 import org.jongo.Jongo;
 import org.jongo.MongoCollection;
@@ -14,9 +17,33 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Rémy 'remeh' Mathieu
  */
 public class MongoModel {
-	@Id
-	@JsonProperty("_id")
-	protected String id;
+
+    private Map<String, Object> cachedObjects  = new HashMap<String, Object>();
+
+    // ---------------------- 
+
+    @Id
+    @JsonProperty("_id")
+    protected String id;
+    
+    // ---------------------- 
+
+    protected Object cache(String field) {
+        Object cache = cachedObjects.get(field);
+        if (cache != null) {
+            return cache;
+        }
+        return null;
+    }
+
+    protected Object cache(String field, Object object) {
+        cachedObjects.put(field, object);
+        return object;
+    }
+
+    protected Object invalidate(String field) {
+        return cachedObjects.remove(field);
+    }
 
 	// ---------------------
 

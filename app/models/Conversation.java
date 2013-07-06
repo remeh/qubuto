@@ -69,26 +69,40 @@ public class Conversation extends QubutoModel {
 
     @Override
 	public User getCreator() {
+       Object cache = cache("creator");
+        if (cache != null) {
+            return (User)cache;
+        }
+
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (creator != null) {
-			return mu.find(creator);
+			return (User)cache("creator", mu.find(creator));
 		}
+
 		return null;
 	}
 
 	public void setCreator(User creator) {
+        invalidate("creator");
 		this.creator = creator.getId();
 	}
 
 	public Project getProject() {
+        Object cache = cache("project");
+        if (cache != null) {
+            return (Project)cache;
+        }
+
 		ModelUtils<Project> mu = new ModelUtils<Project>(Project.class);
 		if (project != null) {
-			return mu.find(project);
+			return (Project)cache("project", mu.find(project));
 		}
-		return null;
+
+        return null;
 	}
 
 	public void setProject(Project project) {
+        invalidate("project");
 		this.project = project.getId();
 	}
 	
@@ -119,6 +133,7 @@ public class Conversation extends QubutoModel {
 	public String getSummary() {
 		if (content != null) {
 			if (content.length() > CONVERSATION_SUMMARY) {
+                // FIXME TODO a better generation
 				return String.format("%s...", content.substring(0, CONVERSATION_SUMMARY)); 
 			}
 		}
@@ -134,8 +149,13 @@ public class Conversation extends QubutoModel {
 	}
 	
 	public List<Message> getMessages() {
+        Object cache = cache("messages");
+        if (cache != null) {
+            return (List<Message>)cache;
+        }
+
 		ModelUtils<Message> messages = new ModelUtils<Message>(Message.class);
-		return Collections.unmodifiableList(messages.query("{'conversation': #}", this.getId()));
+		return (List<Message>) cache("messages",Collections.unmodifiableList(messages.query("{'conversation': #}", this.getId())));
 	}
 
     // ---------------------- 

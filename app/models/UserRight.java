@@ -139,26 +139,40 @@ public class UserRight extends MongoModel {
 	// ---------------------
 
 	public Project getProject() {
+        Object cache = cache("project");
+        if (cache != null) {
+            return (Project)cache;
+        }
+
 		ModelUtils<Project> mu = new ModelUtils<Project>(Project.class);
 		if (project != null) {
-			return mu.find(project);
+			return (Project)cache("project", mu.find(project));
 		}
-		return null;
+
+        return null;
 	}
 
     public void setProject(Project project) {
+        invalidate("project");
         this.project = project.getId();
     }
 
 	public User getUser() {
+       Object cache = cache("user");
+        if (cache != null) {
+            return (User)cache;
+        }
+
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (user != null) {
-			return mu.find(user);
+			return (User)cache("user", mu.find(user));
 		}
+
 		return null;
 	}
 
 	public void setUser(User user) {
+        invalidate("user");
 		this.user = user.getId();
 	}
 
@@ -189,19 +203,31 @@ public class UserRight extends MongoModel {
     // ---------------------- 
 
     public Conversation getConversation() {
-        if (objectId == null) {
-            return null;
+        Object cache = cache("conversation");
+        if (cache != null) {
+            return (Conversation)cache;
         }
+
 		ModelUtils<Conversation> mu = new ModelUtils<Conversation>(Conversation.class);
-        return mu.find(objectId);
+		if (objectId != null) {
+			return (Conversation)cache("conversation", mu.find(objectId));
+		}
+
+        return null;
     }
 
     public Todolist getTodolist() {
-        if (objectId == null) {
-            return null;
+        Object cache = cache("todolist");
+        if (cache != null) {
+            return (Todolist)cache;
         }
+
 		ModelUtils<Todolist> mu = new ModelUtils<Todolist>(Todolist.class);
-        return mu.find(objectId);
+		if (objectId != null) {
+			return (Todolist)cache("todolist", mu.find(objectId));
+		}
+
+        return null;
     }
 
     // ---------------------- 

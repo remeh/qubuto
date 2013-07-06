@@ -35,11 +35,17 @@ public class Session extends MongoModel {
 	// ---------------------
 	
 	public User getUser() {
+        Object cache = cache("user");
+        if (cache != null) {
+            return (User)cache;
+        }
+
 		ModelUtils<User> muUser = new ModelUtils<User>(User.class);
-		return muUser.find(user);
+		return (User) cache("user",muUser.find(user));
 	}
 	
 	public void setUser(User user) {
+        invalidate("user");
 		this.user = user.getId();
 	}
 

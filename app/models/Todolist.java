@@ -78,14 +78,21 @@ public class Todolist extends QubutoModel {
 	
     @Override
 	public User getCreator() {
+        Object cache = cache("creator");
+        if (cache != null) {
+            return (User)cache;
+        }
+
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (creator != null) {
-			return mu.find(creator);
+			return (User)cache("creator", mu.find(creator));
 		}
+
 		return null;
 	}
 
 	public void setCreator(User creator) {
+        invalidate("creator");
 		this.creator = creator.getId();
 	}
 
@@ -118,30 +125,52 @@ public class Todolist extends QubutoModel {
 	}
 
 	public Project getProject() {
+        Object cache = cache("project");
+        if (cache != null) {
+            return (Project)cache;
+        }
+
 		ModelUtils<Project> mu = new ModelUtils<Project>(Project.class);
 		if (project != null) {
-			return mu.find(project);
+			return (Project)cache("project", mu.find(project));
 		}
-		return null;
+
+        return null;
 	}
 
 	public void setProject(Project project) {
+        invalidate("project");
 		this.project = project.getId();
 	}
 	
 	public List<Task> getTasks() {
+        Object cache = cache("tasks");
+        if (cache != null) {
+            return (List<Task>)cache;
+        }
+
 		ModelUtils<Task> tasks = new ModelUtils<Task>(Task.class);
-		return Collections.unmodifiableList(tasks.query("{'todolist': #}", this.getId()));
+		return (List<Task>)cache("tasks",Collections.unmodifiableList(tasks.query("{'todolist': #}", this.getId())));
 	}
 
 	public List<Task> getTodoTasks() {
+        Object cache = cache("todotasks");
+        if (cache != null) {
+            return (List<Task>)cache;
+        }
+
 		ModelUtils<Task> tasks = new ModelUtils<Task>(Task.class);
-		return Collections.unmodifiableList(tasks.query("{'todolist': #, 'state': #}", this.getId(), TaskState.TODO));
+		return (List<Task>) cache("todotasks", Collections.unmodifiableList(tasks.query("{'todolist': #, 'state': #}", this.getId(), TaskState.TODO)));
 	}
 
 	public List<Task> getDoneTasks() {
+        Object cache = cache("donetasks");
+        if (cache != null) {
+            return (List<Task>)cache;
+        }
+
 		ModelUtils<Task> tasks = new ModelUtils<Task>(Task.class);
-		return Collections.unmodifiableList(tasks.query("{'todolist': #, 'state': #}", this.getId(), TaskState.DONE));
+		return (List<Task>) cache("donetasks", Collections.unmodifiableList(tasks.query("{'todolist': #, 'state': #}", this.getId(), TaskState.DONE)));
 	}
 
     @Override

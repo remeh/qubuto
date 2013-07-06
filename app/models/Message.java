@@ -69,9 +69,14 @@ public class Message extends QubutoModel {
 	}
 	
 	public User getAuthor() {
+        Object cache = cache("author");
+        if (cache != null) {
+            return (User)cache;
+        }
+
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (author != null) {
-			return mu.find(author);
+			return (User) cache("author", mu.find(author));
 		}
 		return null;
 	}
@@ -82,18 +87,25 @@ public class Message extends QubutoModel {
     }
 	
 	public void setAuthor(User author) {
+        invalidate("author");
 		this.author = author.getId();
 	}
 	
 	public Conversation getConversation() {
+        Object cache = cache("conversation");
+        if (cache != null) {
+            return (Conversation)cache;
+        }
+
 		ModelUtils<Conversation> mu = new ModelUtils<Conversation>(Conversation.class);
 		if (conversation != null) {
-			return mu.find(conversation);
+			return (Conversation) cache("conversation", mu.find(conversation));
 		}
 		return null;
 	}
 	
 	public void setConversation(Conversation conversation) {
+        invalidate("conversation");
 		this.conversation = conversation.getId();
 	}
 

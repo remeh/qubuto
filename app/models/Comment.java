@@ -52,14 +52,20 @@ public class Comment extends QubutoModel {
     }
 
 	public User getAuthor() {
+        Object cache = cache("author");
+        if (cache != null) {
+            return (User)cache;
+        }
+
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (author != null) {
-			return mu.find(author);
+			return (User) cache("author", mu.find(author));
 		}
 		return null;
 	}
 	
 	public void setAuthor(User author) {
+        invalidate("author");
 		this.author = author.getId();
 	}
 	
@@ -80,14 +86,20 @@ public class Comment extends QubutoModel {
 	}
 	
 	public Task getTask() {
+        Object cache = cache("task");
+        if (cache != null) {
+            return (Task) cache;
+        }
+
 		ModelUtils<Task> mu = new ModelUtils<Task>(Task.class);
 		if (task != null) {
-			return mu.find(task);
+			return (Task) cache("task", mu.find(task));
 		}
 		return null;
 	}
 	
 	public void setTask(Task task) {
+        invalidate("task");
 		this.task = task.getId();
 	}
     

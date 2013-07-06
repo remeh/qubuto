@@ -92,35 +92,41 @@ public class Project extends QubutoModel
 
     @Override
 	public User getCreator() {
+        Object cache = cache("creator");
+        if (cache != null) {
+            return (User)cache;
+        }
+
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (creator != null) {
-			return mu.find(creator);
+			return (User) cache("creator", mu.find(creator));
 		}
 		return null;
 	}
 
 	public void setCreator(User creator) {
+        invalidate("creator");
 		this.creator = creator.getId();
 	}
 	
-//	public void addTodolist(Todolist todolist)
-//	{
-//		todolists = ruTodolist.add(todolists, todolist);
-//	}
-//	
-//	public void removeTodolist(Todolist todolist)
-//	{
-//		todolists = ruTodolist.remove(todolists, todolist);
-//	}
-	
 	public List<Todolist> getTodolists() {
+        Object cache = cache("todolists");
+        if (cache != null) {
+            return (List<Todolist>)cache;
+        }
+
 		ModelUtils<Todolist> todolists = new ModelUtils<Todolist>(Todolist.class);
-		return todolists.query("{'project': #}", this.getId());
+		return (List<Todolist>) cache("todolists", todolists.query("{'project': #}", this.getId()));
 	}
 	
 	public List<Conversation> getConversations() {
+        Object cache = cache("conversations");
+        if (cache != null) {
+            return (List<Conversation>)cache;
+        }
+
 		ModelUtils<Conversation> conversations = new ModelUtils<Conversation>(Conversation.class);
-		return conversations.query("{'project': #}", this.getId());
+		return (List<Conversation>) cache("conversations", conversations.query("{'project': #}", this.getId()));
 	}
 
 	// ---------------------

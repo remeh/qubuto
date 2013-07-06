@@ -139,9 +139,14 @@ public class Task extends QubutoModel {
 	}
 	
 	public User getAuthor() {
+        Object cache = cache("author");
+        if (cache != null) {
+            return (User)cache;
+        }
+
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (author != null) {
-			return mu.find(author);
+			return (User) cache("author", mu.find(author));
 		}
 		return null;
 	}
@@ -151,24 +156,36 @@ public class Task extends QubutoModel {
     }
 	
 	public void setAuthor(User author) {
+        invalidate("author");
 		this.author = author.getId();
 	}
 	
 	public Todolist getTodolist() {
+        Object cache = cache("todolist");
+        if (cache != null) {
+            return (Todolist)cache;
+        }
+
 		ModelUtils<Todolist> mu = new ModelUtils<Todolist>(Todolist.class);
 		if (todolist != null) {
-			return mu.find(todolist);
+			return (Todolist) cache("todolist", mu.find(todolist));
 		}
 		return null;
 	}
 	
 	public void setTodolist(Todolist todolist) {
+        invalidate("todolist");
 		this.todolist = todolist.getId();
 	}
 	
 	public List<Comment> getComments() {
+        Object cache = cache("comments");
+        if (cache != null) {
+            return (List<Comment>)cache;
+        }
+
 		ModelUtils<Comment> comments = new ModelUtils<Comment>(Comment.class);
-		return Collections.unmodifiableList(comments.query("{'task': #}", this.getId()));
+		return (List<Comment>) cache("comments", Collections.unmodifiableList(comments.query("{'task': #}", this.getId())));
 	}
     
 	// ---------------------
