@@ -51,8 +51,15 @@ define(function() {
 				case "UpdateMessage":
 					this.updateMessage(json);
 					break;
+				case "DeleteMessage":
+					this.removeMessage(json);
+					break;
 			}
 		}
+
+        this.removeMessage               = function(json) {
+            conversation.removeMessage(json.id);
+        }
 		
 		this.newMessage = function(json) {
 			conversation.insertMessage(json.id, json.position, json.content, json.username, json.creationDate);

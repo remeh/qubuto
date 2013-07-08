@@ -37,7 +37,7 @@ function sendAjaxCall(route, postValues, doneCallback, failCallback) {
                     // Do something only if there is no custom fail callback
                     if (failCallback == undefined) {
                         if (json.message != undefined) {
-                            alert("An problem occurred : " + json.message);
+                            alert("A problem occurred : " + json.message);
                         } else { 
                             alert("An unknown error occurred.");
                         }

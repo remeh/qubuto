@@ -18,14 +18,13 @@
 </script>
 <div id="main-div" data-author="@conversation.getProject().getCreator().getUsername"
 				   data-route-save-topic="@routes.Conversations.update(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName(), conversation.getCleanTitle())"
-				   data-route-new-message="@routes.Messages.add(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName(), conversation.getCleanTitle())">
+				   data-route-new-message="@routes.Messages.add(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName(), conversation.getCleanTitle())"
+				   data-route-delete-message="@routes.Messages.delete(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName(), conversation.getCleanTitle())">
 	<section>
 		<header>
 			<a href="@routes.Projects.show(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName())" title="@conversation.getProject().getName()">&nbsp;<i class="icon-arrow-left"> </i> <span class="bold">@conversation.getProject().getName()</span></a>
 			<h1 class="green"><span class="light-gray"><i class="icon-comment"> </i></span> @conversation.getTitle()</h1>
-			<span class="topic-author light-gray">
-				<i class="icon-user"></i>&nbsp;Authored by</span> <span class="gray">@conversation.getCreator().getUsername()
-			</span> 
+			<span class="topic-author light-gray"> <i class="icon-user"></i>&nbsp;Authored by</span> <span class="gray">@conversation.getCreator().getUsername()</span>
     		<span class="topic-creation-date light-gray">
     			<i class="icon-time"></i>&nbsp;Creation date <span class="gray">@conversation.getCreationDate().format(Application.COMPLETE_DATE_PATTERN)</span>
         	</span>
@@ -65,6 +64,9 @@
 					data-route-update="@routes.Messages.update(conversation.getProject().getCreator().getUsername(), conversation.getProject().getCleanName(), conversation.getCleanTitle(), "__id__")">
 					<div class="message-author" style="display: none;">
 						<i class="icon-user"></i> Reply by <span class="message-author gray"></span> <i class="icon-time"></i> <span class="gray message-creation-date"></span>
+                        <a href='#' class='delete-message' id="delete-__id__">
+                            <i class="icon-trash float-right"> </i>
+                        </a>
 					</div>
 					<div id="wmd-__id__" style="display: none;">
 				        <div class="wmd-panel">

@@ -79,11 +79,12 @@ GET		/q/:username/:projectCleanName/ws/c/:conversationName							controllers.Con
 # Ajax part
 POST	/q/:username/:projectCleanName/a/c/m/add/:conversationName						controllers.Messages.add(username, projectCleanName, conversationName)
 POST	/q/:username/:projectCleanName/a/c/save-message/:conversationName/:messageId	controllers.Messages.update(username, projectCleanName, conversationName, messageId)
+POST	/q/:username/:projectCleanName/a/c/delete-message/:conversationName	            controllers.Messages.delete(username, projectCleanName, conversationName)
 
 # ###############
 # Users dashboard
 # ###############
-GET		/q/:username																	controllers.Projects.list(username)
+GET		/q/*username                                                                    controllers.Projects.list(username)
 
 ###############
 ###############

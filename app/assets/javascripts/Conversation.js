@@ -1,5 +1,5 @@
 define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
-	function Conversation(routeGetTopic, routeSaveTopic, routeNewMessage, routeSaveMessage) {
+	function Conversation(routeGetTopic, routeSaveTopic, routeNewMessage, routeDeleteMessage) {
 		var self = this;
 		this.editorTopic = null;
 		this.editors = [];
@@ -119,10 +119,11 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 		 * Init the conversations pages.
 		 * @param routeGetTopic the route to get the conversation topic content
 		 */
-		this.construct = function(routeGetTopic, routeSaveTopic, routeNewMessage) {
+		this.construct = function(routeGetTopic, routeSaveTopic, routeNewMessage, routeDeleteMessage) {
 			self.routeGetTopic = routeGetTopic;
 			self.routeSaveTopic = routeSaveTopic;
 			self.routeNewMessage = routeNewMessage;
+			self.routeDeleteMessage = routeDeleteMessage;
 			
 			// init the topic editor
 			// the var 'content' used here come from the view	
@@ -136,11 +137,40 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			
 		    self.initMessages();
 		}
+
+        this.removeMessage              = function(messageId) {
+            var $message = $('.topic-message-'+messageId);
+            if ($message != undefined) {
+                $message.fadeOut(150);
+            }
+        }
+
+        /**
+         * When an user clicks on a message deletion.
+         * @param $a        the jQuery selector for the clicked a.
+         */
+        this.deleteMessage              = function($a) {
+			/*
+			 * Calls the controller to delete the message.
+			 */
+            var id = $a.parents('.topic-message').data('id');
+			
+			var route = self.routeDeleteMessage;
+			var values = {
+                "messageId": id
+			}
+            
+            // sends the AJAX call.
+            sendAjaxCall(route, values);
+        }
 		
         this.bindEvents                 = function() {
 			$(document).on("click", "#conversation-add-message", function() {
 				self.newMessage();
 			});
+            $(document).on("click","a.delete-message", function() {
+                self.deleteMessage($(this));
+            });
         }
 
 		this.newMessage = function() {
@@ -165,7 +195,14 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			
 			var content = $("#wmd-input-" + suffix).val();
 			
-			self.makeAjaxCall("POST", self.routeNewMessage, { "content": content });
+			var route = self.routeNewMessage;
+			var values = {
+                "taskId": taskId,
+                "content": content
+			}
+            
+            // sends the AJAX call.
+            sendAjaxCall(route, values);
 			
 			// remove the edit and re-display the new message div
 			$topic.remove();
@@ -250,8 +287,8 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			// Hide the edit button if the user isn't the author.
 			if (author != $('span.username').data('username')) {
 				$("button#edit-" + id).hide();
+                $("a#delete-"+id).hide();
 			}
-			
 			
 			// init the editor
 			
@@ -322,7 +359,7 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 
         // ---------------------- 
     
-        self.construct(routeGetTopic, routeSaveTopic, routeNewMessage, routeSaveMessage);
+        self.construct(routeGetTopic, routeSaveTopic, routeNewMessage, routeDeleteMessage);
 	}
 	
 	return Conversation;

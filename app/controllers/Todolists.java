@@ -78,7 +78,7 @@ public class Todolists extends SessionController {
 		}
 		
 		Todolist todolist = Todolists.findTodolist(username, projectCleanName, todolistName);
-		if (todolist == null ) {
+		if (todolist == null) {
 			return notFound(Application.renderNotFound());
 		}
 		

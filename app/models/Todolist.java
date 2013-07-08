@@ -85,7 +85,7 @@ public class Todolist extends QubutoModel {
 
 		ModelUtils<User> mu = new ModelUtils<User>(User.class);
 		if (creator != null) {
-			return (User)cache("creator", mu.find(creator));
+			return (User) cache("creator", mu.find(creator));
 		}
 
 		return null;

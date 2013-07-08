@@ -36,6 +36,10 @@ public class Projects extends SessionController {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return redirect(routes.Users.login());
 		}
+
+        if (username.endsWith("/")) {
+            username = username.substring(0, username.length() - 1);
+        }
 		
         User user = getUser();
 		if (username.equals(user.getUsername())) {

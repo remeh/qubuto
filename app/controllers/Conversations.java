@@ -211,28 +211,6 @@ public class Conversations extends SessionController {
 		return ok(BaseController.renderNoErrorsJson());
 	}
 	
-//	public static Result getContent(String username, String projectName, String conversationName) {
-//		if (!isAuthenticated("You're not authenticated.", true)) {
-//			return badRequest(BaseController.renderNotAuthenticatedJson());
-//		}
-//		
-//		// Get the conversation
-//		Conversation conversation = findConversation(username, projectName, conversationName);
-//		// Get the content
-//		String content = conversation.getContent();
-//		// If null, set to empty
-//		if (content == null) {
-//			content = "";
-//		}
-//		// Preserve for Javascript.
-//		content.replace("\"", "\\\"");
-//		// Build the JSON response.
-//		Map<String, Object> hashMap = new HashMap<String, Object>();
-//		hashMap.put("content", conversation.getContent());
-//		hashMap.put("error", 0);
-//		return ok(Json.toJson(hashMap).toString());
-//	}
-	
 	/**
 	 * Opens a websocket on the provided conversation.
 	 */

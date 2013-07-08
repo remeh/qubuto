@@ -66,7 +66,55 @@ public class Messages extends SessionController {
 
 		return ok(BaseController.renderNoErrorsJson());
 	}
-	
+
+	public static Result delete(String username, String projectCleanName, String conversationName) {
+		if (!isAuthenticated("You're not authenticated.", true)) {
+			return badRequest(BaseController.renderNotAuthenticatedJson());
+		}
+		
+		/*
+		 * Find the corresponding conversation.
+		 */
+		Conversation conversation = Conversations.findConversation(username, projectCleanName, conversationName);
+		
+	    DynamicForm form = Form.form().bindFromRequest();
+
+	    /*
+	     * Required fields.
+	     */
+	    
+		String messageId = form.get("messageId");
+		
+		if (conversation == null) {
+			return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
+		}
+		
+		/*
+		 * Retrieves the message
+		 */
+
+		ModelUtils<Message> muMessages = new ModelUtils<Message>(Message.class);
+		Message message = muMessages.find(messageId);
+
+		if (message == null) {
+			return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), ErrorCode.BAD_PARAMETERS.getDefaultMessage()));
+		}
+		
+		/*
+		 * Finally deletes the message.
+		 */
+		
+		message.remove();
+		
+		/*
+		 * Broadcast the action
+		 */
+		
+		MessageActions.deleteMessageAction(conversation.getId(), getUser(), message);
+
+		return ok(BaseController.renderNoErrorsJson());
+    }
+
 	public static Result update(String username, String projectCleanName, String conversationName, String messageId) {
 		if (!isAuthenticated("You're not authenticated.", true)) {
 			return badRequest(BaseController.renderNotAuthenticatedJson());

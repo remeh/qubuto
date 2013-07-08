@@ -4,6 +4,7 @@ import javax.persistence.Id;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import plugins.JongoPlugin;
 import org.jongo.Jongo;
@@ -18,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MongoModel {
 
-    private Map<String, Object> cachedObjects  = new HashMap<String, Object>();
+    protected Map<String, Object> cachedObjects  = new HashMap<String, Object>();
 
     // ---------------------- 
 
@@ -29,11 +30,7 @@ public class MongoModel {
     // ---------------------- 
 
     protected Object cache(String field) {
-        Object cache = cachedObjects.get(field);
-        if (cache != null) {
-            return cache;
-        }
-        return null;
+        return cachedObjects.get(field);
     }
 
     protected Object cache(String field, Object object) {
@@ -48,7 +45,14 @@ public class MongoModel {
 	// ---------------------
 
 	public void save() {
+        // we don't want to save the cache
+        Map<String, Object> save = cachedObjects;
+        cachedObjects = null;
+
 		models().save(this);
+
+        // restore the cache
+        cachedObjects = save;
 	}
 
 	public void remove() {
