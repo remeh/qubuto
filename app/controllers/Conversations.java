@@ -68,7 +68,7 @@ public class Conversations extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.PROJECT, project, RightType.CREATE_CONVERSATION);
+        boolean right = SessionController.hasRight(RightCategory.PROJECT, project, RightType.CREATE_CONVERSATION, project);
         if (!right) {
             return SessionController.forbid(RightCategory.PROJECT, RightType.CREATE_CONVERSATION); 
         }
@@ -114,6 +114,7 @@ public class Conversations extends SessionController {
          * Adds the rights to project collaborator.
          */
         List<User> users = UserService.findCollaborators(project);
+
         for (User user : users) {
             UserService.saveRightsFor(user, conversation);
         }
@@ -135,7 +136,7 @@ public class Conversations extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.CONVERSATION, conversation, RightType.READ);
+        boolean right = SessionController.hasRight(RightCategory.CONVERSATION, conversation, RightType.READ, conversation.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.CONVERSATION, RightType.READ);
         }
@@ -186,7 +187,7 @@ public class Conversations extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.CONVERSATION, conversation, RightType.UPDATE);
+        boolean right = SessionController.hasRight(RightCategory.CONVERSATION, conversation, RightType.UPDATE, conversation.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.CONVERSATION, RightType.UPDATE);
         }

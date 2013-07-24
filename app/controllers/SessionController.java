@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.List;
 
+import models.Project;
 import models.QubutoModel;
 import models.Session;
 import models.User;
@@ -78,8 +79,13 @@ public class SessionController extends BaseController {
      * @param type          the RightType to test for.
      * @return true whether the currently logged user has the wanted rights.
      */
-    public static boolean hasRight(RightCategory category, QubutoModel object, RightType type) {
+    public static boolean hasRight(RightCategory category, QubutoModel object, RightType type, Project project) {
+        // creator of the object
         if (object.getCreator().getUsername().equals(getUser().getUsername())) {
+            return true;
+        }
+        // creator of the project
+        if (project != null && project.getCreator().getUsername().equals(getUser().getUsername())) {
             return true;
         }
         if (object instanceof MongoModel) {

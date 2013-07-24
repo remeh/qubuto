@@ -48,7 +48,7 @@ public class Comments extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.COMMENT);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.COMMENT, todolist.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.COMMENT);
         }
@@ -122,7 +122,7 @@ public class Comments extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.COMMENT);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.COMMENT, todolist.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.COMMENT);
         }

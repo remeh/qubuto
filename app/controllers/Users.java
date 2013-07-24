@@ -27,7 +27,7 @@ public class Users extends SessionController {
      */
     private static boolean checkExistingUsername(String username) {
         ModelUtils<User> muUser = new ModelUtils<User>(User.class);
-        List<User> users = muUser.query(String.format("{'username':'%s'}",username));
+        List<User> users = muUser.query(String.format("{'username':'%s'}",username.toLowerCase()));
         return users.size() > 0;
     }
 
@@ -71,6 +71,8 @@ public class Users extends SessionController {
         
         String username = form.field("username").value();
 		String password = form.field("password").value();
+
+        username = username.toLowerCase();
         
         List<User> users = muUsers.query("{'username':#}", username);
         
@@ -157,6 +159,9 @@ public class Users extends SessionController {
          */
 
         User user = form.get();
+
+        // username to lowerstring
+        user.setUsername(user.getUsername().toLowerCase());
 
         /*
          * Generating salt

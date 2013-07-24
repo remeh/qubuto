@@ -73,7 +73,7 @@ public class Projects extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.PROJECT, project, RightType.READ);
+        boolean right = SessionController.hasRight(RightCategory.PROJECT, project, RightType.READ, project);
         if (!right) {
             return SessionController.forbid(RightCategory.PROJECT, RightType.READ); 
         }
@@ -255,7 +255,7 @@ public class Projects extends SessionController {
         }
 
         ModelUtils<User> muUser = new ModelUtils<User>(User.class);
-        User collaborator = muUser.findOne("username", collaboratorName);
+        User collaborator = muUser.findOne("username", collaboratorName.toLowerCase());
 
         if (collaborator == null) {
     		return badRequest(renderJson(ErrorCode.BAD_PARAMETERS.getErrorCode(), "Unknown user."));

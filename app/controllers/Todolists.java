@@ -60,7 +60,7 @@ public class Todolists extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CONFIGURE);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CONFIGURE, todolist.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.CONFIGURE); 
         }
@@ -86,7 +86,7 @@ public class Todolists extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CONFIGURE);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CONFIGURE, todolist.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.CONFIGURE); 
         }
@@ -145,7 +145,7 @@ public class Todolists extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.PROJECT, project, RightType.CREATE_TODOLIST);
+        boolean right = SessionController.hasRight(RightCategory.PROJECT, project, RightType.CREATE_TODOLIST, project);
         if (!right) {
             return SessionController.forbid(RightCategory.PROJECT, RightType.CREATE_TODOLIST); 
         }
@@ -217,7 +217,7 @@ public class Todolists extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.READ);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.READ, todolist.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.READ); 
         }
@@ -259,7 +259,7 @@ public class Todolists extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.READ);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.READ, todolist.getProject());
         if (!right) {
             return null; // TODO 403 ?
         }

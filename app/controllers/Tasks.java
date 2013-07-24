@@ -47,7 +47,7 @@ public class Tasks extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CLOSE_TASK);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CLOSE_TASK, todolist.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.CLOSE_TASK); 
         }
@@ -114,7 +114,7 @@ public class Tasks extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.OPEN_TASK);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.OPEN_TASK, todolist.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.OPEN_TASK); 
         }
@@ -181,7 +181,7 @@ public class Tasks extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.ADD_TAG);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.ADD_TAG, todolist.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.ADD_TAG); 
         }
@@ -249,7 +249,7 @@ public class Tasks extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.REMOVE_TAG);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.REMOVE_TAG, todolist.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.REMOVE_TAG); 
         }
@@ -314,7 +314,7 @@ public class Tasks extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CREATE_TASK);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.CREATE_TASK, todolist.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.CREATE_TASK); 
         }
@@ -394,7 +394,7 @@ public class Tasks extends SessionController {
          * Rights
          */
 
-        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.DELETE_TASK);
+        boolean right = SessionController.hasRight(RightCategory.TODOLIST, todolist, RightType.DELETE_TASK, todolist.getProject());
         if (!right) {
             return SessionController.forbid(RightCategory.TODOLIST, RightType.DELETE_TASK); 
         }
