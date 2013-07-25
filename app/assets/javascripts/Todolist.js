@@ -247,6 +247,14 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                 });
             }
 
+            // increments the comments count
+            $span = $('#task-comments-' + taskId).find('span');
+            var val = parseInt($span.text(),10) - 1;
+            if (val < 0) {
+                val = 0;
+            }
+            $span.text(val);
+
             self.hideTaskLoader(taskId);
         }
 		
@@ -290,8 +298,6 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
             }
 
             // retrieves the content
-            
-
             var content = $('#comment-' + taskId).val();
 
             var $commentsContainer = $('#comments-container-' + taskId);
@@ -321,6 +327,11 @@ define(['TodolistQubutoWebSocket'], function(TodolistQubutoWebSocket) {
                         autoHideDelay: SHORT_DURATION 
                 });
             }
+
+            // increments the comments count
+            $span = $('#task-comments-' + taskId).find('span');
+            val = parseInt($span.text(),10) + 1;
+            $span.text(val);
             
             // hides the task loader.
             self.hideTaskLoader(taskId);

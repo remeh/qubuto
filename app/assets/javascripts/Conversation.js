@@ -150,6 +150,11 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
          * @param $a        the jQuery selector for the clicked a.
          */
         this.deleteMessage              = function($a) {
+            // TODO undo are better than confirm.
+            if (confirm("Are you sure to delete this message ?") == false) {
+                return;
+            }
+
 			/*
 			 * Calls the controller to delete the message.
 			 */
