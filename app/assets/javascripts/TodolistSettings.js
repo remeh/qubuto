@@ -11,7 +11,6 @@ define([], function() {
         this.updateTag                  = function($input) {
             var id = $input.attr('id');
             $('#preview-'+id).text($input.val());
-            console.log($input.val());
         }
 
         // ---------------------- 

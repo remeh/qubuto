@@ -197,7 +197,7 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 			
 			var route = self.routeNewMessage;
 			var values = {
-                "taskId": taskId,
+                "taskId": suffix,
                 "content": content
 			}
             
@@ -223,12 +223,10 @@ define(['ConversationQubutoWebSocket'], function(ConversationQubutoWebSocket) {
 				return;
 			}
 			
-			for (var i = 0; i < messagesCount; i++) {
-				if (i in messages) {
-					var message = messages[i];
-					this.insertMessage(message.id, message.position, message.content, message.author, message.creationDate);
-				}
-			}
+            for (i in messages) {
+                var message = messages[i];
+                this.insertMessage(message.id, message.position, message.content, message.author, message.creationDate);
+            }
 		}
 		
 		this.prepareNewEditor = function(id, position) {
