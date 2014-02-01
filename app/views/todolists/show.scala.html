@@ -1,0 +1,137 @@
+@(todolist: Todolist, tasks: List[Task], websocketUri: String)
+@import helper._
+@import play.libs.Json
+@main(todolist.getProject().getName() + " - " + todolist.getName()) {
+<script type="text/javascript">
+	var tasksCount = @tasks.size();
+	var tasks = [];
+	@for(task <- tasks) {
+		tasks[@task.getPosition()] = @Html(task.toJsonView().toString());
+	}
+	websocketUri = "@websocketUri";
+</script>
+
+<script id="todo-template" type="text/x-handlebars-template">
+    <div class="pretty-entry todo-entry task-{{state}}" id="{{id}}" data-position="{{position}}">
+        <a href='#' class="task-remove"><i class="float-right light-gray icon-trash"></i></a>
+        <div>
+            <a href='#' class="{{#equals state 'TODO'}}task-todo{{else}}task-done{{/equals}}" title="Done"><i class="{{#equals state 'TODO'}}icon-check-empty{{else}}icon-check{{/equals}} gray"></i></a> <span id="task-content-{{id}}"><span class="dark-gray bold">{{title}}</span> - {{content}}</span>
+        </div>
+        <div class="float-left">
+            <div class="tags">
+                <span>
+                    <i class="gray icon-tag" title="Tags"></i>&nbsp;
+                </span>
+                <a class="tag" href="#" data-tag="1"><span class="tag{{#contains tags 1}} tag-active tag-active-1{{/contains}}">@todolist.getTags().get("1")</span></a>
+                <a class="tag" href="#" data-tag="2"><span class="tag{{#contains tags 2}} tag-active tag-active-2{{/contains}}">@todolist.getTags().get("2")</span></a>
+                <a class="tag" href="#" data-tag="3"><span class="tag{{#contains tags 3}} tag-active tag-active-3{{/contains}}">@todolist.getTags().get("3")</span></a>
+            </div>
+            <div class="todo-infos">
+                <span class="task-author gray"><i class="icon-user"></i>&nbsp;{{author}}</span> <span class="light-gray"><i class="icon-time"></i>&nbsp;{{creationDate}}</span>
+            </div>
+        </div>
+        <div class="float-right">
+            <div class="todo-actions">
+                <span class="loader" id="loader-{{id}}"><i class="icon-spinner icon-spin"></i></span>
+                <button class="small-btn task-comments" id="task-comments-{{id}}"><i class="icon-comments"></i> <span>{{comments.length}}</span></button>
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+        <div class="comments-container" id="comments-container-{{id}}" style="display: none;">
+            <hr class="comment-separation" />
+            <div class="comments">
+            {{#each comments}}
+                <div class="comment" id="{{id}}">
+                    <div><span>{{content}}</span></div>
+                    <span class="task-author gray"><i class="icon-user"></i>&nbsp;{{author}}</span> <span class="light-gray"><i class="icon-time"></i>&nbsp;{{creationDate}}</span>
+                    <a href='#' class="comment-remove"><i class="float-right light-gray icon-trash"></i></a>
+                </div>
+            {{/each}}
+            <div class="comment add-comment">
+                <i class="icon-plus"></i> Click here to add a comment.
+            </div>
+            <div class="comment form-comment" id="form-comment-{{id}}" style="display: none;">
+                <input type="text" class="comment" id="comment-{{id}}" name="comment-{{id}}" placeholder="Enter your comment">
+                <div class="comment-advice"><span class="light-gray">&nbsp; Press enter to submit your comment</span></div>
+                <div class="clear">
+                </div>
+            </div>
+            <div>
+        </div>
+    </div>
+</script>
+<script id="comment-template" type="text/x-handlebars-template">
+    <div class="comment" id="{{id}}">
+        <div>
+            <a href='#' class="float-right comment-remove"><i class="light-gray icon-trash"></i></a>
+            <span>{{content}}</span>
+        </div>
+        <span class="task-author gray"><i class="icon-user"></i>&nbsp;{{author}}</span> <span class="light-gray"><i class="icon-time"></i>&nbsp;{{creationDate}}</span>
+    </div>
+</script>
+@todolists.modalNewTask.render(todolist)
+<div id="main-div"
+       data-route-add-task="@routes.Tasks.add(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-delete-task="@routes.Tasks.delete(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-close-task="@routes.Tasks.close(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-open-task="@routes.Tasks.open(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-add-tag="@routes.Tasks.addTag(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-remove-tag="@routes.Tasks.removeTag(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-add-comment="@routes.Comments.add(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())"
+       data-route-delete-comment="@routes.Comments.delete(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())">
+	<section>
+		<header>
+		<a href='@routes.Projects.show(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName())' title='Back to @todolist.getProject().getName()'>&nbsp;<i class='icon-arrow-left'> </i> <span class="bold">@todolist.getProject().getName()</span></a>
+			<h1 class="green"><span class="light-gray"><i class="icon-ok"> </i></span> @todolist.getName()</h1>
+			<span class="topic-author light-gray">
+				<i class="icon-user"></i> Authored by</span> <span class="gray">@todolist.getCreator().getUsername()
+			</span> 
+    		<span class="topic-creation-date light-gray">
+    			<i class="icon-time"></i>&nbsp;Creation date <span class="gray">@todolist.getCreationDate().format(Application.COMPLETE_DATE_PATTERN)</span>
+        	</span>
+            <span class="float-right"><a href='@routes.Todolists.settings(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())'><i class="icon-cog"></i>&nbsp; Configuration</a></span>
+		</header>
+        <article>
+            <hr />
+            <div><strong><i class="icon-filter"></i>&nbsp;Filters</strong></div>
+            <div>
+                <div class="inline-block filter-tags">
+                    <i class="icon-tag gray"></i> Tags
+                    <a class="filter-tag" href="#" data-tag="1"><span class="tag">@todolist.getTags().get("1")</span></a>
+                    <a class="filter-tag" href="#" data-tag="2"><span class="tag">@todolist.getTags().get("2")</span></a>
+                    <a class="filter-tag" href="#" data-tag="3"><span class="tag">@todolist.getTags().get("3")</span></a>
+                </div>
+                <div class="inline-block filter-content">
+                    <i class="icon-search gray"></i> Content
+                    <input type="text" id="filter-content" placeholder="Type to filter on content">
+                     <a href='#' id="remove-filter-content" style="display: none;"><i class="icon-remove gray"></i></a>
+                </div>
+            </div>
+            <hr />
+        </article>
+		<article>
+			<div class="text-center create-task">
+				<button id="btn-create-task"> <i class="icon-plus"></i>&nbsp; Create a task</button>
+			</div>
+		</article>
+		<article>
+			<div class="todo">
+				<h3><i class="light-gray icon-check-empty"> </i>Todo</h3>
+				<div id="todo-container" class="pretty-list">
+				</div>
+			</div>
+			<div class="done">
+				<h3><i class="light-gray icon-check"> </i>Done</h3>
+				<div id="done-container" class="pretty-list">
+                </div>
+			</div>
+		</article>
+		<footer>
+		</footer>
+	</section>
+</div>
+@helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/todolists").url)
+<script src="@routes.Assets.at("javascripts/external/notify.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/external/notify-style.js")" type="text/javascript"></script>
+}

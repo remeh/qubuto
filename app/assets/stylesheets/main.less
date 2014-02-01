@@ -1,0 +1,139 @@
+// usefull stuff
+@import "external/elements.less";
+@import "external/cssreset-min.css";
+
+// remeh's functions
+@import "basics.less";
+@import "mixins.less";
+
+// qubuto's constants
+@import "constants.less";
+
+@import "headers.less";
+@import "footers.less";
+@import "contents.less";
+@import "forms.less";
+@import "projects.less";
+@import "modals.less";
+@import "todolists.less";
+@import "conversations.less";
+
+// ------------
+// Bases
+// ------------
+
+body {
+	font-family: @fonts;
+	font-size: @font-size;
+	color: #333;
+}
+
+h1, h2, h3, h4, h5, p {
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
+}
+
+// no padding top for the first title because in many cases
+// the container will already have its own padding
+h1 {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+a {
+	color: @gray;
+	text-decoration: none;
+}
+
+a:hover {
+	color: @dark-gray;
+}
+
+em {
+	font-style: italic;
+}
+
+strong {
+	font-weight: bold;
+}
+
+td {
+	padding: 0.3em;
+}
+
+input { 
+	padding: 0.3em;
+}
+
+hr {
+	width: 98%;
+	border: 0px;
+	border-bottom: 1px solid #eee;
+}
+
+input[type=text],
+input[type=password],
+textarea {
+	border: 1px solid #ddd;
+	.gradient(#fff, #fafafa, #fff);
+}
+
+textarea {
+	min-width: 160px;
+	min-height: 10em;
+	resize: none;
+}
+
+input.button, input[type=submit], button, a.btn {
+	border: 1px solid #bbb;
+	padding: 0.5em;
+	
+	.rounded(2px);
+	
+	.gradient(#f9f9f9, #f9f9f9, #ffffff);
+	
+	color: #777;
+	
+	.box-shadow(1px 1px 2px #ddd);
+}
+
+input.button:hover, input[type=submit]:hover, button:hover, a.btn:hover
+{
+	border: 1px solid #ddd;
+	
+	.gradient(#fff, #fff, #fff);
+}
+
+input.button:active, input[type=submit]:active, button:active, a.btn:active
+{
+	.gradient(#f6f6f6, #f6f6f6, #fff);
+	
+	color: #aaa;
+}
+
+input.button:disabled, input[type=submit]:disabled,
+button:disabled, a.btn:disabled, textarea:disabled,
+input[type=text]:disabled, input[type=password]:disabled
+{
+	background: #fff;
+	color: #eee;
+}
+
+// ------------
+// Titles
+// ------------
+
+h1 {
+	font-size: 3em;
+}
+h2 {
+	font-size: 2em;
+	font-weight: bold;
+}
+h3 {
+	font-size: 2em;
+}
+h4 {
+    font-size: 1.1em;
+    font-weight: bold;
+}

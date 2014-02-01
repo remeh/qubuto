@@ -1,0 +1,70 @@
+@(todolist: Todolist, todolistForm: Form[Todolist])
+@import helper._
+@import play.libs.Json
+@main(todolist.getProject().getName() + " - " + todolist.getName() + " - Settings") {
+<div id="main-div">
+	<section>
+		<header>
+		<a href='@routes.Todolists.show(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())' title='Back to @todolist.getName()'>&nbsp;<i class='icon-arrow-left'> </i> <span class="bold">@todolist.getName()</span></a>
+			<h1 class="green"><span class="light-gray"><i class="icon-ok"> </i></span> @todolist.getName()</h1>
+			<span class="topic-author light-gray">
+				<i class="icon-user"></i> Authored by</span> <span class="gray">@todolist.getCreator().getUsername()
+			</span> 
+    		<span class="topic-creation-date light-gray">
+    			<i class="icon-time"></i>&nbsp;Creation date <span class="gray">@todolist.getCreationDate().format(Application.COMPLETE_DATE_PATTERN)</span>
+        	</span>
+		</header>
+		<article>
+            <h3>Tags configuration</h3>
+
+            @helper.form(action = routes.Todolists.save(todolist.getProject().getCreator().getUsername(), todolist.getProject().getCleanName(), todolist.getCleanName())) {
+                <table>
+                    <tr>
+                        <td class="field">
+                            <strong>Tag</strong>
+                        </td>
+                        <td class="description">
+                            <strong>Result preview</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="field">
+                            <input type="text" id="tag-1" name="tag-1" class="tag" value="@todolist.getTag("1")">
+                        </td>
+                        <td class="">
+                            <span class="tag tag-active tag-active-1" id="preview-tag-1">@todolist.getTag("1")</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="field">
+                            <input type="text" id="tag-2" name="tag-2" class="tag" value="@todolist.getTag("2")">
+                        </td>
+                        <td class="">
+                            <span class="tag tag-active tag-active-2" id="preview-tag-2">@todolist.getTag("2")</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="field">
+                            <input type="text" id="tag-3" name="tag-3" class="tag" value="@todolist.getTag("3")">
+                        </td>
+                        <td class="">
+                            <span class="tag tag-active tag-active-3" id="preview-tag-3">@todolist.getTag("3")</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="field">
+                        </td>
+                        <td class="description">
+                            <br />
+                            <input type="submit" value="Save">
+                        </td>
+                    </tr>
+                </table>
+            }
+		</article>
+		<footer>
+		</footer>
+	</section>
+</div>
+@helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/todolistsettings").url)
+}

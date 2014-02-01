@@ -1,0 +1,38 @@
+@(project: Project, projectForm: Form[Project])
+@helper.form(action = routes.Projects.save(project.getCreator().getUsername(), project.getCleanName(), "basics")) {
+    <table>
+        <tr>
+            <td class="label">
+                <label for="@projectForm("name").id">Name</label></td>
+            <td class="field">
+                <input type="text" value="@projectForm("name").value" name="@projectForm("name").name" id="@projectForm("name").id">
+                <br /><span class="red">@if(projectForm.error("name") != null) { @projectForm.error("name").message }</span>
+            </td>
+            <td class="description">
+                <span>Name of the project.</span><br />
+                <span class="light-gray"><em>Warning: by modifying the project name, you modify the URL to access this project.</em></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                <label for="@projectForm("name").id">Description</label></td>
+            <td class="field">
+                <input type="text" value="@projectForm("description").value" name="@projectForm("description").name" id="@projectForm("description").id">
+                <br /><span class="red">@if(projectForm.error("description") != null) { @projectForm.error("description").message }</span>
+            </td>
+            <td class="description">
+                Description of the project
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+            </td>
+            <td class="field">
+            </td>
+            <td class="description">
+                <br />
+                <input type="submit" value="Update">
+            </td>
+        </tr>
+    </table>
+}

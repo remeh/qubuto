@@ -1,0 +1,41 @@
+@import "external/elements.less";
+
+// remeh's functions
+@import "mixins.less";
+
+// qubuto's constants
+@import "constants.less";
+
+div.topic {
+}
+
+div.topic-message {
+	border: 1px dashed #ccc;
+	padding: 1em;
+	margin-top: 10px;
+}
+
+div.conversation-add-message {
+	color: #eee;
+	font-size: 1.3em;
+	text-align: center;
+	.padded;
+}
+
+div.message-author {
+	color: @light-gray;
+}
+
+article.conversation-content {
+	margin: auto;
+	margin-top: 15px;
+	padding: 2em;
+	.rounded(3px);
+	border: 1px dashed #eee;
+	background-color: #fdfdfd;
+	width: 90%;
+}
+
+textarea.conversation-textarea {
+	width: 100%;
+}

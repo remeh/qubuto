@@ -1,0 +1,35 @@
+@(project: Project, projectForm: Form[Project], collaborators: Set[String])
+@import helper._
+@main("Qubuto - " + project.getName()) {
+<div id="main-div">
+	<section>
+		<header>
+            <a href='@routes.Projects.show(project.getCreator().getUsername(), project.getCleanName())' title='Back to @project.getName()'>&nbsp;<i class='icon-arrow-left'> </i> <span class="bold">Back to the project</span></a>
+			<h2 class="dark-gray">@project.getName()</h2>
+			<span class="light-gray">@project.getDescription()</span>
+		</header>
+		<br />		
+		<article>
+            <div class="tabs">
+                <a href='#' class="tab-toggle" data-toggle="basics"><span class="tab tab-active"><i class="icon-pencil"></i>&nbsp; Basics</span></a>
+                <a href='#' class="tab-toggle" data-toggle="users"><span class="tab tab-inactive"><i class="icon-group"></i>&nbsp; Users</span></a>
+                <a href='#' class="tab-toggle" data-toggle="advanced"><span class="tab tab-inactive"><i class="icon-cogs"></i>&nbsp; Advanced</span></a>
+            </div>
+            <div class="tabs-content pretty-entry">
+                <div class="tab-content tab-content-active" id="basics">
+                    @projects.settings_basics.render(project, projectForm)
+                </div>
+                <div class="tab-content" id="users" style="display: none;">
+                    @projects.settings_users.render(project, projectForm, collaborators)
+                </div>
+                <div class="tab-content" id="advanced" style="display: none;">
+                    <span class="red bold">DELETION OF THE PROJECT</span>
+                </div>
+            </div>
+		</article>
+		<footer>
+		</footer>
+	</section>
+</div>
+@helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/projects").url)
+}

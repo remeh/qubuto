@@ -1,0 +1,70 @@
+@(userProjects: List[Project], userSharedProjects: Set[Project])
+@import helper._
+@main("Qubuto - Projects") {
+<script id="project-template" type="text/x-handlebars-template">
+    <a href="{{route}}" title="{{name}}">
+        <div class="project-div">
+            <div style="width: 100%;">
+                <div class="project-list-description"><b>{{name}}</b> - {{description}}</div>
+                <div class="clear"></div>
+            </div>
+            <div>
+                {{#if creator}}<div class="project-list-type"><span class="light-gray">Shared by {{creator}}</span></div>{{/if}}
+                <div class="float-right" style="padding: 0px; margin: 0px;">
+                    <div class="project-list-content"><span style='color: #ccc'><i class="icon-ok"> </i> {{todolistsCount}} todolists</span></div>
+                    <div class="project-list-content"><span style='color: #ccc'><i class="icon-comments-alt"> </i> {{conversationsCount}} conversations</span></div>
+                    <div class="project-list-content"><span style='color: #ccc'><i class="icon-picture"> </i> 0 files</span></div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </a>
+</script>
+<script type="text/javascript">
+	var projects = [];
+	@for(project <- userProjects) {
+        var project = {
+            name: "@Html(project.getName())",
+            route: "@routes.Projects.show(project.getCreator().getUsername(), project.getCleanName())",
+            //creator: "@Html(project.getCreator().getUsername())",
+            description: "@Html(project.getDescription())",
+            conversationsCount: @project.getConversations().size(),
+            todolistsCount: @project.getTodolists().size(),
+        }
+		projects.push(project);
+	}
+    var sharedProjects = [];
+	@for(project <- userSharedProjects) {
+        var project = {
+            name: "@Html(project.getName())",
+            route: "@routes.Projects.show(project.getCreator().getUsername(), project.getCleanName())",
+            creator: "@Html(project.getCreator().getUsername())",
+            description: "@Html(project.getDescription())",
+            conversationsCount: @project.getConversations().size(),
+            todolistsCount: @project.getTodolists().size(),
+        }
+		sharedProjects.push(project);
+	}
+</script>
+<div id="main-div">
+	<section>
+		<header>
+			<h1 class="green">Projects</h1>
+		</header>
+		<br />		
+		<article style='margin-top: 25px';>
+			<a href="@routes.Projects.create"><div class="project-div text-center"><i class="icon-plus-sign"> </i> New project</div></a>
+            <h4 class="project-title gray">Your projects</h4>
+            <div class="your-projects-container">
+            </div>
+            <hr />
+            <h4 class="project-title gray">Projects shared with you</h4>
+            <div class="shared-projects-container">
+            </div>
+		</article>
+		<footer>
+		</footer>
+	</section>
+</div>
+@helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/listprojects").url)
+}

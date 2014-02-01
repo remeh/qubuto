@@ -1,0 +1,17 @@
+@(project: Project, todolistForm: Form[Todolist])
+@import helper._
+@main("Qubuto - Create a todolist") {
+<div id="main-div">
+	<section>
+		<header>
+			<h1 class="green">Create a todolist</h1>
+			<h2><span class="dark-gray">for <a href="@routes.Projects.show(project.getCreator().getUsername(), project.getName())" title="@project.getName()">@project.getName()</a></span></h2>
+		</header>
+		<article>
+			@todolists.form.render(project, todolistForm, false)
+		</article>
+		<footer class="text-right">
+		</footer>
+	</section>
+</div>
+}

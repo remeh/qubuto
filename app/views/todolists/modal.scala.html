@@ -1,0 +1,6 @@
+@(project: Project, todolistForm: Form[Todolist])
+<div id="new-todolist" style="display: none;">
+	<span class="close-modal float-right"><a href='#'><i class="icon-remove"></i></a></span>
+	<h3>Create a todolist</h3>
+	@todolists.form.render(project, todolistForm, true)
+</div>

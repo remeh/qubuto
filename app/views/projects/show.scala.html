@@ -1,0 +1,40 @@
+@(project: Project, todolistForm: Form[Todolist], conversationForm: Form[Conversation])
+@import helper._
+@main("Qubuto - " + project.getName()) {
+@todolists.modal.render(project, todolistForm)
+@conversations.modal.render(project, conversationForm)
+<div id="main-div">
+	<section>
+		<header>
+			<h2 class="dark-gray">@project.getName()</h2>
+			<span class="light-gray">@project.getDescription()</span>
+            <span class="float-right"><a href='@routes.Projects.settings(project.getCreator().getUsername(), project.getCleanName())'><i class="icon-cog"></i>&nbsp; Configuration</a></span>
+		</header>
+		<br />		
+		<article>
+			<div class="separator"></div>
+			<div class="project-summary">
+				<ul class="navigation-horizontal">
+					<li><i class="icon-ok"> </i> @if(project.getTodolists().size() == 0) { No } else { @project.getTodolists().size() } todolists</li>
+					<li><i class="icon-comments"> </i> @if(project.getConversations().size() == 0) { No } else { @project.getConversations().size() } conversations</li>
+					<li><i class="icon-download-alt"> </i> No files</li>
+				</ul>
+			</div>			
+			<div class="separator"></div>
+			<h3 class="dark-gray"><i class="icon-ok"></i>&nbsp;Todolists</h3>
+			<p class="project-action-new"><a class="new-todolist" href='#'><i class="icon-plus"> </i> Add a todolist</a></p>
+			@projects.todolistlist.render(project)
+			
+			<h3 class="dark-gray"><i class="icon-comment"></i>&nbsp;Conversations</h3>
+			<p class="project-action-new"><a class="new-conversation" href='#'><i class="icon-plus"> </i> Add a conversation</a></p>
+			@projects.conversationlist.render(project)
+			
+			<h3 class="dark-gray"><i class="icon-download-alt"></i>&nbsp;Files</h3>
+			No files.
+		</article>
+		<footer>
+		</footer>
+	</section>
+</div>
+@helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/projects").url)
+}

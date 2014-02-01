@@ -1,0 +1,100 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+###############
+###############
+###   APP   ###
+###############
+###############
+
+# Home page
+GET     /                         					 	 								controllers.Application.index()
+GET		/status																			controllers.Application.status()
+GET		/stats																			controllers.Application.stats()
+
+# ###############
+# Users
+# ###############
+GET		/register																		controllers.Users.register()
+POST	/register																		controllers.Users.update()
+GET		/login																			controllers.Users.login()
+POST	/login																			controllers.Users.enter()
+GET		/logout																			controllers.Users.logout()
+
+# ###############
+# Projects
+# ###############
+GET		/project/create																	controllers.Projects.create()
+POST	/project/create																	controllers.Projects.submit()
+GET		/q/:username/:projectCleanName													controllers.Projects.show(username, projectCleanName)
+GET     /q/:username/:projectCleanName/settings                                         controllers.Projects.settings(username, projectCleanName)
+POST    /q/:username/:projectCleanName/settings/:action                                 controllers.Projects.save(username, projectCleanName, action)
+# Ajax part
+POST    /q/:username/:projectCleanName/users/add                                        controllers.Projects.addCollaborator(username, projectCleanName)
+POST    /q/:username/:projectCleanName/users/rem                                        controllers.Projects.removeCollaborator(username, projectCleanName)
+
+# ###############
+# Todolists
+# ###############
+POST	/todolist/create																controllers.Todolists.submit()
+GET		/q/:username/:projectCleanName/t/:todolistName                                  controllers.Todolists.show(username, projectCleanName, todolistName)
+GET     /q/:username/:projectCleanName/t/:todolistName/settings                         controllers.Todolists.settings(username, projectCleanName, todolistName)
+POST    /q/:username/:projectCleanName/t/:todolistName/settings                         controllers.Todolists.save(username, projectCleanName, todolistName)
+# Websocket part
+GET		/q/:username/:projectCleanName/ws/t/:todolistName                               controllers.Todolists.subscribe(username, projectCleanName, todolistName)
+
+# ###############
+# Tasks
+# ###############
+# Ajax part
+POST	/q/:username/:projectCleanName/a/t/t/close/:todolistName					    controllers.Tasks.close(username, projectCleanName, todolistName)
+POST	/q/:username/:projectCleanName/a/t/t/open/:todolistName							controllers.Tasks.open(username, projectCleanName, todolistName)
+POST	/q/:username/:projectCleanName/a/t/t/add/:todolistName							controllers.Tasks.add(username, projectCleanName, todolistName)
+POST	/q/:username/:projectCleanName/a/t/t/del/:todolistName							controllers.Tasks.delete(username, projectCleanName, todolistName)
+POST	/q/:username/:projectCleanName/a/t/tag/add/:todolistName						controllers.Tasks.addTag(username, projectCleanName, todolistName)
+POST	/q/:username/:projectCleanName/a/t/tag/rem/:todolistName						controllers.Tasks.removeTag(username, projectCleanName, todolistName)
+
+# ###############
+# Comments
+# ###############
+# Ajax part
+POST	/q/:username/:projectCleanName/a/t/c/add/:todolistName					        controllers.Comments.add(username, projectCleanName, todolistName)
+POST	/q/:username/:projectCleanName/a/t/c/del/:todolistName					        controllers.Comments.delete(username, projectCleanName, todolistName)
+
+# ###############
+# Conversations
+# ###############
+POST	/conversation/create															controllers.Conversations.submit()
+GET		/q/:username/:projectCleanName/c/:conversationName								controllers.Conversations.show(username, projectCleanName, conversationName)
+# Ajax part
+#GET		/q/:username/:projectCleanName/a/c/get-topic/:conversationName				controllers.Conversations.getContent(username, projectCleanName, conversationName)
+POST	/q/:username/:projectCleanName/a/c/save-topic/:conversationName					controllers.Conversations.update(username, projectCleanName, conversationName)
+# Websocket part
+GET		/q/:username/:projectCleanName/ws/c/:conversationName							controllers.Conversations.subscribe(username, projectCleanName, conversationName)
+
+# ###############
+# Messages
+# ###############
+# Ajax part
+POST	/q/:username/:projectCleanName/a/c/m/add/:conversationName						controllers.Messages.add(username, projectCleanName, conversationName)
+POST	/q/:username/:projectCleanName/a/c/save-message/:conversationName/:messageId	controllers.Messages.update(username, projectCleanName, conversationName, messageId)
+POST	/q/:username/:projectCleanName/a/c/delete-message/:conversationName	            controllers.Messages.delete(username, projectCleanName, conversationName)
+
+# ###############
+# Users dashboard
+# ###############
+GET		/q/*username                                                                    controllers.Projects.list(username)
+
+###############
+###############
+###   API   ###
+###############
+###############
+
+# Users
+GET		/api/amiauth																	controllers.api.Users.amIAuth()
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               													controllers.Assets.at(path="/public", file)

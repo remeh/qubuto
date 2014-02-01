@@ -1,0 +1,30 @@
+@(project: Project, conversationForm: Form[Conversation], isModal: Boolean = false)
+@helper.form(action = routes.Conversations.submit()) {
+    <table>
+        <tr>
+            <td class="label">
+                <label for="@conversationForm("title").id">Title</label></td>
+            <td class="field">
+			    <input type="text" value="@conversationForm("title").value" name="@conversationForm("title").name" id="@conversationForm("title").id">
+			    <br /><span class="red">@if(conversationForm.error("title") != null) { @conversationForm.error("title").message }</span>
+			</td>
+		    @if(!isModal) {
+	            <td class="description">
+	                Title of the conversation
+	            </td>
+	        }
+        </tr>
+        <tr>
+            <td class="label">
+            	<input type="hidden" name="conversation_project_id" value="@project.getId()">
+            </td>
+            <td class="field">
+                <input class="float-right" type="submit" value="Create">
+            </td>
+		    @if(!isModal) {
+	            <td class="description">
+	            </td>
+            }
+        </tr>
+    </table>
+}

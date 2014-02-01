@@ -1,0 +1,77 @@
+@(userForm: Form[User])
+@import helper._
+@main("Qubuto - Registration") {
+<div id="main-div">
+	<section>
+		<header>
+			<h1 class="green">You're not registered ?</h1>
+			<h2 class="gray">Create your account.</h2>
+		</header>
+		
+		<article>
+	        @helper.form(action = routes.Users.update()) {
+                <table>
+                    <tr>
+                        <td class="label">
+                            <label for="@userForm("username").id">Username</label></td>
+                        <td class="field">
+						    <input type="text" value="@userForm("username").value" name="@userForm("username").name" id="@userForm("username").id">
+						    <br /><span class="red">@if(userForm.error("username") != null) { @userForm.error("username").message }</span>
+						</td>
+                        <td class="description">
+                            Choose an username
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <label for="@userForm("email").id">Email</label></td>
+                        <td class="field">
+						    <input type="text" value="@userForm("email").value" name="@userForm("email").name" id="@userForm("email").id">
+						    <br /><span class="red">@if(userForm.error("email") != null) { @userForm.error("email").message }</span>
+						</td>
+                        <td class="description">
+                            Enter your email
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <label for="@userForm("password").id">Password</label></td>
+                        <td class="field">
+						    <input type="password" name="@userForm("password").name" id="@userForm("password").id">
+						    <br /><span class="red">@if(userForm.error("password") != null) { @userForm.error("password").message }</span>
+						</td>
+                        <td class="description">
+                            Choose a password
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <label for="password_validation">Password validation</label></td>
+                        <td class="field">
+						    <input type="password" name="password_validation" id="password_validation">
+						    <br /><span class="red">@if(userForm.error("password_validation") != null) { @userForm.error("password_validation").message }</span>
+						</td>
+                        <td class="description">
+                            Validate your password.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                        <td class="field">
+                        </td>
+                        <td class="description">
+                        	<br />
+                            <input type="submit" value="Register">
+                        </td>
+                    </tr>
+                </table>
+            }
+            <p>
+            	You're new to Qubuto ? <a href='#'>Take a quick tour</a>.
+            </p>
+		</article>
+		<footer class="text-right">
+		</footer>
+	</section>
+</div>
+}

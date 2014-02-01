@@ -1,0 +1,17 @@
+@(project: Project, conversationForm: Form[Conversation])
+@import helper._
+@main("Qubuto - Create a conversation") {
+<div id="main-div">
+	<section>
+		<header>
+			<h1 class="green">Create a conversation</h1>
+			<h2><span class="dark-gray">for <a href="@routes.Projects.show(project.getCreator().getUsername(), project.getName())" title="@project.getName()">@project.getName()</a></span></h2>
+		</header>
+		<article>
+			@conversations.form.render(project, conversationForm, false)
+		</article>
+		<footer class="text-right">
+		</footer>
+	</section>
+</div>
+}

@@ -1,0 +1,34 @@
+@(userForm: Form[User])
+@import helper._
+@main("Qubuto - Login") {
+<div id="login-div">
+	<section class="text-center">
+		<header>
+			<h1 class="green">Login</h1>
+		</header>
+		
+		<article>
+	        @helper.form(action = routes.Users.enter()) {
+	        	<div class="text-center">
+	        		<p>
+					    <input type="text" value="@userForm("username").value" name="@userForm("username").name" id="@userForm("username").id"  placeholder="username" class="text-center"><br />
+					    <span class="red">@if(userForm.error("username") != null) { @userForm.error("username").message }</span>
+					</p>
+				    <p>
+					    <input type="password" name="@userForm("password").name" id="@userForm("password").id" placeholder="password" class="text-center"><br />
+					    <span class="red">@if(userForm.error("password") != null) { @userForm.error("password").message }</span>
+				    </p>
+				    <p>
+                    	<input type="submit" value="Login">
+                    </p>
+                </div>
+            }
+            <p>
+            	Not already registered ? <a href='@routes.Users.register()'>Click here</a>.
+            </p>
+		</article>
+		<footer class="text-right">
+		</footer>
+	</section>
+</div>
+}

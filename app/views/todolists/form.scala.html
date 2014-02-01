@@ -1,0 +1,46 @@
+@(project: Project, todolistForm: Form[Todolist], isModal: Boolean = false)
+@helper.form(action = routes.Todolists.submit()) {
+    <table>
+        <tr>
+            <td class="label">
+                <label for="@todolistForm("name").id">Name</label></td>
+            <td class="field">
+			    <input type="text" value="@todolistForm("name").value" name="@todolistForm("name").name" id="@todolistForm("name").id">
+			    <br /><span class="red">@if(todolistForm.error("name") != null) { @todolistForm.error("name").message }</span>
+			</td>
+		    @if(!isModal) {
+	            <td class="description">
+	                Name of the project
+	            </td>
+	        }
+        </tr>
+        <tr>
+            <td class="label">
+                <label for="@todolistForm("description").id">Description</label></td>
+            <td class="field">
+			    <input type="text" value="@todolistForm("description").value" name="@todolistForm("description").name" id="@todolistForm("description").id">
+			    @if(!isModal) {
+			    	<br />
+			    	<span class="red">@if(todolistForm.error("description") != null) { @todolistForm.error("description").message }</span>
+			    }
+			</td>
+			@if(!isModal) {
+	            <td class="description">
+	                Description of the todolist.
+	            </td>
+	        }
+        </tr>
+        <tr>
+            <td class="label">
+            	<input type="hidden" name="todolist_project_id" value="@project.getId()">
+            </td>
+            <td class="field">
+                <input type="submit" value="Create">
+            </td>
+		    @if(!isModal) {
+	            <td class="description">
+	            </td>
+            }
+        </tr>
+    </table>
+}

@@ -1,0 +1,13 @@
+@(todolist: Todolist)
+<div id="new-task" style="display: none;">
+	<span class="close-modal float-right"><a href='#'><i class="icon-remove"></i></a></span>
+    <span class="float-right loader" id="modal-loader" style="display: none;"><i class="icon-spinner icon-spin"></i></span>
+	<h3>New task</h3>
+	<div class="new-task-container padded">
+		<form id="add-task-form" action="/" method="get">
+			<input type="text" name="title" placeholder="Title of the task" class="full-width" id="add-task-title" />
+			<textarea placeholder="Content of the task" name="content" class="full-width" id="add-task-content"></textarea>
+		</form>
+		<button class="small-btn full-width" id="add-task">Add</button>
+	</div>
+</div>

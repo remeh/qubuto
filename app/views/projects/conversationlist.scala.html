@@ -1,0 +1,24 @@
+@(project: Project)
+<div class="pretty-list">
+	@for(conversation <- project.getConversations()) {
+		<a href='@routes.Conversations.show(project.getCreator().getUsername(), project.getCleanName(), conversation.getCleanTitle())' title='@conversation.getTitle()'>
+			<div class="pretty-entry">
+				<div>
+					<span class="conversation-name dark-gray">@conversation.getTitle()</span>
+				</div>
+				<div>
+					<span class="gray">@conversation.getSummary()</span>
+				</div>
+				<div>
+					<span class="light-gray">@conversation.getCreator().getUsername()</span>
+					<span class="light-gray pull-right"><i class="icon-comments-alt"></i>&nbsp;@conversation.getMessages().size() messages</span>
+				</div>
+			</div>
+		</a>
+	}
+	@if(project.getConversations().size() == 0) {
+		<div class="pretty-entry">
+			No conversations.
+		</div>
+	}
+</div>

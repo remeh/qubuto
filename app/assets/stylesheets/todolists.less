@@ -1,0 +1,136 @@
+@import "constants.less";
+@import "external/elements.less";
+
+// remeh's functions
+@import "mixins.less";
+
+// qubuto's constants
+@import "constants.less";
+
+div.new-task-container {
+	border: 1px dashed #eee;
+}
+
+#add-task-title {
+	padding-right: 0px;
+	padding-left: 0px;
+	border: 1px dashed #ddd;
+	border-bottom: 0px;
+	background: #fff;
+}
+
+#add-task-content {
+	border: 1px dashed #ddd;
+	width: 100%;
+	border-bottom: 1px dashed #f0f0f0;
+	background: white;
+	padding-right: 0px;
+	padding-left: 0px;
+	background: #fff;
+}
+
+#add-task {
+	border: 1px dashed #ddd;
+	width: 100% + .5px;
+	border-top: 0px;
+	border-radius: 0px;
+	padding-right: 0px;
+	padding-left: 0px;
+	background: #fff;
+}
+
+div.create-task {
+    margin-top: 12px;
+}
+
+span.task-author {
+    margin-right: 25px;
+}
+
+div.todo-infos {
+    margin-top: 10px;
+}
+
+div.todo-actions {
+    margin-top: 33px;
+}
+
+// Tags
+
+div.filter-tags {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+div.tags {
+    padding-top: 0.5em;
+    margin-top: 4px;
+}
+
+span.tag {
+    border: 1px dashed #ddd;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    margin-top: 1em;
+    .rounded;
+}
+
+span.tag-active {
+    color: white;
+    font-weight: bold;
+}
+
+span.tag-active-1 {
+    background-color: #8bce55; // green
+    border: 1px solid #8bce55;
+}
+
+span.tag-active-2 {
+    background-color: #557ace; // blue
+    border: 1px solid #557ace;
+}
+
+span.tag-active-3 {
+    background-color: #ce2929; // red
+    border: 1px solid #ce2929;
+}
+
+// Comments
+
+hr.comment-separation {
+    padding-top: 5px;
+}
+
+div.comments {
+    margin-top: 14px;
+}
+
+div.comment {
+    margin-top: 2px;
+    padding: 1em;
+    border: 1px dashed @light-gray;
+}
+
+div.add-comment {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: #e5e5e5;
+    border: 1px dashed #efefef;
+    text-align: center;
+}
+
+div.form-comment {
+    padding-right: 23px;
+    margin-bottom: 2px;
+}
+
+div.button-comment-container {
+    margin: 0px;
+    padding: 0px;
+    padding-top: 5px;
+}
+
+input.comment {
+    width: 100%;
+}
+
