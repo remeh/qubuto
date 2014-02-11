@@ -25,7 +25,7 @@ Filters allow you to quickly search for tasks waiting to be done.
 
 ### Conversations
 
-Conversations are kind of like a forum thread, but entirely rendered in Markdown for text formatting and with collaborative support, such as the todolists.
+Conversations are kind of a forum thread, but entirely rendered in Markdown for text formatting and with collaborative support, such as the todolists.
 
 They should be used to write down ideas, roadmaps or even to discuss on features.
 
