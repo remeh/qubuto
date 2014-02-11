@@ -5,7 +5,7 @@ Qubuto offers a collaborative way of managing projects with todolists, conversat
 
 ### Collaboration
 
-The way Qubuto has been think is that an action done in a project is immediatly visible in other users window. No need to reload anything, notifications and quick animations show the changes done in the todolists and conversations.
+The way Qubuto has been thought is that an action done in a project is immediatly visible in other users window. No need to reload anything, notifications and quick animations show the changes done in the todolists and conversations.
 
 ![Sharing a project with other users](http://remy.io/files/qubuto/collaborators.png)
 
