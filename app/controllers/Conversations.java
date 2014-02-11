@@ -119,7 +119,7 @@ public class Conversations extends SessionController {
             UserService.saveRightsFor(user, conversation);
         }
 		
-        return redirect(routes.Conversations.show(getUser().getUsername(), project.getCleanName(), cleanTitle));
+        return redirect(routes.Conversations.show(project.getCreator().getUsername(), project.getCleanName(), cleanTitle));
 	}
 	
 	public static Result show(String username, String projectCleanName, String conversationName) {

@@ -200,7 +200,7 @@ public class Todolists extends SessionController {
             UserService.saveRightsFor(user, todolist);
         }
 		
-        return redirect(routes.Todolists.show(getUser().getUsername(), project.getCleanName(), cleanName));
+        return redirect(routes.Todolists.show(project.getCreator().getUsername(), project.getCleanName(), cleanName));
 	}
 	
 	public static Result show(String username, String projectCleanName, String todolistName) {
